@@ -38,7 +38,7 @@ MEDIA_URL = ''
 STATIC_ROOT = ''
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    abspath(PROJECT_ROOT, 'static')
+    abspath(PROJECT_ROOT, 'static'),
 )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -48,11 +48,9 @@ STATICFILES_FINDERS = (
 SECRET_KEY = '6s-*u$$jlc7(g-3wh74s0rx6c1^-*(u%r=%v)rak33&eah3#-)'
 
 TEMPLATE_LOADERS = (
-    #'django.template.loaders.filesystem.Loader',
-    #'django.template.loaders.app_directories.Loader',
-    #'django.template.loaders.eggs.Loader',
-    'django_jinja.loaders.AppLoader',
-    'django_jinja.loaders.FileSystemLoader',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.eggs.Loader',
 )
 
 TEMPLATE_DIRS = (
@@ -65,8 +63,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'zeusci.urls'
@@ -81,13 +78,13 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
-    'django_jinja',
-    'coffin',
-
-    'mainapp',
-    'djcelery',
+    # Externals
     'compressor',
+    'djcelery',
     'gunicorn',
+
+    # Internals
+    'zeusci',
     'zeus',
 )
 
@@ -119,10 +116,6 @@ LOGGING = {
         },
     }
 }
-
-JINJA2_EXTENSIONS = [
-    'compressor.contrib.jinja2ext.CompressorExtension',
-]
 
 
 # =============================================================================
