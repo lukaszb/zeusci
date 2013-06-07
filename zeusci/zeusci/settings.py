@@ -126,3 +126,17 @@ BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 import djcelery
 djcelery.setup_loader()
 
+
+# =============================================================================
+# Zeus
+# =============================================================================
+
+ZEUS_SETTINGS= {
+    'PROJECTS': {
+        'frogress': {
+            'repo_url': 'git://github.com/lukaszb/frogress.git',
+            'url': 'https://github.com/lukaszb/frogress',
+        },
+    },
+}
+

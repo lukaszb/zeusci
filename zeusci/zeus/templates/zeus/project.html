@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+
+{% block container %}
+<h1>{{ project }}</h1>
+
+<h4>Repo URL: {{ project.repo_url }}</h4>
+<h4>URL: <a href="{{ project.url }}">{{ project.url }}</a></h4>
+
+{% endblock %}
