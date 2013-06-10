@@ -1,5 +1,8 @@
+from __future__ import unicode_literals
+from .builders import build
 from celery import task
 import time
+
 
 @task()
 def add(x, y):
@@ -12,5 +15,5 @@ def mul(x, y):
 
 @task
 def build_project(project):
-    return project
+    return build(project)
 

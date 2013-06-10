@@ -82,6 +82,7 @@ INSTALLED_APPS = (
     'compressor',
     'djcelery',
     'gunicorn',
+    'django_nose',
 
     # Internals
     'zeusci',
@@ -138,5 +139,9 @@ ZEUS_SETTINGS= {
             'url': 'https://github.com/lukaszb/frogress',
         },
     },
+    'BUILDS_ROOT': abspath(PROJECT_ROOT, 'builds'),
 }
 
+
+# django-nose
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
