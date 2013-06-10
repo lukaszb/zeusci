@@ -53,3 +53,16 @@ class Build(models.Model):
     class Meta:
         unique_together = ('project', 'number')
 
+
+class BuildStep(models.Model):
+    build = models.ForeignKey(Build)
+    number = models.PositiveIntegerField()
+    created_at = models.DateTimeField(default=datetime.datetime.now)
+    finished_at = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return '%s.%s' % (self.build, self.number)
+
+    class Meta:
+        unique_together = ('build', 'number')
+
