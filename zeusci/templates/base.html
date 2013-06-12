@@ -64,6 +64,24 @@
         <div class="container">
             {% block container %}
             <h1>Zeus - Continous Integration</h1>
+
+            {% if projects %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Project</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <td><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+
             {% endblock container %}
         </div>
         {% endblock container-wrapper %}

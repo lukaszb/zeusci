@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models
+from django.core.urlresolvers import reverse_lazy
 from .conf import settings
 import datetime
 import jsonfield
@@ -26,6 +27,9 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse_lazy('zeus_project_detail', kwargs={'name': self.name})
+
     def setup(self, data):
         self.repo_url = data.get('repo_url')
         self.url = data.get('url')
@@ -37,6 +41,10 @@ class Build(models.Model):
     build_dir = models.CharField(max_length=512, null=True)
     created_at = models.DateTimeField(default=datetime.datetime.now)
     finished_at = models.DateTimeField(null=True)
+
+    class Meta:
+        unique_together = ('project', 'number')
+        ordering = ['-created_at']
 
     def __str__(self):
         return '%s | %s' % (self.project, self.number)
@@ -51,8 +59,14 @@ class Build(models.Model):
                 self.number = 1
         super(Build, self).save(*args, **kwargs)
 
-    class Meta:
-        unique_together = ('project', 'number')
+    def get_absolute_url(self):
+        kwargs = {'name': self.project.name, 'build_no': self.number}
+        return reverse_lazy('zeus_project_build_detail', kwargs=kwargs)
+
+    @property
+    def duration(self):
+        if self.created_at and self.finished_at:
+            return self.finished_at - self.created_at
 
 
 class BuildStep(models.Model):
@@ -62,9 +76,23 @@ class BuildStep(models.Model):
     finished_at = models.DateTimeField(null=True)
     options = jsonfield.JSONField()
 
+    class Meta:
+        unique_together = ('build', 'number')
+        ordering = ['-number']
+
     def __str__(self):
         return '%s.%s' % (self.build, self.number)
 
-    class Meta:
-        unique_together = ('build', 'number')
+    def get_absolute_url(self):
+        kwargs = {
+            'name': self.build.project.name,
+            'build_no': self.build.number,
+            'step_no': self.number,
+        }
+        return reverse_lazy('zeus_project_build_step_detail', kwargs=kwargs)
+
+    @property
+    def duration(self):
+        if self.created_at and self.finished_at:
+            return self.finished_at - self.created_at
 

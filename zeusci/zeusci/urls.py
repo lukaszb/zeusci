@@ -5,7 +5,16 @@ from django.views.generic import TemplateView
 
 admin.autodiscover()
 
-home = TemplateView.as_view(template_name='base.html')
+class HomeView(TemplateView):
+    template_name = 'base.html'
+
+    def get_context_data(self, **kwargs):
+        from zeus.models import Project
+        data = super(HomeView, self).get_context_data(**kwargs)
+        data['projects'] = Project.objects.all()
+        return data
+
+home = HomeView.as_view()
 
 
 urlpatterns = patterns('',
