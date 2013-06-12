@@ -32,21 +32,34 @@ class PythonBuilder(BaseBuilder):
         fetcher.fetch(project.repo_url, build_dir)
 
         tox_ini_path = abspath(build_dir, 'tox.ini')
-        from tox._cmdline import Session
         config = self.get_tox_config(tox_ini_path)
+        results = []
         for step_no, env in enumerate(config.envlist, 1):
             self.info(" TOX | %s" % env)
-            step = BuildStep.objects.create(build=build, number=step_no)
-            step_config = self.get_tox_config(tox_ini_path, env)
-            Session(step_config).runcommand()
-            step.finished_at = datetime.datetime.now()
-            step.save()
+            from .tasks import build_step
+            ar = build_step.delay(self, build, step_no, env)
+            results.append(ar)
+            #step = BuildStep.objects.create(build=build, number=step_no)
+            #step_config = self.get_tox_config(tox_ini_path, env)
+            #Session(step_config).runcommand()
+            #step.finished_at = datetime.datetime.now()
+            #step.save()
+        for ar in results:
+            ar.wait()
 
-        build.finished_at = datetime.datetime.now()
-        build.save()
+        now = datetime.datetime.now()
+        Build.objects.filter(pk=build.pk).update(finished_at=now)
         # Clean after build
         #import shutil
         #shutil.rmtree(build_dir)
+
+    def build_step(self, step, env):
+        from tox._cmdline import Session
+        inipath = abspath(step.build.build_dir, 'tox.ini')
+        config = self.get_tox_config(inipath, env)
+        Session(config).runcommand()
+        BuildStep.objects.filter(pk=step.pk).update(
+            finished_at=datetime.datetime.now())
 
     def get_tox_config(self, inipath, venv=None):
         from tox._config import parseconfig

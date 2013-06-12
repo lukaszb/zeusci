@@ -79,6 +79,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     # Externals
+    'django_extensions',
     'compressor',
     'djcelery',
     'gunicorn',
