@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from .conf import settings
 import datetime
+import jsonfield
 
 
 class ProjectManager(models.Manager):
@@ -59,6 +60,7 @@ class BuildStep(models.Model):
     number = models.PositiveIntegerField()
     created_at = models.DateTimeField(default=datetime.datetime.now)
     finished_at = models.DateTimeField(null=True)
+    options = jsonfield.JSONField()
 
     def __str__(self):
         return '%s.%s' % (self.build, self.number)
