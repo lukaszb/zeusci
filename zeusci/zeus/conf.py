@@ -8,6 +8,7 @@ import tempfile
 DEFAULTS = {
     'PROJECTS': {},
     'BUILDS_ROOT': tempfile.gettempdir(),
+    'PROJECT_MODEL': 'zeus.project.Project',
     'FOO': 'default-foobar',
 }
 

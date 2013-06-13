@@ -135,12 +135,12 @@ djcelery.setup_loader()
 # =============================================================================
 
 ZEUS_SETTINGS= {
-    'PROJECTS': {
-        'frogress': {
-            'repo_url': 'git://github.com/lukaszb/frogress.git',
-            'url': 'https://github.com/lukaszb/frogress',
-        },
-    },
+    #'PROJECTS': {
+        #'frogress': {
+            #'repo_url': 'git://github.com/lukaszb/frogress.git',
+            #'url': 'https://github.com/lukaszb/frogress',
+        #},
+    #},
     'BUILDS_ROOT': abspath(PROJECT_ROOT, 'builds'),
 }
 

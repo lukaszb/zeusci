@@ -1,38 +1,12 @@
 from __future__ import unicode_literals
+from .project import get_project_model
 from django.db import models
 from django.core.urlresolvers import reverse_lazy
-from .conf import settings
 import datetime
 import jsonfield
 
 
-class ProjectManager(models.Manager):
-
-    def for_name(self, name):
-        obj = self.model()
-        obj.name = name
-        attrs = ['url', 'repo_url']
-        for attr in attrs:
-            setattr(obj, attr, settings.PROJECTS[name].get(attr))
-        return obj
-
-
-class Project(models.Model):
-    name = models.CharField(max_length=128)
-    url = models.URLField()
-    repo_url = models.CharField(max_length=512)
-
-    objects = ProjectManager()
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse_lazy('zeus_project_detail', kwargs={'name': self.name})
-
-    def setup(self, data):
-        self.repo_url = data.get('repo_url')
-        self.url = data.get('url')
+Project = get_project_model()
 
 
 class Build(models.Model):
