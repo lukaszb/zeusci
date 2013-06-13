@@ -147,3 +147,10 @@ ZEUS_SETTINGS= {
 
 # django-nose
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+
+TESTING = os.environ.get('TESTING', False)
+if TESTING:
+    from test_settings import update_settings_for_tests
+    update_settings_for_tests(locals())
+
