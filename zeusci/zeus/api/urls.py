@@ -22,6 +22,12 @@ urlpatterns = patterns('zeus.api.views',
     url(r'projects/(?P<name>\w+)$',
         view='project_detail',
         name='zeus_api_project_detail'),
+    url(r'projects/(?P<name>\w+)/builds$',
+        view='build_list',
+        name='zeus_api_build_list'),
+    url(r'projects/(?P<name>\w+)/builds/(?P<build_no>\d+)$',
+        view='build_detail',
+        name='zeus_api_build_detail'),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns, allowed=['json', 'api'])

@@ -10,3 +10,5 @@ def update_settings_for_tests(settings):
             'ENGINE': 'django.db.backends.sqlite3',
         },
     }
+    settings['USE_TZ'] = False
+

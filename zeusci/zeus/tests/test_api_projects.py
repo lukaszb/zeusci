@@ -1,17 +1,15 @@
-from django.test import TestCase
 from django.core.urlresolvers import reverse
+from zeus.models import Build
 from zeus.models import Project
+from .test_api_base import BaseApiTestCase
+import datetime
 
 
-def make_url(view_name, **kwargs):
-    return 'http://testserver' + reverse(view_name, kwargs=kwargs)
-
-
-class TestProjectApi(TestCase):
+class TestProjectApi(BaseApiTestCase):
     maxDiff = None
 
     def setUp(self):
-        Project.objects.create(
+        zeus = Project.objects.create(
             name='zeus',
             url='https://github.com/lukaszb/zeus',
             repo_url='git://github.com/lukaszb/zeus.git',
@@ -21,19 +19,24 @@ class TestProjectApi(TestCase):
             url='https://github.com/lukaszb/frogress',
             repo_url='git://github.com/lukaszb/frogress.git',
         )
+        Build.objects.create(project=zeus, number=1)
+        Build.objects.create(project=zeus, number=2, build_dir='/tmp/zeus/2')
+        dt = datetime.datetime(2013, 6, 13, 23, 12)
+        Build.objects.create(project=zeus, number=3, finished_at=dt)
+
 
     def test_project_list(self):
         url = reverse('zeus_api_project_list')
         response = self.client.get(url)
         self.assertItemsEqual(response.data, [
             {
-                'uri': make_url('zeus_api_project_detail', name='zeus'),
+                'uri': self.make_url('zeus_api_project_detail', name='zeus'),
                 'name': 'zeus',
                 'project_url': 'https://github.com/lukaszb/zeus',
                 'repo_url': 'git://github.com/lukaszb/zeus.git'
             },
             {
-                'uri': make_url('zeus_api_project_detail', name='frogress'),
+                'uri': self.make_url('zeus_api_project_detail', name='frogress'),
                 'name': 'frogress',
                 'project_url': 'https://github.com/lukaszb/frogress',
                 'repo_url': 'git://github.com/lukaszb/frogress.git'
@@ -41,12 +44,23 @@ class TestProjectApi(TestCase):
         ])
 
     def test_project_detail(self):
-        url = reverse('zeus_api_project_detail', kwargs={'name': 'frogress'})
+        url = reverse('zeus_api_project_detail', kwargs={'name': 'zeus'})
         response = self.client.get(url)
         self.assertDictEqual(response.data, {
-            'uri': make_url('zeus_api_project_detail', name='frogress'),
-            'name': 'frogress',
-            'project_url': 'https://github.com/lukaszb/frogress',
-            'repo_url': 'git://github.com/lukaszb/frogress.git'
+            'uri': self.make_url('zeus_api_project_detail', name='zeus'),
+            'name': 'zeus',
+            'project_url': 'https://github.com/lukaszb/zeus',
+            'repo_url': 'git://github.com/lukaszb/zeus.git',
+            'builds': [
+                {
+                    'uri': self.make_build_detail_url('zeus', 1),
+                },
+                {
+                    'uri': self.make_build_detail_url('zeus', 2),
+                },
+                {
+                    'uri': self.make_build_detail_url('zeus', 3),
+                },
+            ],
         })
 
