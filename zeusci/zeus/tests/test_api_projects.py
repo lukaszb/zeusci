@@ -40,3 +40,13 @@ class TestProjectApi(TestCase):
             },
         ])
 
+    def test_project_detail(self):
+        url = reverse('zeus_api_project_detail', kwargs={'name': 'frogress'})
+        response = self.client.get(url)
+        self.assertDictEqual(response.data, {
+            'uri': make_url('zeus_api_project_detail', name='frogress'),
+            'name': 'frogress',
+            'project_url': 'https://github.com/lukaszb/frogress',
+            'repo_url': 'git://github.com/lukaszb/frogress.git'
+        })
+
