@@ -19,6 +19,7 @@ home = HomeView.as_view()
 
 urlpatterns = patterns('',
     url(r'^$', home, name='home'),
+    url(r'^api/', include('zeus.api.urls')),
     url(r'^', include('zeus.urls')),
 
     url(r'^admin/', include(admin.site.urls)),

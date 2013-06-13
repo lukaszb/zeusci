@@ -84,6 +84,7 @@ INSTALLED_APPS = (
     'djcelery',
     'gunicorn',
     'django_nose',
+    'rest_framework',
 
     # Internals
     'zeusci',
