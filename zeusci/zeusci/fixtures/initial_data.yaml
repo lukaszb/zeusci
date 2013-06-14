@@ -8,7 +8,7 @@
     is_superuser: true
     last_login: 2013-06-14 14:17:13.912328
     last_name: ''
-    password: pbkdf2_sha256$10000$cG0aHiFZzhaE$WfWkr+Q+1ToRRkWsxu2JOFdP61ZLvalTBX3DUe+TN+s=
+    password: pbkdf2_sha256$10000$cG0aHiFZzhaE$WfWkr+Q+1ToRRkWsxu2JOFdP61ZLvalTBX3DUe+TN+s= # foobar
     user_permissions: []
     username: lukasz
   model: auth.user
