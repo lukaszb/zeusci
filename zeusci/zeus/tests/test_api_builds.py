@@ -8,9 +8,6 @@ import datetime
 class TestBuildApi(BaseApiTestCase):
     maxDiff = None
 
-    def make_build_detail_url(self, name, number):
-        return self.make_url('zeus_api_build_detail', name=name, build_no=number)
-
     def setUp(self):
         zeus = Project.objects.create(
             name='zeus',
