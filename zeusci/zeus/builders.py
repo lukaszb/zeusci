@@ -4,8 +4,9 @@ from .conf import settings
 from .utils.general import abspath
 from .models import Build
 from .models import BuildStep
+from tox._cmdline import Session
 import datetime
-
+import shutil
 
 class BaseBuilder(object):
 
@@ -14,6 +15,10 @@ class BaseBuilder(object):
 
     def build(self, project):
         raise NotImplementedError
+
+    def clean(self, build):
+        if settings.REMOVE_BUILD_DIRS:
+            shutil.rmtree(build.build_dir)
 
 
 class PythonBuilder(BaseBuilder):
@@ -33,8 +38,15 @@ class PythonBuilder(BaseBuilder):
         build.save()
 
         self.fetch(build)
+        self.pre_build_steps(build)
         self.build_steps(build)
-        #self.clean(build)
+        self.clean(build)
+
+    def pre_build_steps(self, build):
+        tox_ini_path = abspath(build.build_dir, 'tox.ini')
+        config = self.get_tox_config(tox_ini_path)
+        config.option.sdistonly = True
+        Session(config).runcommand()
 
     def build_steps(self, build):
         tox_ini_path = abspath(build.build_dir, 'tox.ini')
@@ -57,7 +69,6 @@ class PythonBuilder(BaseBuilder):
         Build.objects.filter(pk=build.pk).update(finished_at=now)
 
     def build_step(self, step):
-        from tox._cmdline import Session
         inipath = abspath(step.build.build_dir, 'tox.ini')
         env = step.options.get('toxenv')
         config = self.get_tox_config(inipath, env)
@@ -72,10 +83,6 @@ class PythonBuilder(BaseBuilder):
             args += ['-e', venv]
         config = parseconfig(args, 'tox')
         return config
-
-    def clean(self, build):
-        import shutil
-        shutil.rmtree(build.build_dir)
 
 
 def build(project):
