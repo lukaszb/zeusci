@@ -10,6 +10,6 @@
     last_name: ''
     password: pbkdf2_sha256$10000$cG0aHiFZzhaE$WfWkr+Q+1ToRRkWsxu2JOFdP61ZLvalTBX3DUe+TN+s= # foobar
     user_permissions: []
-    username: lukasz
+    username: admin
   model: auth.user
   pk: 1
