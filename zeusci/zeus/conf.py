@@ -9,6 +9,7 @@ DEFAULTS = {
     'PROJECTS': {},
     'BUILDS_ROOT': tempfile.gettempdir(),
     'PROJECT_MODEL': 'zeus.project.Project',
+    'REMOVE_BUILD_DIRS': True,
     'FOO': 'default-foobar',
 }
 

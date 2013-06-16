@@ -5,6 +5,7 @@ from .utils.general import abspath
 from .models import Build
 from .models import BuildStep
 from tox._cmdline import Session
+from toxic import Tox
 import datetime
 import shutil
 
@@ -44,15 +45,13 @@ class PythonBuilder(BaseBuilder):
 
     def pre_build_steps(self, build):
         tox_ini_path = abspath(build.build_dir, 'tox.ini')
-        config = self.get_tox_config(tox_ini_path)
-        config.option.sdistonly = True
-        Session(config).runcommand()
+        self.tox = Tox(tox_ini_path)
+        self.tox.sdist()
 
     def build_steps(self, build):
-        tox_ini_path = abspath(build.build_dir, 'tox.ini')
-        config = self.get_tox_config(tox_ini_path)
         results = []
-        for step_no, env in enumerate(config.envlist, 1):
+        venvs = self.tox.get_venvs()
+        for step_no, env in enumerate(venvs, 1):
             self.info("Build step %d | tox:%s" % (step_no, env))
             from .tasks import build_step
             step = BuildStep.objects.create(
@@ -69,10 +68,8 @@ class PythonBuilder(BaseBuilder):
         Build.objects.filter(pk=build.pk).update(finished_at=now)
 
     def build_step(self, step):
-        inipath = abspath(step.build.build_dir, 'tox.ini')
-        env = step.options.get('toxenv')
-        config = self.get_tox_config(inipath, env)
-        Session(config).runcommand()
+        venv = step.options.get('toxenv')
+        self.tox.run_for_venv(venv)
         BuildStep.objects.filter(pk=step.pk).update(
             finished_at=datetime.datetime.now())
 
