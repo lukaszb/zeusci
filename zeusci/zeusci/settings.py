@@ -85,6 +85,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'django_nose',
     'rest_framework',
+    'chat',
 
     # Internals
     'zeusci',
@@ -102,9 +103,22 @@ LOGGING = {
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
-        }
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
     },
     'handlers': {
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -116,6 +130,11 @@ LOGGING = {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'socketio': {
+            'handlers':['console'],
+            'propagate': True,
+            'level':'INFO',
         },
     }
 }

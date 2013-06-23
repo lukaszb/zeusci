@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from .project import get_project_model
 from .conf import settings
+from .utils.general import abspath
 from django.db import models
 from django.core.urlresolvers import reverse_lazy
 import datetime
@@ -16,6 +17,7 @@ class Build(models.Model):
     build_dir = models.CharField(max_length=512, null=True)
     created_at = models.DateTimeField(default=datetime.datetime.now)
     finished_at = models.DateTimeField(null=True)
+    info = jsonfield.JSONField()
 
     class Meta:
         unique_together = ('project', 'number')
@@ -42,6 +44,14 @@ class Build(models.Model):
     def duration(self):
         if self.created_at and self.finished_at:
             return self.finished_at - self.created_at
+
+    @property
+    def build_steps_dir(self):
+        return abspath(self.build_dir, 'steps')
+
+    @property
+    def build_repo_dir(self):
+        return abspath(self.build_dir, 'repo')
 
 
 class BuildStep(models.Model):
@@ -76,6 +86,14 @@ class BuildStep(models.Model):
     @property
     def output(self):
         return open(self.output_path).read()
+
+    @property
+    def build_step_dir(self):
+        return abspath(self.build.build_steps_dir, str(self.number))
+
+    @property
+    def build_step_repo_dir(self):
+        return abspath(self.build_step_dir, 'repo')
 
     SUCCESS = 'success'
     PENDING = 'pending'

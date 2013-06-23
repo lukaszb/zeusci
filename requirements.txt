@@ -13,3 +13,4 @@ django-extensions == 1.1.1
 django-jsonfield == 0.9.10
 ipython == 0.13.2
 ipdb == 0.7
+tox == 1.4.3

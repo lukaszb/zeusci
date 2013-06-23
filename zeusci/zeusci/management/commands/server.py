@@ -27,7 +27,7 @@ class Command(BaseCommand):
     def handle(self, addrport="", *args, **options):
 
         if not addrport:
-            self.addr = ''
+            self.addr = 'localhost'
             self.port = DEFAULT_PORT
         else:
             m = match(naiveip_re, addrport)
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         try:
             bind = (self.addr, int(self.port))
             print
-            print "SocketIOServer running on %s:%s" % bind
+            print "SocketIOServer running on http://%s:%s" % bind
             print
             handler = self.get_handler(*args, **options)
             server = SocketIOServer(bind, handler, resource="socket.io", policy_server=True)

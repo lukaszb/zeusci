@@ -5,7 +5,6 @@ from .utils.general import abspath
 from .utils.general import makedirs
 from .models import Build
 from .models import BuildStep
-#from toxic import Tox
 import datetime
 import os
 import shutil
@@ -25,19 +24,25 @@ class BaseBuilder(object):
             shutil.rmtree(build.build_dir)
 
 
+def get_tox_config(tox_ini_path):
+    from tox._config import parseconfig
+    return parseconfig(tox_ini_path)
+
+
 class PythonBuilder(BaseBuilder):
 
     def fetch(self, build):
-        msg = "Fetching %s -> %s" % (build.project.repo_url, build.build_dir)
+        msg = "Fetching %s -> %s" % (build.project.repo_url, build.build_repo_dir)
         self.info(msg)
         fetcher = GitFetcher()
-        fetcher.fetch(build.project.repo_url, build.build_dir)
+        fetcher.fetch(build.project.repo_url, build.build_repo_dir)
 
     def build(self, project):
         self.info("Building %s" % project.name)
         build = Build.objects.create(project=project)
         dirname = '%s.%s' % (project.name, build.number)
         build_dir = abspath(settings.BUILDS_ROOT, dirname)
+
         build.build_dir = build_dir
         build.save()
 
@@ -48,12 +53,11 @@ class PythonBuilder(BaseBuilder):
 
     def pre_build_steps(self, build):
         self.tox_ini_path = abspath(build.build_dir, 'tox.ini')
-        #self.tox = Tox(self.tox_ini_path)
-        #self.tox.sdist()
 
     def build_steps(self, build):
         results = []
-        venvs = self.tox.get_venvs()
+        tox_config = get_tox_config(self.tox_ini_path)
+        venvs = tox_config.envlist
         for step_no, env in enumerate(venvs, 1):
             self.info("Build step %d | tox:%s" % (step_no, env))
             from .tasks import build_step
@@ -65,6 +69,7 @@ class PythonBuilder(BaseBuilder):
                 options={'toxenv': env},
                 output_path=output_path,
             )
+            shutil.copytree(build.build_repo_dir, step.build_step_repo_dir)
             ar = build_step.delay(self, step)
             results.append(ar)
         for ar in results:
@@ -76,13 +81,13 @@ class PythonBuilder(BaseBuilder):
     def build_step(self, step):
         venv = step.options['toxenv']
         with open(step.output_path, 'w') as stream:
-            cmd = ['tox', '-c', self.tox_ini_path, '-e', venv]
+            tox_ini_path = abspath(step.build_step_repo_dir, 'tox.ini')
+            cmd = ['tox', '-c', tox_ini_path, '-e', venv]
             print "Running command: %s" % str(cmd)
             popen = subprocess.Popen(cmd, stdout=stream, stderr=stream)
             popen.communicate()
             print "Finished step with code: %s" % popen.returncode
             print "Output is at: %s" % step.output_path
-        #self.tox.run_for_venv(venv)
         BuildStep.objects.filter(pk=step.pk).update(
             finished_at=datetime.datetime.now(),
             returncode=popen.returncode,
