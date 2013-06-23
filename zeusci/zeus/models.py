@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from .project import get_project_model
+from .conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse_lazy
 import datetime
@@ -49,6 +50,8 @@ class BuildStep(models.Model):
     created_at = models.DateTimeField(default=datetime.datetime.now)
     finished_at = models.DateTimeField(null=True)
     options = jsonfield.JSONField()
+    returncode = models.IntegerField(null=True)
+    output_path = models.FilePathField(settings.BUILDS_OUTPUT_DIR, recursive=True)
 
     class Meta:
         unique_together = ('build', 'number')
@@ -69,4 +72,21 @@ class BuildStep(models.Model):
     def duration(self):
         if self.created_at and self.finished_at:
             return self.finished_at - self.created_at
+
+    @property
+    def output(self):
+        return open(self.output_path).read()
+
+    SUCCESS = 'success'
+    PENDING = 'pending'
+    FAIL = 'fail'
+
+    @property
+    def status(self):
+        if self.finished_at and self.returncode == 0:
+            return self.SUCCESS
+        elif self.returncode is None:
+            return self.PENDING
+        else:
+            return self.FAIL
 

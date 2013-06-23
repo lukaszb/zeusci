@@ -15,3 +15,13 @@ def lookup_value(obj, value):
     obj = getattr(obj, attr)
     return lookup_value(obj, value)
 
+
+def makedirs(path):
+    try:
+        os.makedirs(path)
+    except OSError as err:
+        if err.errno == 17: # 17 is directory exist already
+            return False
+        raise
+    return True
+

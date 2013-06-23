@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<h2>Build: #{{ build.number }}</h2>
+<h2><a href="{{ build.get_absolute_url }}">Build: #{{ build.number }}</a></h2>
 
 {% block build_content %}
 
@@ -11,6 +11,7 @@
     <thead>
         <tr>
             <th>Build Step</th>
+            <th>Status</th>
             <th>Started</th>
             <th>Finished</th>
             <th>Duration</th>
@@ -20,6 +21,15 @@
         {% for step in build.buildstep_set.all %}
         <tr>
             <td><a href="{{ step.get_absolute_url }}">{{ step.number }}</a></td>
+            <td>
+                {% if step.status == step.PENDING %}
+                Pending
+                {% elif step.status == step.SUCCESS %}
+                Success
+                {% elif step.status == step.FAIL %}
+                Failed
+                {% endif %}
+            </td>
             <td>{{ step.created_at }}</td>
             <td>{{ step.finished_at }}</td>
             <td>{{ step.duration }}</td>

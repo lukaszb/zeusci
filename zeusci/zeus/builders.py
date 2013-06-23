@@ -2,12 +2,15 @@ from __future__ import unicode_literals
 from .fetchers import GitFetcher
 from .conf import settings
 from .utils.general import abspath
+from .utils.general import makedirs
 from .models import Build
 from .models import BuildStep
-from tox._cmdline import Session
 from toxic import Tox
 import datetime
+import os
 import shutil
+import subprocess
+
 
 class BaseBuilder(object):
 
@@ -44,8 +47,8 @@ class PythonBuilder(BaseBuilder):
         self.clean(build)
 
     def pre_build_steps(self, build):
-        tox_ini_path = abspath(build.build_dir, 'tox.ini')
-        self.tox = Tox(tox_ini_path)
+        self.tox_ini_path = abspath(build.build_dir, 'tox.ini')
+        self.tox = Tox(self.tox_ini_path)
         self.tox.sdist()
 
     def build_steps(self, build):
@@ -54,10 +57,13 @@ class PythonBuilder(BaseBuilder):
         for step_no, env in enumerate(venvs, 1):
             self.info("Build step %d | tox:%s" % (step_no, env))
             from .tasks import build_step
+            output_path = os.path.join(settings.BUILDS_OUTPUT_DIR, build.project.name, str(build.number), str(step_no))
+            makedirs(os.path.dirname(output_path))
             step = BuildStep.objects.create(
                 build=build,
                 number=step_no,
                 options={'toxenv': env},
+                output_path=output_path,
             )
             ar = build_step.delay(self, step)
             results.append(ar)
@@ -68,18 +74,19 @@ class PythonBuilder(BaseBuilder):
         Build.objects.filter(pk=build.pk).update(finished_at=now)
 
     def build_step(self, step):
-        venv = step.options.get('toxenv')
-        self.tox.run_for_venv(venv)
+        venv = step.options['toxenv']
+        with open(step.output_path, 'w') as stream:
+            cmd = ['tox', '-c', self.tox_ini_path, '-e', venv]
+            print "Running command: %s" % str(cmd)
+            popen = subprocess.Popen(cmd, stdout=stream, stderr=stream)
+            popen.communicate()
+            print "Finished step with code: %s" % popen.returncode
+            print "Output is at: %s" % step.output_path
+        #self.tox.run_for_venv(venv)
         BuildStep.objects.filter(pk=step.pk).update(
-            finished_at=datetime.datetime.now())
-
-    def get_tox_config(self, inipath, venv=None):
-        from tox._config import parseconfig
-        args = ['-c', abspath(inipath)]
-        if venv is not None:
-            args += ['-e', venv]
-        config = parseconfig(args, 'tox')
-        return config
+            finished_at=datetime.datetime.now(),
+            returncode=popen.returncode,
+        )
 
 
 def build(project):

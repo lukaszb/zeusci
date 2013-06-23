@@ -23,7 +23,6 @@ class Project(models.Model):
         return self.build_set.all().order_by('number')
 
 
-
 def get_project_model():
     return import_class(settings.PROJECT_MODEL)
 

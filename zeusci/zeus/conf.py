@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from .utils.general import abspath
 import os
 import tempfile
 
@@ -8,6 +9,7 @@ import tempfile
 DEFAULTS = {
     'PROJECTS': {},
     'BUILDS_ROOT': tempfile.gettempdir(),
+    'BUILDS_OUTPUT_DIR': None,
     'PROJECT_MODEL': 'zeus.project.Project',
     'REMOVE_BUILD_DIRS': True,
     'FOO': 'default-foobar',
@@ -37,6 +39,9 @@ class ZeusSettings(object):
         except OSError as error:
             if error.errno != 17: # 17 is: directory exist
                 raise
+        if self.settings['BUILDS_OUTPUT_DIR'] is None:
+            self.settings['BUILDS_OUTPUT_DIR'] = abspath(
+                self.settings['BUILDS_ROOT'], 'outputs')
 
 
 settings = ZeusSettings(DEFAULTS, USER_SETTINGS)
