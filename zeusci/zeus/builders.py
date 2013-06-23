@@ -5,7 +5,7 @@ from .utils.general import abspath
 from .utils.general import makedirs
 from .models import Build
 from .models import BuildStep
-from toxic import Tox
+#from toxic import Tox
 import datetime
 import os
 import shutil
@@ -48,8 +48,8 @@ class PythonBuilder(BaseBuilder):
 
     def pre_build_steps(self, build):
         self.tox_ini_path = abspath(build.build_dir, 'tox.ini')
-        self.tox = Tox(self.tox_ini_path)
-        self.tox.sdist()
+        #self.tox = Tox(self.tox_ini_path)
+        #self.tox.sdist()
 
     def build_steps(self, build):
         results = []
