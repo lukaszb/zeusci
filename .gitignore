@@ -2,11 +2,4 @@
 .database.sqlite
 zeusci/builds
 
-devenv/.Python
-devenv/.tox-config*
-devenv/bin
-devenv/include
-devenv/lib
-devenv/log
-devenv/src
-
+devenv
