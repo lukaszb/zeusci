@@ -85,7 +85,6 @@ INSTALLED_APPS = (
     'gunicorn',
     'django_nose',
     'rest_framework',
-    'chat',
 
     # Internals
     'zeusci',
