@@ -79,6 +79,10 @@ class PythonBuilder(BaseBuilder):
         Build.objects.filter(pk=build.pk).update(finished_at=now)
 
     def build_step(self, step):
+        BuildStep.objects.filter(pk=step.pk).update(
+            finished_at=None,
+            returncode=None,
+        )
         venv = step.options['toxenv']
         with open(step.output_path, 'w') as stream:
             tox_ini_path = abspath(step.build_step_repo_dir, 'tox.ini')
@@ -88,10 +92,14 @@ class PythonBuilder(BaseBuilder):
             popen.communicate()
             print "Finished step with code: %s" % popen.returncode
             print "Output is at: %s" % step.output_path
-        BuildStep.objects.filter(pk=step.pk).update(
-            finished_at=datetime.datetime.now(),
-            returncode=popen.returncode,
-        )
+
+        step.finished_at = datetime.datetime.now()
+        step.returncode=popen.returncode
+        step.save()
+        import time
+        while True:
+            time.sleep(3)
+            print " --> Sleeping (gevent)"
 
 
 def build(project):

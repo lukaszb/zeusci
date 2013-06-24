@@ -5,6 +5,8 @@ import socketio.sdjango
 
 
 admin.autodiscover()
+socketio.sdjango.autodiscover()
+
 
 class HomeView(TemplateView):
     template_name = 'base.html'

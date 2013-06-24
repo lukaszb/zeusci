@@ -13,5 +13,8 @@ urlpatterns = patterns('zeus.views',
     url('^p/(?P<name>\w+)/build/$',
         view='project_build_view',
         name='zeus_project_build'),
+    url('^force/p/(?P<name>\w+)/build/(?P<build_no>\d+)\.(?P<step_no>\d+)/$',
+        view='project_force_build_step_view',
+        name='zeus_project_force_build_step'),
 )
 

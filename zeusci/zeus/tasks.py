@@ -19,5 +19,7 @@ def build_project(project):
 
 @task
 def build_step(builder, step):
+    step.start_task()
     builder.build_step(step)
+    step.finish_task(save=True)
 

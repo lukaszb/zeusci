@@ -4,6 +4,7 @@ from .conf import settings
 from .utils.general import abspath
 from django.db import models
 from django.core.urlresolvers import reverse_lazy
+from django.core.cache import cache
 import datetime
 import jsonfield
 
@@ -78,6 +79,14 @@ class BuildStep(models.Model):
         }
         return reverse_lazy('zeus_project_build_step_detail', kwargs=kwargs)
 
+    def get_force_build_url(self):
+        kwargs = {
+            'name': self.build.project.name,
+            'build_no': self.build.number,
+            'step_no': self.number,
+        }
+        return reverse_lazy('zeus_project_force_build_step', kwargs=kwargs)
+
     @property
     def duration(self):
         if self.created_at and self.finished_at:
@@ -107,4 +116,31 @@ class BuildStep(models.Model):
             return self.PENDING
         else:
             return self.FAIL
+
+    @classmethod
+    def get_task_is_running_cache_key(pk):
+        return 'zeus-ci-build-step-task-running-%s' % pk
+
+    @property
+    def task_is_running_cache_key(self):
+        if not self.pk:
+            raise ValueError("Only steps already stored at database can have "
+                "task cache key")
+        return BuildStep.get_task_cache_key(self.pk)
+
+    def start_task(self, save=False):
+        timeout = settings.BUILD_STEP_TIMEOUT
+        cache.set(self.task_is_running_cache_key, 'yes', timeout=timeout)
+        self.finished_at = None
+        if save:
+            self.save()
+
+    def finish_task(self, save=False):
+        cache.delete(self.task_is_running_cache_key)
+        self.finished_at = datetime.datetime.now()
+        if save:
+            self.save()
+
+    def is_task_running(self):
+        return cache.get(self.task_is_running_cache_key) is not None
 

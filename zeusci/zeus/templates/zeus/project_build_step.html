@@ -1,12 +1,41 @@
 {% extends "zeus/project_build.html" %}
+{% load static from staticfiles %}
+{% load jsonify from zeus %}
+
+{% block extra_css %}
+<style>
+    pre {
+        background-color: #000;
+        color: #fff;
+    }
+</style>
+{% endblock %}
 
 {% block build_content %}
 
-<h3>Step: #{{ step.number }}</h3>
+<h3>Step: #{{ step.number }} | {{ step.options.toxenv }}</h3>
+<a href="{{ step.get_force_build_url }}">Force re-build this step</a>
 
-<pre>
-{{ step.output }}
+<h4>Websocket logs</h4>
+<pre id="logs">
 </pre>
 
+<h4>Output</h4>
+<pre id="output">
+</pre>
+{% comment %}
+{{ step.output }}
+{% endcomment %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    var PROJECT_NAME = {{ step.build.project.name|jsonify }};
+    var BUILD_NO = {{ step.build.number|jsonify }};
+    var STEP_NO = {{ step.number|jsonify }};
+</script>
+<script src="{% static "zeus/js/socket.io.js" %}"></script>
+<script src="{% static "zeus/js/zeus.js" %}"></script>
 {% endblock %}
 

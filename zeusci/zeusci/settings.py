@@ -85,7 +85,6 @@ INSTALLED_APPS = (
     'gunicorn',
     'django_nose',
     'rest_framework',
-    'chat',
 
     # Internals
     'zeusci',
@@ -139,6 +138,16 @@ LOGGING = {
     }
 }
 
+
+# =============================================================================
+# Cache
+# =============================================================================
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    }
+}
 
 # =============================================================================
 # Celery
