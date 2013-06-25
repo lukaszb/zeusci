@@ -63,13 +63,10 @@ class PythonBuilder(BaseBuilder):
         for step_no, env in enumerate(venvs, 1):
             self.info("Build step %d | tox:%s" % (step_no, env))
             from .tasks import build_step
-            output_path = os.path.join(settings.BUILDS_OUTPUT_DIR, build.project.name, str(build.number), str(step_no))
-            makedirs(os.path.dirname(output_path))
             step = BuildStep.objects.create(
                 build=build,
                 number=step_no,
                 options={'toxenv': env},
-                output_path=output_path,
             )
             shutil.copytree(build.build_repo_dir, step.build_step_repo_dir)
             ar = build_step.delay(self, step)
@@ -90,7 +87,6 @@ class PythonBuilder(BaseBuilder):
         for chunk in command.iter_output():
             cache.set(step.cache_key_output, command.data)
         print "Finished step with code: %s" % command.returncode
-        print "Output is at: %s" % step.output_path
         BuildStep.objects.filter(pk=step.pk).update(
             finished_at=datetime.datetime.now(),
             returncode=command.returncode,
