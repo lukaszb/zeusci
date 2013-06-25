@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load compress %}
+{% load static from staticfiles %}
+
+{% block extra_css %}
+{% compress css %}
+<link rel="stylesheet" type="text/x-sass" href="{% static "zeus/css/zeus.sass" %}">
+{% endcompress %}
+{% endblock %}
+

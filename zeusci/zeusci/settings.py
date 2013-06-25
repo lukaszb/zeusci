@@ -43,6 +43,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 SECRET_KEY = '6s-*u$$jlc7(g-3wh74s0rx6c1^-*(u%r=%v)rak33&eah3#-)'
@@ -152,6 +153,7 @@ CACHES = {
     }
 }
 
+
 # =============================================================================
 # Celery
 # =============================================================================
@@ -160,6 +162,21 @@ BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 import djcelery
 djcelery.setup_loader()
 
+
+# =============================================================================
+# Compressor
+# =============================================================================
+COMPRESS = True
+COMPRESS_CSS_FILTERS = (
+    #'compressor.filters.css_default.CssAbsoluteFilter',
+    #'compressor.filters.cssmin.CSSMinFilter',
+)
+COMPRESS_OUTPUT_DIR = 'cache'
+COMPRESS_PRECOMPILERS = (
+    ('text/coffeescript', 'coffee --compile --stdio'),
+    ('text/x-sass', 'sass {infile} {outfile} -C'),
+    ('text/x-scss', 'sass --scss {infile} {outfile}'),
+)
 
 # =============================================================================
 # Zeus
