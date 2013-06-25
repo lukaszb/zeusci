@@ -56,7 +56,7 @@ class Build(models.Model):
 
 
 class BuildStep(models.Model):
-    build = models.ForeignKey(Build)
+    build = models.ForeignKey(Build, related_name='steps')
     number = models.PositiveIntegerField()
     created_at = models.DateTimeField(default=datetime.datetime.now)
     finished_at = models.DateTimeField(null=True)

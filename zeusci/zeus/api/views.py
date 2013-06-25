@@ -1,8 +1,10 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from ..models import Build
+from ..models import BuildStep
 from ..models import Project
 from .serializers import BuildSerializer
+from .serializers import DetailBuildStepSerializer
 from .serializers import ProjectDetailSerializer
 from .serializers import ProjectSerializer
 
@@ -30,9 +32,12 @@ class BuildApiMixin(object):
     def get_queryset(self):
         return Build.objects.filter(project__name=self.kwargs['name'])
 
+    def get_object_filters(self):
+        return {'number': self.kwargs['build_no']}
+
     def get_object(self):
         queryset = self.get_queryset()
-        filters = {'number': self.kwargs['build_no']}
+        filters = self.get_object_filters()
         return get_object_or_404(queryset, **filters)
 
 
@@ -43,8 +48,30 @@ class BuildList(BuildApiMixin, generics.ListCreateAPIView):
 build_list = BuildList.as_view()
 
 
-class BuildDetail(BuildApiMixin, generics.RetrieveUpdateDestroyAPIView):
+class BuildDetail(BuildApiMixin, generics.RetrieveAPIView):
     pass
 
 build_detail = BuildDetail.as_view()
+
+
+class BuildStepDetail(generics.RetrieveAPIView):
+    serializer_class = DetailBuildStepSerializer
+    model = BuildStep
+
+    def get_queryset(self):
+        return BuildStep.objects.filter(build__project__name=self.kwargs['name'])
+
+    def get_object_filters(self):
+        return {
+            'build__number': self.kwargs['build_no'],
+            'number': self.kwargs['step_no'],
+        }
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        filters = self.get_object_filters()
+        return get_object_or_404(queryset, **filters)
+
+
+build_step_detail = BuildStepDetail.as_view()
 
