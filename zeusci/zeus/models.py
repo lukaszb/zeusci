@@ -4,6 +4,7 @@ from .conf import settings
 from .utils.general import abspath
 from django.db import models
 from django.core.urlresolvers import reverse_lazy
+from django.core.cache import cache
 import datetime
 import jsonfield
 
@@ -61,7 +62,6 @@ class BuildStep(models.Model):
     finished_at = models.DateTimeField(null=True)
     options = jsonfield.JSONField()
     returncode = models.IntegerField(null=True)
-    output_path = models.FilePathField(settings.BUILDS_OUTPUT_DIR, recursive=True)
 
     class Meta:
         unique_together = ('build', 'number')
@@ -84,10 +84,6 @@ class BuildStep(models.Model):
             return self.finished_at - self.created_at
 
     @property
-    def output(self):
-        return open(self.output_path).read()
-
-    @property
     def build_step_dir(self):
         return abspath(self.build.build_steps_dir, str(self.number))
 
@@ -107,4 +103,21 @@ class BuildStep(models.Model):
             return self.PENDING
         else:
             return self.FAIL
+
+    @property
+    def cache_key_output(self):
+        return 'zeus-build-step-output-%s' % self.pk
+
+    @property
+    def output(self):
+        output = cache.get(self.cache_key_output)
+        if output is None:
+            output = self.step_output.output
+            cache.set(self.cache_key_output, output)
+        return output
+
+
+class BuildStepOutput(models.Model):
+    step = models.OneToOneField(BuildStep, related_name='step_output')
+    output = models.TextField()
 

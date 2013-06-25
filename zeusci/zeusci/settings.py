@@ -140,6 +140,19 @@ LOGGING = {
 
 
 # =============================================================================
+# Cache
+# =============================================================================
+CACHES = {
+    'default': {
+        #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        #'LOCATION': 'some-unique-flake',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        'KEY_PREFIX': 'zeus-ci',
+    }
+}
+
+# =============================================================================
 # Celery
 # =============================================================================
 BROKER_URL = 'amqp://guest:guest@localhost:5672/'

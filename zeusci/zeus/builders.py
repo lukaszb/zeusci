@@ -5,10 +5,12 @@ from .utils.general import abspath
 from .utils.general import makedirs
 from .models import Build
 from .models import BuildStep
+from .models import BuildStepOutput
+from django.core.cache import cache
 import datetime
 import os
 import shutil
-import subprocess
+import procme
 
 
 class BaseBuilder(object):
@@ -79,19 +81,21 @@ class PythonBuilder(BaseBuilder):
         Build.objects.filter(pk=build.pk).update(finished_at=now)
 
     def build_step(self, step):
+
         venv = step.options['toxenv']
-        with open(step.output_path, 'w') as stream:
-            tox_ini_path = abspath(step.build_step_repo_dir, 'tox.ini')
-            cmd = ['tox', '-c', tox_ini_path, '-e', venv]
-            print "Running command: %s" % str(cmd)
-            popen = subprocess.Popen(cmd, stdout=stream, stderr=stream)
-            popen.communicate()
-            print "Finished step with code: %s" % popen.returncode
-            print "Output is at: %s" % step.output_path
+        tox_ini_path = abspath(step.build_step_repo_dir, 'tox.ini')
+        cmd = ['tox', '-c', tox_ini_path, '-e', venv]
+        command = procme.Command(cmd)
+        print "Running command: %s" % str(cmd)
+        for chunk in command.iter_output():
+            cache.set(step.cache_key_output, command.data)
+        print "Finished step with code: %s" % command.returncode
+        print "Output is at: %s" % step.output_path
         BuildStep.objects.filter(pk=step.pk).update(
             finished_at=datetime.datetime.now(),
-            returncode=popen.returncode,
+            returncode=command.returncode,
         )
+        BuildStepOutput.objects.create(step=step, output=command.data)
 
 
 def build(project):
