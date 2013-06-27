@@ -5,7 +5,7 @@ from .utils.general import abspath
 from .utils.general import makedirs
 from .models import Build
 from .models import Step
-from .models import StepOutput
+from .models import Output
 from django.core.cache import cache
 import datetime
 import os
@@ -92,7 +92,7 @@ class PythonBuilder(BaseBuilder):
             finished_at=datetime.datetime.now(),
             returncode=command.returncode,
         )
-        StepOutput.objects.create(step=step, output=command.data)
+        Output.objects.create(step=step, output=command.data)
 
 
 def build(project):

@@ -117,7 +117,7 @@ class Step(models.Model):
         return output
 
 
-class StepOutput(models.Model):
+class Output(models.Model):
     step = models.OneToOneField(Step, related_name='step_output')
     output = models.TextField()
 
