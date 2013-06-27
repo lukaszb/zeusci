@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from .fields import HyperlinkedIdentityField
-from zeus.models import BuildStep
+from zeus.models import Step
 
 
 base_build_step_fields = ['uri', 'number', 'created_at', 'finished_at', 'returncode']
-class BuildStepSerializer(serializers.ModelSerializer):
+class StepSerializer(serializers.ModelSerializer):
     uri = HyperlinkedIdentityField(
         view_name='zeus_api_build_step_detail',
         lookup_field={
@@ -14,14 +14,14 @@ class BuildStepSerializer(serializers.ModelSerializer):
         },
     )
     class Meta:
-        model = BuildStep
+        model = Step
         fields = base_build_step_fields
 
 
-class DetailBuildStepSerializer(BuildStepSerializer):
+class DetailStepSerializer(StepSerializer):
     output = serializers.CharField()
     class Meta:
-        model = BuildStep
+        model = Step
         fields = base_build_step_fields + ['output']
 
 
@@ -33,7 +33,7 @@ class BuildSerializer(serializers.Serializer):
             'name': 'project__name',
         },
     )
-    steps = BuildStepSerializer(source='steps')
+    steps = StepSerializer(source='steps')
 
 
 class ProjectSerializer(serializers.Serializer):

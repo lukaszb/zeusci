@@ -4,8 +4,8 @@ from .conf import settings
 from .utils.general import abspath
 from .utils.general import makedirs
 from .models import Build
-from .models import BuildStep
-from .models import BuildStepOutput
+from .models import Step
+from .models import StepOutput
 from django.core.cache import cache
 import datetime
 import os
@@ -63,7 +63,7 @@ class PythonBuilder(BaseBuilder):
         for step_no, env in enumerate(venvs, 1):
             self.info("Build step %d | tox:%s" % (step_no, env))
             from .tasks import build_step
-            step = BuildStep.objects.create(
+            step = Step.objects.create(
                 build=build,
                 number=step_no,
                 options={'toxenv': env},
@@ -88,11 +88,11 @@ class PythonBuilder(BaseBuilder):
         for chunk in command.iter_output():
             cache.set(step.cache_key_output, command.data)
         print "Finished step with code: %s" % command.returncode
-        BuildStep.objects.filter(pk=step.pk).update(
+        Step.objects.filter(pk=step.pk).update(
             finished_at=datetime.datetime.now(),
             returncode=command.returncode,
         )
-        BuildStepOutput.objects.create(step=step, output=command.data)
+        StepOutput.objects.create(step=step, output=command.data)
 
 
 def build(project):

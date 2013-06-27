@@ -55,7 +55,7 @@ class Build(models.Model):
         return abspath(self.build_dir, 'repo')
 
 
-class BuildStep(models.Model):
+class Step(models.Model):
     build = models.ForeignKey(Build, related_name='steps')
     number = models.PositiveIntegerField()
     created_at = models.DateTimeField(default=datetime.datetime.now)
@@ -117,7 +117,7 @@ class BuildStep(models.Model):
         return output
 
 
-class BuildStepOutput(models.Model):
-    step = models.OneToOneField(BuildStep, related_name='step_output')
+class StepOutput(models.Model):
+    step = models.OneToOneField(Step, related_name='step_output')
     output = models.TextField()
 

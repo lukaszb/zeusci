@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from ..models import Build
-from ..models import BuildStep
+from ..models import Step
 from ..models import Project
 from .serializers import BuildSerializer
-from .serializers import DetailBuildStepSerializer
+from .serializers import DetailStepSerializer
 from .serializers import ProjectDetailSerializer
 from .serializers import ProjectSerializer
 
@@ -54,12 +54,12 @@ class BuildDetail(BuildApiMixin, generics.RetrieveAPIView):
 build_detail = BuildDetail.as_view()
 
 
-class BuildStepDetail(generics.RetrieveAPIView):
-    serializer_class = DetailBuildStepSerializer
-    model = BuildStep
+class StepDetail(generics.RetrieveAPIView):
+    serializer_class = DetailStepSerializer
+    model = Step
 
     def get_queryset(self):
-        return BuildStep.objects.filter(build__project__name=self.kwargs['name'])
+        return Step.objects.filter(build__project__name=self.kwargs['name'])
 
     def get_object_filters(self):
         return {
@@ -73,5 +73,5 @@ class BuildStepDetail(generics.RetrieveAPIView):
         return get_object_or_404(queryset, **filters)
 
 
-build_step_detail = BuildStepDetail.as_view()
+build_step_detail = StepDetail.as_view()
 

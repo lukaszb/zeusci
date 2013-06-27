@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from .conf import settings
 from .models import Build
-from .models import BuildStep
+from .models import Step
 from .models import Project
 from .tasks import build_project
 
@@ -43,25 +43,25 @@ class ProjectBuildDetailView(TemplateView):
 project_build_detail_view = ProjectBuildDetailView.as_view()
 
 
-class ProjectBuildStepDetailView(TemplateView):
+class ProjectStepDetailView(TemplateView):
     template_name = 'zeus/project_build_step.html'
 
     def get_context_data(self, **kwargs):
         name = kwargs['name']
         build_no = kwargs['build_no']
         step_no = kwargs['step_no']
-        step = get_object_or_404(BuildStep,
+        step = get_object_or_404(Step,
             build__project__name=name,
             build__number=build_no,
             number=step_no,
         )
-        data = super(ProjectBuildStepDetailView, self).get_context_data(**kwargs)
+        data = super(ProjectStepDetailView, self).get_context_data(**kwargs)
         data['project'] = step.build.project
         data['build'] = step.build
         data['step'] = step
         return data
 
-project_build_step_detail_view = ProjectBuildStepDetailView.as_view()
+project_build_step_detail_view = ProjectStepDetailView.as_view()
 
 
 class ProjectBuildView(RedirectView):
