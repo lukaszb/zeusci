@@ -31,12 +31,15 @@ class TestBuildApi(BaseApiTestCase):
         self.assertItemsEqual(response.data, [
             {
                 'uri': self.make_build_detail_url('zeus', 1),
+                'steps': [],
             },
             {
                 'uri': self.make_build_detail_url('zeus', 2),
+                'steps': [],
             },
             {
                 'uri': self.make_build_detail_url('zeus', 3),
+                'steps': [],
             },
         ])
 
