@@ -68,6 +68,7 @@ class PythonBuilder(BaseBuilder):
                 number=step_no,
                 options={'toxenv': env},
             )
+            cache.delete(step.cache_key_output)
             shutil.copytree(build.build_repo_dir, step.build_step_repo_dir)
             ar = build_step.delay(self, step)
             results.append(ar)

@@ -18,7 +18,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for step in build.buildstep_set.all %}
+        {% for step in build.steps.all %}
         <tr>
             <td><a href="{{ step.get_absolute_url }}">{{ step.number }}</a></td>
             <td>
