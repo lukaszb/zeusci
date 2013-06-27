@@ -68,9 +68,9 @@ class PythonBuilder(BaseBuilder):
                 number=step_no,
                 options={'toxenv': env},
             )
-            cache.delete(step.cache_key_output)
+            step.clear_output_cache()
             shutil.copytree(build.build_repo_dir, step.build_step_repo_dir)
-            ar = build_step.delay(self, step)
+            ar = build_step.delay(step, self.__class__)
             results.append(ar)
         for ar in results:
             ar.wait()
@@ -92,7 +92,12 @@ class PythonBuilder(BaseBuilder):
             finished_at=datetime.datetime.now(),
             returncode=command.returncode,
         )
-        Output.objects.create(step=step, output=command.data)
+        try:
+            Output.objects.only('step').get(step=step)
+            Output.objects.filter(step=step).update(output=command.data)
+            step.clear_output_cache()
+        except Output.DoesNotExist:
+            Output.objects.get_or_create(step=step, output=command.data)
 
 
 def build(project):

@@ -8,6 +8,7 @@ from .models import Build
 from .models import Step
 from .models import Project
 from .tasks import build_project
+from .tasks import build_step
 
 
 
@@ -76,4 +77,28 @@ class ProjectBuildView(RedirectView):
         return super(ProjectBuildView, self).get(request, name)
 
 project_build_view = ProjectBuildView.as_view()
+
+
+class ProjectBuildStepView(RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, **kwargs):
+        return reverse('zeus_project_build_step_detail', kwargs={
+            'name': self.step.build.project.name,
+            'build_no': self.step.build.number,
+            'step_no': self.step.number,
+        })
+
+    def get(self, request, name, build_no, step_no):
+        self.step = get_object_or_404(
+            Step,
+            build__project__name=name,
+            build__number=build_no,
+            number=step_no,
+        )
+        from .builders import PythonBuilder
+        build_step.delay(self.step, PythonBuilder)
+        return super(ProjectBuildStepView, self).get(request, name)
+
+project_build_step_view = ProjectBuildStepView.as_view()
 

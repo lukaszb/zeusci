@@ -70,13 +70,20 @@ class Step(models.Model):
     def __str__(self):
         return '%s.%s' % (self.build, self.number)
 
-    def get_absolute_url(self):
-        kwargs = {
+    def _get_url_kwargs(self):
+        return {
             'name': self.build.project.name,
             'build_no': self.build.number,
             'step_no': self.number,
         }
+
+    def get_absolute_url(self):
+        kwargs = self._get_url_kwargs()
         return reverse_lazy('zeus_project_build_step_detail', kwargs=kwargs)
+
+    def get_force_build_url(self):
+        kwargs = self._get_url_kwargs()
+        return reverse_lazy('zeus_force_project_build_step', kwargs=kwargs)
 
     @property
     def duration(self):
@@ -115,6 +122,9 @@ class Step(models.Model):
             output = self.step_output.output
             cache.set(self.cache_key_output, output)
         return output
+
+    def clear_output_cache(self):
+        cache.delete(self.cache_key_output)
 
 
 class Output(models.Model):

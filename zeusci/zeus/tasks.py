@@ -18,6 +18,8 @@ def build_project(project):
     return build(project)
 
 @task
-def build_step(builder, step):
+def build_step(step, builder_cls):
+    builder = builder_cls()
+    print " -> Running build_step(%r, %r)" % (step, builder_cls)
     builder.build_step(step)
 
