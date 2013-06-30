@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 
 
 urlpatterns = patterns('zeus.views',
-    url('^p/(?P<name>\w+)/$', 'project_view', name='zeus_project_detail'),
+    url('^p/(?P<name>[-\w]+)/$', 'project_view', name='zeus_project_detail'),
     url('^p/(?P<name>\w+)/build/(?P<build_no>\d+)/$',
         view='project_build_detail_view',
         name='zeus_project_build_detail'),

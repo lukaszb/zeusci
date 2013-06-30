@@ -123,6 +123,10 @@ class Step(models.Model):
             cache.set(self.cache_key_output, output)
         return output
 
+    def clear_output(self):
+        Output.objects.filter(step=self).update(output='')
+        self.clear_output_cache()
+
     def clear_output_cache(self):
         cache.delete(self.cache_key_output)
 

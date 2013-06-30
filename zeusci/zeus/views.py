@@ -98,6 +98,7 @@ class ProjectBuildStepView(RedirectView):
         )
         from .builders import PythonBuilder
         build_step.delay(self.step, PythonBuilder)
+        self.step.clear_output()
         return super(ProjectBuildStepView, self).get(request, name)
 
 project_build_step_view = ProjectBuildStepView.as_view()
