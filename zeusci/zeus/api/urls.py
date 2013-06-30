@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.urlpatterns import format_suffix_patterns
+from smarturls import surl
 
 
 @api_view(['GET'])
@@ -16,19 +17,19 @@ def api_root(request, format=None):
 
 urlpatterns = patterns('zeus.api.views',
     url(r'^$', api_root, name='zeus_api_root'),
-    url(r'projects$',
+    surl('projects$',
         view='project_list',
         name='zeus_api_project_list'),
-    url(r'projects/(?P<name>\w+)$',
+    surl('/projects/<slug:name>$',
         view='project_detail',
         name='zeus_api_project_detail'),
-    url(r'projects/(?P<name>\w+)/builds$',
+    surl('/projects/<slug:name>/builds$',
         view='build_list',
         name='zeus_api_build_list'),
-    url(r'projects/(?P<name>\w+)/builds/(?P<build_no>\d+)$',
+    surl('/projects/<slug:name>/builds/<int:build_no>$',
         view='build_detail',
         name='zeus_api_build_detail'),
-    url(r'projects/(?P<name>\w+)/builds/(?P<build_no>\d+)\.(?P<step_no>\d+)$',
+    surl('/projects/<slug:name>/builds/<int:build_no>\.<int:step_no>$',
         view='build_step_detail',
         name='zeus_api_build_step_detail'),
 )
