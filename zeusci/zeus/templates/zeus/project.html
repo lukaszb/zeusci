@@ -5,8 +5,21 @@
 {% block container %}
 <h1><a href="{{ project.get_absolute_url }}">{{ project }}</a></h1>
 
-<h4>Repo URL: {{ project.repo_url }}</h4>
-<h4>URL: <a href="{{ project.url }}">{{ project.url }}</a></h4>
+<dl class="dl-horizontal">
+    <dt>Website</dt>
+    <dd><a href="{{ project.url }}">{{ project.url }}</a></dd>
+
+    <dt>Repository</dt>
+    <dd>{{ project.repo_url }}</dd>
+</dl>
+
+{% block tabs %}
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#">Current</a></li>
+    <li><a href="#">History</a></li>
+    <li><a href="#">Settings</a></li>
+</ul>
+{% endblock %}
 
 {% block content %}
 
@@ -33,7 +46,7 @@
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}
 
-{% endblock %}
+{% endblock container %}
 
