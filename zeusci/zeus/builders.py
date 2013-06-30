@@ -3,8 +3,8 @@ from .fetchers import GitFetcher
 from .conf import settings
 from .utils.general import abspath
 from .utils.general import makedirs
+from .models import Buildset
 from .models import Build
-from .models import Step
 from .models import Output
 from django.core.cache import cache
 import datetime
@@ -13,7 +13,7 @@ import shutil
 import procme
 
 
-class BaseBuilder(object):
+class BaseBuildseter(object):
 
     def info(self, message):
         print(" => %s" % message)
@@ -31,78 +31,78 @@ def get_tox_config(tox_ini_path):
     return parseconfig(tox_ini_path)
 
 
-class PythonBuilder(BaseBuilder):
+class PythonBuildseter(BaseBuildseter):
 
-    def fetch(self, build):
-        msg = "Fetching %s -> %s" % (build.project.repo_url, build.build_repo_dir)
+    def fetch(self, buildset):
+        msg = "Fetching %s -> %s" % (buildset.project.repo_url, buildset.build_repo_dir)
         self.info(msg)
         fetcher = GitFetcher()
-        fetcher.fetch(build.project.repo_url, build.build_repo_dir)
+        fetcher.fetch(buildset.project.repo_url, buildset.build_repo_dir)
 
-    def build(self, project):
-        self.info("Building %s" % project.name)
-        build = Build.objects.create(project=project)
-        dirname = '%s.%s' % (project.name, build.number)
+    def build_project(self, project):
+        self.info("Buildseting %s" % project.name)
+        buildset = Buildset.objects.create(project=project)
+        dirname = '%s.%s' % (project.name, buildset.number)
         build_dir = abspath(settings.BUILDS_ROOT, dirname)
 
-        build.build_dir = build_dir
-        build.save()
+        buildset.build_dir = build_dir
+        buildset.save()
 
-        self.fetch(build)
-        self.pre_build_steps(build)
-        self.build_steps(build)
-        self.clean(build)
+        self.fetch(buildset)
+        self.pre_builds(buildset)
+        self.builds(buildset)
+        self.clean(buildset)
 
-    def pre_build_steps(self, build):
-        self.tox_ini_path = abspath(build.build_dir, 'tox.ini')
+    def pre_builds(self, buildset):
+        self.tox_ini_path = abspath(buildset.build_dir, 'tox.ini')
 
-    def build_steps(self, build):
+    def builds(self, buildset):
         results = []
         tox_config = get_tox_config(self.tox_ini_path)
         venvs = tox_config.envlist
-        for step_no, env in enumerate(venvs, 1):
-            self.info("Build step %d | tox:%s" % (step_no, env))
-            from .tasks import build_step
-            step = Step.objects.create(
-                build=build,
-                number=step_no,
+        for build_no, env in enumerate(venvs, 1):
+            self.info("Buildset step %d | tox:%s" % (build_no, env))
+            from .tasks import do_build
+            build = Build.objects.create(
+                buildset=buildset,
+                number=build_no,
                 options={'toxenv': env},
             )
-            step.clear_output_cache()
-            shutil.copytree(build.build_repo_dir, step.build_step_repo_dir)
-            ar = build_step.delay(step, self.__class__)
+            build.clear_output_cache()
+            shutil.copytree(buildset.build_repo_dir, build.build_repo_dir)
+            ar = do_build.delay(build, self.__class__)
             results.append(ar)
         for ar in results:
             ar.wait()
 
         now = datetime.datetime.now()
-        Build.objects.filter(pk=build.pk).update(finished_at=now)
+        Buildset.objects.filter(pk=buildset.pk).update(finished_at=now)
 
-    def build_step(self, step):
+    def build(self, build):
 
-        venv = step.options['toxenv']
-        tox_ini_path = abspath(step.build_step_repo_dir, 'tox.ini')
+        venv = build.options['toxenv']
+        tox_ini_path = abspath(build.build_repo_dir, 'tox.ini')
         cmd = ['tox', '-c', tox_ini_path, '-e', venv]
         command = procme.Command(cmd)
         print "Running command: %s" % str(cmd)
         for chunk in command.iter_output():
-            cache.set(step.cache_key_output, command.data)
-        print "Finished step with code: %s" % command.returncode
-        Step.objects.filter(pk=step.pk).update(
+            cache.set(build.cache_key_output, command.data)
+        print "Finished build with code: %s" % command.returncode
+        Build.objects.filter(pk=build.pk).update(
             finished_at=datetime.datetime.now(),
             returncode=command.returncode,
         )
         try:
-            Output.objects.only('step').get(step=step)
-            Output.objects.filter(step=step).update(output=command.data)
-            step.clear_output_cache()
+            Output.objects.only('build').get(build=build)
+            Output.objects.filter(build=build).update(output=command.data)
+            build.clear_output_cache()
         except Output.DoesNotExist:
-            Output.objects.get_or_create(step=step, output=command.data)
+            Output.objects.get_or_create(build=build, output=command.data)
 
 
 def build(project):
-    print "Building project: %s" % project
+    print "Buildseting project: %s" % project
 
-    builder = PythonBuilder()
-    builder.build(project)
+    builder = PythonBuildseter()
+    builder.build_project(project)
 

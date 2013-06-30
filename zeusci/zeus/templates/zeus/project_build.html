@@ -1,44 +1,26 @@
-{% extends "zeus/project.html" %}
-
-
-{% block content %}
-
-<h2><a href="{{ build.get_absolute_url }}">Build: #{{ build.number }}</a></h2>
+{% extends "zeus/project_buildset.html" %}
 
 {% block build_content %}
 
-<table class="table table-striped table-bordered table-condensed">
-    <thead>
-        <tr>
-            <th>Build Step</th>
-            <th>Status</th>
-            <th>Started</th>
-            <th>Finished</th>
-            <th>Duration</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for step in build.steps.all %}
-        <tr>
-            <td><a href="{{ step.get_absolute_url }}">{{ step.number }}</a></td>
-            <td>
-                {% if step.status == step.PENDING %}
-                Pending
-                {% elif step.status == step.SUCCESS %}
-                Success
-                {% elif step.status == step.FAIL %}
-                Failed
-                {% endif %}
-            </td>
-            <td>{{ step.created_at }}</td>
-            <td>{{ step.finished_at }}</td>
-            <td>{{ step.duration }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div ng-app ng-controller="zeus.StepController">
+<h3>Step: #{{ build.number }}</h3>
+
+<a href="{{ build.get_force_build_url }}">Force re-build</a>
+
+{% verbatim %}
+<pre>
+{{ build.output }}
+</pre>
+{% endverbatim %}
+
+</div>
 
 {% endblock %}
 
+{% block extra_js %}
+<script type="text/javascript">
+    var API_STEP_URL = "{% url "zeus_api_build_detail" build.buildset.project.name build.buildset.number build.number %}.json";
+</script>
+{{ block.super }}
 {% endblock %}
 

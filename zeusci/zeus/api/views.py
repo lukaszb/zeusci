@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
+from ..models import Buildset
 from ..models import Build
-from ..models import Step
 from ..models import Project
-from .serializers import BuildSerializer
-from .serializers import DetailStepSerializer
+from .serializers import BuildsetSerializer
+from .serializers import DetailBuildSerializer
 from .serializers import ProjectDetailSerializer
 from .serializers import ProjectSerializer
 
@@ -25,15 +25,15 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
 project_detail = ProjectDetail.as_view()
 
 
-class BuildApiMixin(object):
-    serializer_class = BuildSerializer
-    model = Build
+class BuildsetApiMixin(object):
+    serializer_class = BuildsetSerializer
+    model = Buildset
 
     def get_queryset(self):
-        return Build.objects.filter(project__name=self.kwargs['name'])
+        return Buildset.objects.filter(project__name=self.kwargs['name'])
 
     def get_object_filters(self):
-        return {'number': self.kwargs['build_no']}
+        return {'number': self.kwargs['buildset_no']}
 
     def get_object(self):
         queryset = self.get_queryset()
@@ -42,29 +42,29 @@ class BuildApiMixin(object):
 
 
 
-class BuildList(BuildApiMixin, generics.ListCreateAPIView):
+class BuildsetList(BuildsetApiMixin, generics.ListCreateAPIView):
     pass
 
-build_list = BuildList.as_view()
+buildset_list = BuildsetList.as_view()
 
 
-class BuildDetail(BuildApiMixin, generics.RetrieveAPIView):
+class BuildsetDetail(BuildsetApiMixin, generics.RetrieveAPIView):
     pass
 
-build_detail = BuildDetail.as_view()
+buildset_detail = BuildsetDetail.as_view()
 
 
-class StepDetail(generics.RetrieveAPIView):
-    serializer_class = DetailStepSerializer
-    model = Step
+class BuildDetail(generics.RetrieveAPIView):
+    serializer_class = DetailBuildSerializer
+    model = Build
 
     def get_queryset(self):
-        return Step.objects.filter(build__project__name=self.kwargs['name'])
+        return Build.objects.filter(buildset__project__name=self.kwargs['name'])
 
     def get_object_filters(self):
         return {
-            'build__number': self.kwargs['build_no'],
-            'number': self.kwargs['step_no'],
+            'buildset__number': self.kwargs['buildset_no'],
+            'number': self.kwargs['build_no'],
         }
 
     def get_object(self):
@@ -73,5 +73,5 @@ class StepDetail(generics.RetrieveAPIView):
         return get_object_or_404(queryset, **filters)
 
 
-build_step_detail = StepDetail.as_view()
+build_detail = BuildDetail.as_view()
 

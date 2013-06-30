@@ -1,19 +1,19 @@
 from django.contrib import admin
+from .models import Buildset
 from .models import Build
-from .models import Step
 from .models import Project
 
 
-class BuildAdmin(admin.ModelAdmin):
+class BuildsetAdmin(admin.ModelAdmin):
     list_display = ['project', 'number']
 
+admin.site.register(Buildset, BuildsetAdmin)
+
+
+class BuildAdmin(admin.ModelAdmin):
+    list_display = ['buildset', 'number']
+
 admin.site.register(Build, BuildAdmin)
-
-
-class StepAdmin(admin.ModelAdmin):
-    list_display = ['build', 'number']
-
-admin.site.register(Step, StepAdmin)
 
 
 admin.site.register(Project)

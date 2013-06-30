@@ -1,0 +1,52 @@
+{% extends "zeus/project.html" %}
+
+
+{% block content %}
+
+<h2><a href="{{ buildset.get_absolute_url }}">Buildset: #{{ buildset.number }}</a></h2>
+
+{% block build_content %}
+
+<table class="table table-striped table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>Build</th>
+            <th>Status</th>
+            <th>Started</th>
+            <th>Finished</th>
+            <th>Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for build in buildset.builds.all %}
+        <tr class="{% spaceless %}
+            {% if build.status == build.PENDING %}
+            warning
+            {% elif build.status == build.SUCCESS %}
+            success
+            {% elif build.status == build.FAIL %}
+            error
+            {% endif %}
+        {% endspaceless %}">
+            <td><a href="{{ build.get_absolute_url }}">{{ build.number }}</a></td>
+            <td>
+                {% if build.status == build.PENDING %}
+                Pending
+                {% elif build.status == build.SUCCESS %}
+                Success
+                {% elif build.status == build.FAIL %}
+                Failed
+                {% endif %}
+            </td>
+            <td>{{ build.created_at }}</td>
+            <td>{{ build.finished_at }}</td>
+            <td>{{ build.duration }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% endblock %}
+

@@ -19,8 +19,8 @@ class Project(models.Model):
         self.repo_url = data.get('repo_url')
         self.url = data.get('url')
 
-    def get_builds(self):
-        return self.build_set.all().order_by('number')
+    def get_buildsets(self):
+        return self.buildsets.all().order_by('number')
 
 
 def get_project_model():

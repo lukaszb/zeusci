@@ -14,12 +14,12 @@ def mul(x, y):
     return x * y
 
 @task
-def build_project(project):
+def do_build_project(project):
     return build(project)
 
 @task
-def build_step(step, builder_cls):
+def do_build(build, builder_cls):
     builder = builder_cls()
-    print " -> Running build_step(%r, %r)" % (step, builder_cls)
-    builder.build_step(step)
+    print " -> Running build(%r, %r)" % (build, builder_cls)
+    builder.build(build)
 

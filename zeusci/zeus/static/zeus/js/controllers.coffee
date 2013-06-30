@@ -8,7 +8,7 @@ zeus.StepController = ($scope, $http, $timeout) ->
 
     fetch = (callback) ->
         $http.get(API_STEP_URL).success( (data) ->
-            $scope.step = data;
+            $scope.build = data;
             if callback
                 callback()
         )

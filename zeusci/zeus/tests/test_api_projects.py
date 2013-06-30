@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from zeus.models import Build
+from zeus.models import Buildset
 from zeus.models import Project
 from .test_api_base import BaseApiTestCase
 import datetime
@@ -19,10 +19,10 @@ class TestProjectApi(BaseApiTestCase):
             url='https://github.com/lukaszb/frogress',
             repo_url='git://github.com/lukaszb/frogress.git',
         )
-        Build.objects.create(project=zeus, number=1)
-        Build.objects.create(project=zeus, number=2, build_dir='/tmp/zeus/2')
+        Buildset.objects.create(project=zeus, number=1)
+        Buildset.objects.create(project=zeus, number=2, build_dir='/tmp/zeus/2')
         dt = datetime.datetime(2013, 6, 13, 23, 12)
-        Build.objects.create(project=zeus, number=3, finished_at=dt)
+        Buildset.objects.create(project=zeus, number=3, finished_at=dt)
 
 
     def test_project_list(self):
@@ -51,18 +51,18 @@ class TestProjectApi(BaseApiTestCase):
             'name': 'zeus',
             'project_url': 'https://github.com/lukaszb/zeus',
             'repo_url': 'git://github.com/lukaszb/zeus.git',
-            'builds': [
+            'buildsets': [
                 {
-                    'uri': self.make_build_detail_url('zeus', 1),
-                    'steps': [],
+                    'uri': self.make_buildset_detail_url('zeus', 1),
+                    'builds': [],
                 },
                 {
-                    'uri': self.make_build_detail_url('zeus', 2),
-                    'steps': [],
+                    'uri': self.make_buildset_detail_url('zeus', 2),
+                    'builds': [],
                 },
                 {
-                    'uri': self.make_build_detail_url('zeus', 3),
-                    'steps': [],
+                    'uri': self.make_buildset_detail_url('zeus', 3),
+                    'builds': [],
                 },
             ],
         })

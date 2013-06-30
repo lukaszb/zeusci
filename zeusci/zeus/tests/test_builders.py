@@ -1,13 +1,13 @@
 from __future__ import unicode_literals
 from django.test import SimpleTestCase
 from zeus.models import Project
-from zeus.builders import PythonBuilder
+from zeus.builders import PythonBuildseter
 
 
-class TestPythonBuilder(SimpleTestCase):
+class TestPythonBuildseter(SimpleTestCase):
 
     def setUp(self):
-        self.builder = PythonBuilder()
+        self.builder = PythonBuildseter()
 
     def test_build(self):
         #self.builder

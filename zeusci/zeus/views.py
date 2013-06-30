@@ -4,11 +4,11 @@ from django.views.generic import RedirectView
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from .conf import settings
+from .models import Buildset
 from .models import Build
-from .models import Step
 from .models import Project
-from .tasks import build_project
-from .tasks import build_step
+from .tasks import do_build_project
+from .tasks import do_build
 
 
 
@@ -22,50 +22,50 @@ class ProjectView(TemplateView):
         data = super(ProjectView, self).get_context_data(**kwargs)
         data['project'] = self.get_project(kwargs['name'])
         data['settings'] = settings
-        print data
         return data
 
 
 project_view = ProjectView.as_view()
 
 
+class ProjectBuildsetDetailView(TemplateView):
+    template_name = 'zeus/project_buildset.html'
+
+    def get_context_data(self, **kwargs):
+        name = kwargs['name']
+        buildset_no = kwargs['buildset_no']
+        buildset = get_object_or_404(Buildset, project__name=name, number=buildset_no)
+        data = super(ProjectBuildsetDetailView, self).get_context_data(**kwargs)
+        data['project'] = buildset.project
+        data['buildset'] = buildset
+        return data
+
+project_buildset_detail_view = ProjectBuildsetDetailView.as_view()
+
+
 class ProjectBuildDetailView(TemplateView):
     template_name = 'zeus/project_build.html'
 
     def get_context_data(self, **kwargs):
+        print " ----> build detail"
         name = kwargs['name']
+        buildset_no = kwargs['buildset_no']
         build_no = kwargs['build_no']
-        build = get_object_or_404(Build, project__name=name, number=build_no)
+        build = get_object_or_404(Build,
+            buildset__project__name=name,
+            buildset__number=buildset_no,
+            number=build_no,
+        )
         data = super(ProjectBuildDetailView, self).get_context_data(**kwargs)
-        data['project'] = build.project
+        data['project'] = build.buildset.project
+        data['buildset'] = build.buildset
         data['build'] = build
         return data
 
 project_build_detail_view = ProjectBuildDetailView.as_view()
 
 
-class ProjectStepDetailView(TemplateView):
-    template_name = 'zeus/project_build_step.html'
-
-    def get_context_data(self, **kwargs):
-        name = kwargs['name']
-        build_no = kwargs['build_no']
-        step_no = kwargs['step_no']
-        step = get_object_or_404(Step,
-            build__project__name=name,
-            build__number=build_no,
-            number=step_no,
-        )
-        data = super(ProjectStepDetailView, self).get_context_data(**kwargs)
-        data['project'] = step.build.project
-        data['build'] = step.build
-        data['step'] = step
-        return data
-
-project_build_step_detail_view = ProjectStepDetailView.as_view()
-
-
-class ProjectBuildView(RedirectView):
+class ProjectBuildsetView(RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
@@ -73,33 +73,33 @@ class ProjectBuildView(RedirectView):
 
     def get(self, request, name):
         self.project = get_object_or_404(Project, name=name)
-        build_project.delay(self.project)
-        return super(ProjectBuildView, self).get(request, name)
+        do_build_project.delay(self.project)
+        return super(ProjectBuildsetView, self).get(request, name)
 
-project_build_view = ProjectBuildView.as_view()
+project_buildset_view = ProjectBuildsetView.as_view()
 
 
-class ProjectBuildStepView(RedirectView):
+class ProjectBuildsetBuildView(RedirectView):
     permanent = False
 
     def get_redirect_url(self, **kwargs):
-        return reverse('zeus_project_build_step_detail', kwargs={
-            'name': self.step.build.project.name,
-            'build_no': self.step.build.number,
-            'step_no': self.step.number,
+        return reverse('zeus_project_build_detail', kwargs={
+            'name': self.build.buildset.project.name,
+            'buildset_no': self.build.buildset.number,
+            'build_no': self.build.number,
         })
 
-    def get(self, request, name, build_no, step_no):
-        self.step = get_object_or_404(
-            Step,
-            build__project__name=name,
-            build__number=build_no,
-            number=step_no,
+    def get(self, request, name, buildset_no, build_no):
+        self.build = get_object_or_404(
+            Build,
+            buildset__project__name=name,
+            buildset__number=buildset_no,
+            number=build_no,
         )
-        from .builders import PythonBuilder
-        build_step.delay(self.step, PythonBuilder)
-        self.step.clear_output()
-        return super(ProjectBuildStepView, self).get(request, name)
+        from .builders import PythonBuildseter
+        do_build.delay(self.build, PythonBuildseter)
+        self.build.clear_output()
+        return super(ProjectBuildsetBuildView, self).get(request, name)
 
-project_build_step_view = ProjectBuildStepView.as_view()
+project_build_view = ProjectBuildsetBuildView.as_view()
 
