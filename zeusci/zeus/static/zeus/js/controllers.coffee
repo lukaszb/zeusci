@@ -1,9 +1,10 @@
 
+zeus.POLL_INTERVAL = 500
 
-console.log "Loaded coffee-script"
-console.log "#{API_STEP_URL}"
+zeus.StepController = ($scope, $http, $timeout) ->
 
-window.StepController = ($scope, $http, $timeout) ->
+    init = () ->
+        poll()
 
     fetch = (callback) ->
         $http.get(API_STEP_URL).success( (data) ->
@@ -12,8 +13,12 @@ window.StepController = ($scope, $http, $timeout) ->
                 callback()
         )
 
-    tick = () ->
-        fetch( ->
-            $timeout(tick, 500)
-        )
-    tick()
+    poll = () ->
+        callback = ->
+            $timeout(poll, zeus.POLL_INTERVAL)
+        fetch(callback)
+
+    init()
+
+zeus.StepController.$inject = ['$scope', '$http', '$timeout'];
+

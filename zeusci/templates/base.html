@@ -93,7 +93,7 @@
         {% block extra_js %}
         {% compress js %}
         <script type="text/javascript" src="{% static "zeus/js/angular.1.0.7.min.js" %}"></script>
-        <script type="text/javascript" src="{% static "zeus/js/controllers.js" %}"></script>
+        <script type="text/coffeescript" src="{% static "zeus/js/zeus.coffee" %}"></script>
         <script type="text/coffeescript" src="{% static "zeus/js/controllers.coffee" %}"></script>
         {% endcompress %}
         {% endblock %}
