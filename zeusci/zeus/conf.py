@@ -13,6 +13,7 @@ DEFAULTS = {
     'PROJECT_MODEL': 'zeus.project.Project',
     'REMOVE_BUILD_DIRS': True,
     'FOO': 'default-foobar',
+    'PROJECT_BUILDSETS_COUNT': 10,
 }
 
 USER_SETTINGS = getattr(settings, 'ZEUS_SETTINGS', None)

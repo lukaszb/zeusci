@@ -20,7 +20,10 @@ class Project(models.Model):
         self.url = data.get('url')
 
     def get_buildsets(self):
-        return self.buildsets.all().order_by('number')
+        buildsets = self.buildsets.all().order_by('-number')
+        if settings.PROJECT_BUILDSETS_COUNT:
+            buildsets = buildsets[:settings.PROJECT_BUILDSETS_COUNT]
+        return buildsets
 
 
 def get_project_model():

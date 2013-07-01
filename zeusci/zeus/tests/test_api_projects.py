@@ -3,6 +3,7 @@ from zeus.models import Buildset
 from zeus.models import Project
 from .test_api_base import BaseApiTestCase
 import datetime
+import mock
 
 
 class TestProjectApi(BaseApiTestCase):
@@ -52,7 +53,7 @@ class TestProjectApi(BaseApiTestCase):
             'repo_url': 'git://github.com/lukaszb/zeus.git',
             'buildsets': [
                 {
-                    'uri': self.make_buildset_detail_url('zeus', 1),
+                    'uri': self.make_buildset_detail_url('zeus', 3),
                     'builds': [],
                 },
                 {
@@ -60,9 +61,19 @@ class TestProjectApi(BaseApiTestCase):
                     'builds': [],
                 },
                 {
-                    'uri': self.make_buildset_detail_url('zeus', 3),
+                    'uri': self.make_buildset_detail_url('zeus', 1),
                     'builds': [],
                 },
             ],
         })
+
+    @mock.patch('zeus.project.settings')
+    def test_project_detail_respects_buildestes_count(self, settings):
+        settings.PROJECT_BUILDSETS_COUNT = 2
+        url = reverse('zeus_api_project_detail', kwargs={'name': 'zeus'})
+        response = self.client.get(url)
+        self.assertEqual([bs['uri'] for bs in response.data['buildsets']], [
+            self.make_buildset_detail_url('zeus', 3),
+            self.make_buildset_detail_url('zeus', 2),
+        ])
 
