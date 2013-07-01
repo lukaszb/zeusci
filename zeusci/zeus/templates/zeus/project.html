@@ -3,11 +3,11 @@
 
 
 {% block container %}
-<h1><a href="{{ project.get_absolute_url }}">{{ project }}</a></h1>
+<h1><a href="{{ project.project_url }}">{{ project.name }}</a></h1>
 
 <dl class="dl-horizontal">
     <dt>Website</dt>
-    <dd><a href="{{ project.url }}">{{ project.url }}</a></dd>
+    <dd><a href="{{ project.website_url }}">{{ project.website_url }}</a></dd>
 
     <dt>Repository</dt>
     <dd>{{ project.repo_url }}</dd>
@@ -35,10 +35,10 @@
         </tr>
     </thead>
     <tbody>
-        {% for buildset in project.buildsets.all %}
+        {% for buildset in project.buildsets_recent %}
         <tr>
             <td><a href="{{ buildset.get_absolute_url }}">{{ buildset.number }}</a></td>
-            <td>{{ buildset.created_at }}</td>
+            <td>{{ buildset }}</td>
             <td>{{ buildset.finished_at }}</td>
             <td>{{ buildset.duration }}</td>
         </tr>

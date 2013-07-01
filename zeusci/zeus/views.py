@@ -3,12 +3,12 @@ from django.views.generic import TemplateView
 from django.views.generic import RedirectView
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from .conf import settings
 from .models import Buildset
 from .models import Build
 from .models import Project
 from .tasks import do_build_project
 from .tasks import do_build
+from .api.serializers import ProjectDetailSerializer
 
 
 
@@ -20,8 +20,8 @@ class ProjectView(TemplateView):
 
     def get_context_data(self, **kwargs):
         data = super(ProjectView, self).get_context_data(**kwargs)
-        data['project'] = self.get_project(kwargs['name'])
-        data['settings'] = settings
+        project = self.get_project(kwargs['name'])
+        data['project'] = ProjectDetailSerializer(project).data
         return data
 
 

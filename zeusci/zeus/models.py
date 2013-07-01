@@ -21,7 +21,7 @@ class Buildset(models.Model):
 
     class Meta:
         unique_together = ('project', 'number')
-        ordering = ['-created_at']
+        ordering = ['-number']
 
     def __str__(self):
         return '%s | %s' % (self.project, self.number)

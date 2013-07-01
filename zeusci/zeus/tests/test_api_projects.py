@@ -10,20 +10,20 @@ class TestProjectApi(BaseApiTestCase):
     maxDiff = None
 
     def setUp(self):
-        zeus = Project.objects.create(
+        self.zeus = Project.objects.create(
             name='zeus',
             url='https://github.com/lukaszb/zeus',
             repo_url='git://github.com/lukaszb/zeus.git',
         )
-        Project.objects.create(
+        self.frogress = Project.objects.create(
             name='frogress',
             url='https://github.com/lukaszb/frogress',
             repo_url='git://github.com/lukaszb/frogress.git',
         )
-        Buildset.objects.create(project=zeus, number=1)
-        Buildset.objects.create(project=zeus, number=2, build_dir='/tmp/zeus/2')
+        Buildset.objects.create(project=self.zeus, number=1)
+        Buildset.objects.create(project=self.zeus, number=2, build_dir='/tmp/zeus/2')
         dt = datetime.datetime(2013, 6, 13, 23, 12)
-        Buildset.objects.create(project=zeus, number=3, finished_at=dt)
+        Buildset.objects.create(project=self.zeus, number=3, finished_at=dt)
 
     def test_project_list(self):
         url = reverse('zeus_api_project_list')
@@ -32,15 +32,17 @@ class TestProjectApi(BaseApiTestCase):
             {
                 'uri': self.make_url('zeus_api_project_detail', name='zeus'),
                 'name': 'zeus',
-                'project_url': 'https://github.com/lukaszb/zeus',
+                'website_url': 'https://github.com/lukaszb/zeus',
                 'repo_url': 'git://github.com/lukaszb/zeus.git',
+                'project_url': self.zeus.get_absolute_url(),
                 'buildsets_uri': self.make_buildset_list_url('zeus'),
             },
             {
                 'uri': self.make_url('zeus_api_project_detail', name='frogress'),
                 'name': 'frogress',
-                'project_url': 'https://github.com/lukaszb/frogress',
+                'website_url': 'https://github.com/lukaszb/frogress',
                 'repo_url': 'git://github.com/lukaszb/frogress.git',
+                'project_url': self.frogress.get_absolute_url(),
                 'buildsets_uri': self.make_buildset_list_url('frogress'),
             },
         ]
@@ -50,25 +52,38 @@ class TestProjectApi(BaseApiTestCase):
     def test_project_detail(self, settings):
         settings.PROJECT_BUILDSETS_COUNT = 10
         url = reverse('zeus_api_project_detail', kwargs={'name': 'zeus'})
+        buildset1 = Buildset.objects.get(project__name='zeus', number=1)
+        buildset2 = Buildset.objects.get(project__name='zeus', number=2)
+        buildset3 = Buildset.objects.get(project__name='zeus', number=3)
         response = self.client.get(url)
         self.assertDictEqual(response.data, {
             'uri': self.make_url('zeus_api_project_detail', name='zeus'),
             'name': 'zeus',
-            'project_url': 'https://github.com/lukaszb/zeus',
+            'website_url': 'https://github.com/lukaszb/zeus',
             'repo_url': 'git://github.com/lukaszb/zeus.git',
+            'project_url': self.zeus.get_absolute_url(),
             'buildsets_uri': self.make_buildset_list_url('zeus'),
             'buildsets_total_count': 3,
             'buildsets_recent': [
                 {
                     'uri': self.make_buildset_detail_url('zeus', 3),
+                    'number': 3,
+                    'created_at': buildset3.created_at,
+                    'finished_at': buildset3.finished_at,
                     'builds': [],
                 },
                 {
                     'uri': self.make_buildset_detail_url('zeus', 2),
+                    'number': 2,
+                    'created_at': buildset2.created_at,
+                    'finished_at': buildset2.finished_at,
                     'builds': [],
                 },
                 {
                     'uri': self.make_buildset_detail_url('zeus', 1),
+                    'number': 1,
+                    'created_at': buildset1.created_at,
+                    'finished_at': buildset1.finished_at,
                     'builds': [],
                 },
             ],

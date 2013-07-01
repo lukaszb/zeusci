@@ -22,3 +22,12 @@ zeus.StepController = ($scope, $http, $timeout) ->
 
 zeus.StepController.$inject = ['$scope', '$http', '$timeout'];
 
+
+zeus.ProjectDetailController = ($scope, $http, $timeout) ->
+
+    init = () =>
+        @.poll()
+
+
+
+zeus.ProjectDetailController.$inject = ['$scope', '$http', '$timeout'];

@@ -34,6 +34,9 @@ class BuildsetSerializer(serializers.Serializer):
             'name': 'project__name',
         },
     )
+    number = serializers.IntegerField()
+    created_at = serializers.DateTimeField()
+    finished_at = serializers.DateTimeField()
     builds = BuildSerializer(source='builds')
 
 
@@ -44,8 +47,9 @@ class ProjectSerializer(serializers.Serializer):
         lookup_field='name',
     )
     name = serializers.CharField('name')
-    project_url = serializers.CharField(source='url')
+    website_url = serializers.CharField(source='url')
     repo_url = serializers.CharField('repo_url')
+    project_url = serializers.CharField(source='get_absolute_url')
     buildsets_uri = serializers.HyperlinkedIdentityField(
         view_name='zeus_api_buildset_list',
         pk_url_kwarg='name',

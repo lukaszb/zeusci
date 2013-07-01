@@ -19,11 +19,29 @@ class TestBuildsetApi(BaseApiTestCase):
             url='https://github.com/lukaszb/frogress',
             repo_url='git://github.com/lukaszb/frogress.git',
         )
-        Buildset.objects.create(project=zeus, number=1)
-        Buildset.objects.create(project=zeus, number=2, build_dir='/tmp/zeus/2')
         dt = datetime.datetime(2013, 6, 13, 23, 12)
-        Buildset.objects.create(project=zeus, number=3, finished_at=dt)
-        Buildset.objects.create(project=frogress, number=1)
+        self.bs1 = Buildset.objects.create(
+            project=zeus,
+            number=1,
+            created_at=dt,
+        )
+        self.bs2 = Buildset.objects.create(
+            project=zeus,
+            number=2,
+            created_at=dt,
+            build_dir='/tmp/zeus/2',
+        )
+        self.bs3 = Buildset.objects.create(
+            project=zeus,
+            number=3,
+            created_at=dt,
+            finished_at=dt,
+        )
+        self.bs4 = Buildset.objects.create(
+            project=frogress,
+            number=1,
+            created_at=dt
+        )
 
     def test_buildset_list(self):
         url = reverse('zeus_api_buildset_list', kwargs={'name': 'zeus'})
@@ -31,14 +49,23 @@ class TestBuildsetApi(BaseApiTestCase):
         results = [
             {
                 'uri': self.make_buildset_detail_url('zeus', 3),
+                'number': 3,
+                'created_at': self.bs3.created_at,
+                'finished_at': self.bs3.created_at,
                 'builds': [],
             },
             {
                 'uri': self.make_buildset_detail_url('zeus', 2),
+                'number': 2,
+                'created_at': self.bs2.created_at,
+                'finished_at': self.bs2.finished_at,
                 'builds': [],
             },
             {
                 'uri': self.make_buildset_detail_url('zeus', 1),
+                'number': 1,
+                'created_at': self.bs1.created_at,
+                'finished_at': self.bs1.finished_at,
                 'builds': [],
             },
         ]
