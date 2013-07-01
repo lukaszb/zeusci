@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from .utils.general import abspath
+from .utils.imports import import_class
 import os
 import tempfile
 
@@ -14,7 +15,14 @@ DEFAULTS = {
     'REMOVE_BUILD_DIRS': True,
     'FOO': 'default-foobar',
     'PROJECT_BUILDSETS_COUNT': 10,
+    'API_PAGINATION_SERIALIZER_CLASS': 'rest_framework.pagination.PaginationSerializer',
+    'API_PAGINATE_BY': 20,
 }
+
+# List of settings that may be in string import notation.
+IMPORT_STRINGS = [
+    'API_PAGINATION_SERIALIZER_CLASS',
+]
 
 USER_SETTINGS = getattr(settings, 'ZEUS_SETTINGS', None)
 
@@ -30,7 +38,10 @@ class ZeusSettings(object):
     def __getattr__(self, attr):
         if attr not in self.defaults:
             raise AttributeError('Invalid Zeus setting: %r' % attr)
-        return self.settings[attr]
+        value = self.settings[attr]
+        if attr in IMPORT_STRINGS:
+            return import_class(value)
+        return value
 
     def verify(self):
         if 'BUILDS_ROOT' not in self.settings:

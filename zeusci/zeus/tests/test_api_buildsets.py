@@ -28,9 +28,9 @@ class TestBuildsetApi(BaseApiTestCase):
     def test_buildset_list(self):
         url = reverse('zeus_api_buildset_list', kwargs={'name': 'zeus'})
         response = self.client.get(url)
-        self.assertItemsEqual(response.data, [
+        results = [
             {
-                'uri': self.make_buildset_detail_url('zeus', 1),
+                'uri': self.make_buildset_detail_url('zeus', 3),
                 'builds': [],
             },
             {
@@ -38,8 +38,9 @@ class TestBuildsetApi(BaseApiTestCase):
                 'builds': [],
             },
             {
-                'uri': self.make_buildset_detail_url('zeus', 3),
+                'uri': self.make_buildset_detail_url('zeus', 1),
                 'builds': [],
             },
-        ])
+        ]
+        self.assertEqual(response.data['results'], results)
 

@@ -28,7 +28,7 @@ class TestProjectApi(BaseApiTestCase):
     def test_project_list(self):
         url = reverse('zeus_api_project_list')
         response = self.client.get(url)
-        self.assertItemsEqual(response.data, [
+        results = [
             {
                 'uri': self.make_url('zeus_api_project_detail', name='zeus'),
                 'name': 'zeus',
@@ -43,7 +43,8 @@ class TestProjectApi(BaseApiTestCase):
                 'repo_url': 'git://github.com/lukaszb/frogress.git',
                 'buildsets_uri': self.make_buildset_list_url('frogress'),
             },
-        ])
+        ]
+        self.assertEqual(response.data['results'], results)
 
     def test_project_detail(self):
         url = reverse('zeus_api_project_detail', kwargs={'name': 'zeus'})

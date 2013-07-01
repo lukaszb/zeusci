@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
+from ..conf import settings
 from ..models import Buildset
 from ..models import Build
 from ..models import Project
@@ -9,7 +10,12 @@ from .serializers import ProjectDetailSerializer
 from .serializers import ProjectSerializer
 
 
-class ProjectList(generics.ListCreateAPIView):
+class BaseApiMixin(object):
+    pagination_serializer_class = settings.API_PAGINATION_SERIALIZER_CLASS
+    paginate_by = settings.API_PAGINATE_BY
+
+
+class ProjectList(BaseApiMixin, generics.ListCreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
@@ -17,7 +23,7 @@ class ProjectList(generics.ListCreateAPIView):
 project_list = ProjectList.as_view()
 
 
-class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
+class ProjectDetail(BaseApiMixin, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectDetailSerializer
     model = Project
     lookup_field = 'name'
@@ -42,19 +48,19 @@ class BuildsetApiMixin(object):
 
 
 
-class BuildsetList(BuildsetApiMixin, generics.ListCreateAPIView):
+class BuildsetList(BaseApiMixin, BuildsetApiMixin, generics.ListCreateAPIView):
     pass
 
 buildset_list = BuildsetList.as_view()
 
 
-class BuildsetDetail(BuildsetApiMixin, generics.RetrieveAPIView):
+class BuildsetDetail(BaseApiMixin, BuildsetApiMixin, generics.RetrieveAPIView):
     pass
 
 buildset_detail = BuildsetDetail.as_view()
 
 
-class BuildDetail(generics.RetrieveAPIView):
+class BuildDetail(BaseApiMixin, generics.RetrieveAPIView):
     serializer_class = DetailBuildSerializer
     model = Build
 
