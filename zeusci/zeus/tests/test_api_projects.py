@@ -46,7 +46,9 @@ class TestProjectApi(BaseApiTestCase):
         ]
         self.assertEqual(response.data['results'], results)
 
-    def test_project_detail(self):
+    @mock.patch('zeus.project.settings')
+    def test_project_detail(self, settings):
+        settings.PROJECT_BUILDSETS_COUNT = 10
         url = reverse('zeus_api_project_detail', kwargs={'name': 'zeus'})
         response = self.client.get(url)
         self.assertDictEqual(response.data, {
