@@ -3,6 +3,10 @@ import os
 abspath = lambda *p: os.path.abspath(os.path.join(*p))
 
 PROJECT_ROOT = abspath(os.path.dirname(__file__), '..')
+VAR_DIR = abspath(PROJECT_ROOT, '..', 'var')
+print " => PROJECT_ROOT: %r" % PROJECT_ROOT
+print " => VAR_DIR: %r" % VAR_DIR
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -171,7 +175,7 @@ COMPRESS_CSS_FILTERS = (
     #'compressor.filters.css_default.CssAbsoluteFilter',
     #'compressor.filters.cssmin.CSSMinFilter',
 )
-COMPRESS_OUTPUT_DIR = 'cache'
+COMPRESS_OUTPUT_DIR = 'compressor-cache'
 COMPRESS_PRECOMPILERS = (
     ('text/coffeescript', 'coffee --compile --stdio'),
     ('text/x-sass', 'sass {infile} {outfile} -C'),
@@ -189,7 +193,7 @@ ZEUS_SETTINGS= {
             #'url': 'https://github.com/lukaszb/frogress',
         #},
     #},
-    'BUILDS_ROOT': abspath(PROJECT_ROOT, 'builds'),
+    'BUILDS_ROOT': abspath(VAR_DIR, 'builds'),
     'REMOVE_BUILD_DIRS': False,
 }
 

@@ -1,6 +1,6 @@
 *.pyc
 .database.sqlite
 zeusci/builds
-zeusci/cache
+zeusci/compressor-cache
 
 devenv
