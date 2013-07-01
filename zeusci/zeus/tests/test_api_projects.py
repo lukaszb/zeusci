@@ -24,7 +24,6 @@ class TestProjectApi(BaseApiTestCase):
         dt = datetime.datetime(2013, 6, 13, 23, 12)
         Buildset.objects.create(project=zeus, number=3, finished_at=dt)
 
-
     def test_project_list(self):
         url = reverse('zeus_api_project_list')
         response = self.client.get(url)
