@@ -85,19 +85,14 @@
         </div>
         {% endblock container-wrapper %}
 
+        {% block js %}
         {% compress js %}
         <script src="{% static "js/jquery-1.10.1.min.js" %}"></script>
         <script src="{% static "bootstrap/js/bootstrap.js" %}"></script>
         {% endcompress %}
-
+        {% endblock js %}
         {% block extra_js %}
-        {% compress js %}
-        <script type="text/javascript" src="{% static "zeus/js/angular.1.0.7.min.js" %}"></script>
-        <script type="text/coffeescript" src="{% static "zeus/js/zeus.coffee" %}"></script>
-        <script type="text/coffeescript" src="{% static "zeus/js/controllers.coffee" %}"></script>
-        {% endcompress %}
-        {% endblock %}
-
+        {% endblock extra_js %}
     </body>
 </html>
 
