@@ -1,5 +1,5 @@
 
-zeus.POLL_INTERVAL = 500
+zeus.POLL_INTERVAL = 3000
 
 zeus.StepController = ($scope, $http, $timeout) ->
 
