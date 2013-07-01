@@ -19,8 +19,14 @@ class Project(models.Model):
         self.repo_url = data.get('repo_url')
         self.url = data.get('url')
 
-    def get_buildsets(self):
-        buildsets = self.buildsets.all().order_by('-number')
+    def get_buildsets_queryset(self):
+        return self.buildsets.all().order_by('-number')
+
+    def get_buildsets_total_count(self):
+        return self.get_buildsets_queryset().count()
+
+    def get_recent_buildsets(self):
+        buildsets = self.get_buildsets_queryset()
         if settings.PROJECT_BUILDSETS_COUNT:
             buildsets = buildsets[:settings.PROJECT_BUILDSETS_COUNT]
         return buildsets

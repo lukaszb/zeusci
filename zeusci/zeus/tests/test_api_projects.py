@@ -33,13 +33,15 @@ class TestProjectApi(BaseApiTestCase):
                 'uri': self.make_url('zeus_api_project_detail', name='zeus'),
                 'name': 'zeus',
                 'project_url': 'https://github.com/lukaszb/zeus',
-                'repo_url': 'git://github.com/lukaszb/zeus.git'
+                'repo_url': 'git://github.com/lukaszb/zeus.git',
+                'buildsets_uri': self.make_buildset_list_url('zeus'),
             },
             {
                 'uri': self.make_url('zeus_api_project_detail', name='frogress'),
                 'name': 'frogress',
                 'project_url': 'https://github.com/lukaszb/frogress',
-                'repo_url': 'git://github.com/lukaszb/frogress.git'
+                'repo_url': 'git://github.com/lukaszb/frogress.git',
+                'buildsets_uri': self.make_buildset_list_url('frogress'),
             },
         ])
 
@@ -51,7 +53,9 @@ class TestProjectApi(BaseApiTestCase):
             'name': 'zeus',
             'project_url': 'https://github.com/lukaszb/zeus',
             'repo_url': 'git://github.com/lukaszb/zeus.git',
-            'buildsets': [
+            'buildsets_uri': self.make_buildset_list_url('zeus'),
+            'buildsets_total_count': 3,
+            'buildsets_recent': [
                 {
                     'uri': self.make_buildset_detail_url('zeus', 3),
                     'builds': [],
@@ -72,7 +76,8 @@ class TestProjectApi(BaseApiTestCase):
         settings.PROJECT_BUILDSETS_COUNT = 2
         url = reverse('zeus_api_project_detail', kwargs={'name': 'zeus'})
         response = self.client.get(url)
-        self.assertEqual([bs['uri'] for bs in response.data['buildsets']], [
+        self.assertEqual(response.data['buildsets_total_count'], 3)
+        self.assertEqual([bs['uri'] for bs in response.data['buildsets_recent']], [
             self.make_buildset_detail_url('zeus', 3),
             self.make_buildset_detail_url('zeus', 2),
         ])
