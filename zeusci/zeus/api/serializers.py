@@ -61,7 +61,7 @@ class ProjectSerializer(serializers.Serializer):
     name = serializers.CharField('name')
     website_url = serializers.CharField(source='url')
     repo_url = serializers.CharField('repo_url')
-    project_url = serializers.CharField(source='get_absolute_url')
+    url = serializers.CharField(source='get_absolute_url')
     buildsets_uri = serializers.HyperlinkedIdentityField(
         view_name='zeus_api_buildset_list',
         pk_url_kwarg='name',

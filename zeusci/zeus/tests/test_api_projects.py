@@ -34,7 +34,7 @@ class TestProjectApi(BaseApiTestCase):
                 'name': 'zeus',
                 'website_url': 'https://github.com/lukaszb/zeus',
                 'repo_url': 'git://github.com/lukaszb/zeus.git',
-                'project_url': self.zeus.get_absolute_url(),
+                'url': self.zeus.get_absolute_url(),
                 'buildsets_uri': self.make_api_buildset_list_url('zeus'),
             },
             {
@@ -42,7 +42,7 @@ class TestProjectApi(BaseApiTestCase):
                 'name': 'frogress',
                 'website_url': 'https://github.com/lukaszb/frogress',
                 'repo_url': 'git://github.com/lukaszb/frogress.git',
-                'project_url': self.frogress.get_absolute_url(),
+                'url': self.frogress.get_absolute_url(),
                 'buildsets_uri': self.make_api_buildset_list_url('frogress'),
             },
         ]
@@ -61,7 +61,7 @@ class TestProjectApi(BaseApiTestCase):
             'name': 'zeus',
             'website_url': 'https://github.com/lukaszb/zeus',
             'repo_url': 'git://github.com/lukaszb/zeus.git',
-            'project_url': self.zeus.get_absolute_url(),
+            'url': self.zeus.get_absolute_url(),
             'buildsets_uri': self.make_api_buildset_list_url('zeus'),
             'buildsets_total_count': 3,
             'buildsets_recent': [
