@@ -1,13 +1,23 @@
 {% extends "zeus/project.html" %}
+{% load jsonify from zeus %}
 
+{% block init_js %}
+{{ block.super }}
+<script type="text/javascript">
+    zeus_buildset = {{ buildset|jsonify }};
+</script>
+{% endblock %}
 
 {% block content %}
 
+<div ng-controller="zeus.BuildsetDetailController">
 <h2><a href="{{ buildset.get_absolute_url }}">Buildset: #{{ buildset.number }}</a></h2>
 
 {% block build_content %}
+{% verbatim %}
 
 <table class="table table-striped table-bordered table-condensed table-hover">
+    <caption>Builds</caption>
     <thead>
         <tr>
             <th>Build</th>
@@ -18,35 +28,20 @@
         </tr>
     </thead>
     <tbody>
-        {% for build in buildset.builds.all %}
-        <tr class="{% spaceless %}
-            {% if build.status == build.PENDING %}
-            warning
-            {% elif build.status == build.SUCCESS %}
-            success
-            {% elif build.status == build.FAIL %}
-            error
-            {% endif %}
-        {% endspaceless %}">
-            <td><a href="{{ build.get_absolute_url }}">{{ build.number }}</a></td>
-            <td>
-                {% if build.status == build.PENDING %}
-                Pending
-                {% elif build.status == build.SUCCESS %}
-                Success
-                {% elif build.status == build.FAIL %}
-                Failed
-                {% endif %}
-            </td>
-            <td>{{ build.created_at }}</td>
-            <td>{{ build.finished_at }}</td>
+        <tr class="{{ build.status | statusToClass }}" ng-repeat="build in buildset.builds">
+            <td><a href="{{ build.url }}">{{ build.number }}</a></td>
+            <td>{{ build.status }}</td>
+            <td>{{ build.created_at | date:"medium" }}</td>
+            <td>{{ build.finished_at | date:"medium" }}</td>
             <td>{{ build.duration }}</td>
         </tr>
-        {% endfor %}
     </tbody>
 </table>
 
+{% endverbatim %}
 {% endblock %}
+
+</div>
 
 {% endblock %}
 

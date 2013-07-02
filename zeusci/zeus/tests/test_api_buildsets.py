@@ -48,24 +48,30 @@ class TestBuildsetApi(BaseApiTestCase):
         response = self.client.get(url)
         results = [
             {
-                'uri': self.make_buildset_detail_url('zeus', 3),
+                'uri': self.make_api_buildset_detail_url('zeus', 3),
+                'url': self.bs3.get_absolute_url(),
                 'number': 3,
                 'created_at': self.bs3.created_at,
                 'finished_at': self.bs3.created_at,
+                'status': 'pending',
                 'builds': [],
             },
             {
-                'uri': self.make_buildset_detail_url('zeus', 2),
+                'uri': self.make_api_buildset_detail_url('zeus', 2),
+                'url': self.bs2.get_absolute_url(),
                 'number': 2,
                 'created_at': self.bs2.created_at,
                 'finished_at': self.bs2.finished_at,
+                'status': 'pending',
                 'builds': [],
             },
             {
-                'uri': self.make_buildset_detail_url('zeus', 1),
+                'uri': self.make_api_buildset_detail_url('zeus', 1),
+                'url': self.bs1.get_absolute_url(),
                 'number': 1,
                 'created_at': self.bs1.created_at,
                 'finished_at': self.bs1.finished_at,
+                'status': 'pending',
                 'builds': [],
             },
         ]

@@ -93,7 +93,7 @@ class HyperlinkedIdentityField(Field):
         May raise a `NoReverseMatch` if the `view_name` and `lookup_field`
         attributes are not configured to correctly match the URL conf.
         """
-        
+
         #lookup_field = getattr(obj, self.lookup_field)
         #kwargs = {self.lookup_field: lookup_field}
 

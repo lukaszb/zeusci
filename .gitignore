@@ -1,7 +1,7 @@
 *.pyc
 .database.sqlite
 zeusci/builds
-zeusci/compressor-cache
+.compressor-cache
 
 devenv
 var

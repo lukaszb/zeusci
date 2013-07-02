@@ -9,6 +9,8 @@ from .models import Project
 from .tasks import do_build_project
 from .tasks import do_build
 from .api.serializers import ProjectDetailSerializer
+from .api.serializers import BuildsetSerializer
+from .api.serializers import BuildDetailSerializer
 
 
 
@@ -36,8 +38,8 @@ class ProjectBuildsetDetailView(TemplateView):
         buildset_no = kwargs['buildset_no']
         buildset = get_object_or_404(Buildset, project__name=name, number=buildset_no)
         data = super(ProjectBuildsetDetailView, self).get_context_data(**kwargs)
-        data['project'] = buildset.project
-        data['buildset'] = buildset
+        data['project'] = ProjectDetailSerializer(buildset.project).data
+        data['buildset'] = BuildsetSerializer(buildset).data
         return data
 
 project_buildset_detail_view = ProjectBuildsetDetailView.as_view()
@@ -57,9 +59,10 @@ class ProjectBuildDetailView(TemplateView):
             number=build_no,
         )
         data = super(ProjectBuildDetailView, self).get_context_data(**kwargs)
-        data['project'] = build.buildset.project
-        data['buildset'] = build.buildset
-        data['build'] = build
+        data['project'] = ProjectDetailSerializer(build.buildset.project).data
+        data['buildset'] = BuildsetSerializer(build.buildset).data
+        data['build'] = BuildDetailSerializer(build).data
+        data['force_build_url'] = build.get_force_build_url()
         return data
 
 project_build_detail_view = ProjectBuildDetailView.as_view()

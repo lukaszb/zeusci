@@ -3,7 +3,15 @@ from .fields import HyperlinkedIdentityField
 from zeus.models import Build
 
 
-base_build_fields = ['uri', 'number', 'created_at', 'finished_at', 'returncode']
+base_build_fields = [
+    'uri',
+    'url',
+    'number',
+    'created_at',
+    'finished_at',
+    'returncode',
+    'status',
+]
 
 class BuildSerializer(serializers.ModelSerializer):
     uri = HyperlinkedIdentityField(
@@ -14,16 +22,18 @@ class BuildSerializer(serializers.ModelSerializer):
             'name': 'buildset__project__name',
         },
     )
+    url = serializers.CharField(source='get_absolute_url')
+    status = serializers.CharField()
     class Meta:
         model = Build
         fields = base_build_fields
 
 
-class DetailBuildSerializer(BuildSerializer):
+class BuildDetailSerializer(BuildSerializer):
     output = serializers.CharField()
     class Meta:
         model = Build
-        fields = base_build_fields + ['output']
+        fields = base_build_fields + ['output', 'status']
 
 
 class BuildsetSerializer(serializers.Serializer):
@@ -34,9 +44,11 @@ class BuildsetSerializer(serializers.Serializer):
             'name': 'project__name',
         },
     )
+    url = serializers.CharField(source='get_absolute_url')
     number = serializers.IntegerField()
     created_at = serializers.DateTimeField()
     finished_at = serializers.DateTimeField()
+    status = serializers.CharField(source='get_status')
     builds = BuildSerializer(source='builds')
 
 

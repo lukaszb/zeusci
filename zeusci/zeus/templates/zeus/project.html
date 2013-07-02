@@ -1,8 +1,16 @@
 {% extends "zeus/base.html" %}
 {% load jsonify from zeus %}
 
+{% block init_js %}
+{{ block.super }}
+<script type="text/javascript">
+    zeus_project = {{ project|jsonify }};
+</script>
+{% endblock %}
 
 {% block container %}
+{% verbatim %}
+<div ng-app="zeus" ng-controller="zeus.ProjectDetailController">
 <h1><a href="{{ project.project_url }}">{{ project.name }}</a></h1>
 
 <dl class="dl-horizontal">
@@ -13,39 +21,45 @@
     <dd>{{ project.repo_url }}</dd>
 </dl>
 
-{% block tabs %}
 <ul class="nav nav-tabs">
     <li class="active"><a href="#">Current</a></li>
     <li><a href="#">History</a></li>
     <li><a href="#">Settings</a></li>
 </ul>
-{% endblock %}
+{% endverbatim %}
 
 {% block content %}
-
 <a href="{% url "zeus_force_project_buildset" name=project.name %}">Force build</a>
+{% verbatim %}
+
+<ul class="breadcrumb">
+    <li><a href="{{ project.url }}">{{ project.name }}</a></li>
+</ul>
 
 <table class="table table-striped table-bordered table-condensed">
+    <caption>Recent buildsets</caption>
     <thead>
         <tr>
-            <th>Build</th>
+            <th>Buildset</th>
+            <th>Status</th>
             <th>Started</th>
             <th>Finished</th>
             <th>Duration</th>
         </tr>
     </thead>
     <tbody>
-        {% for buildset in project.buildsets_recent %}
-        <tr>
-            <td><a href="{{ buildset.get_absolute_url }}">{{ buildset.number }}</a></td>
-            <td>{{ buildset }}</td>
+        <tr class="{{ buildset.status | statusToClass }}" ng-repeat="buildset in project.buildsets_recent">
+            <td><a href="{{ buildset.url }}">{{ buildset.number }}</a></td>
+            <td>{{ buildset.status }}</td>
+            <td>{{ buildset.created_at }}</td>
             <td>{{ buildset.finished_at }}</td>
             <td>{{ buildset.duration }}</td>
         </tr>
-        {% endfor %}
     </tbody>
 </table>
 
+</div>
+{% endverbatim %}
 {% endblock content %}
 
 {% endblock container %}

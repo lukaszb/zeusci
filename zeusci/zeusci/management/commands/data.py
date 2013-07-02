@@ -1,6 +1,7 @@
 from django.core.management.base import NoArgsCommand
 from django.core.management import call_command
 from django.contrib.auth import get_user_model
+from django.contrib.sites.models import Site
 from zeus.models import Project
 
 
@@ -28,4 +29,10 @@ class Command(NoArgsCommand):
             repo_url='git@github.com:lukaszb/frogress.git',
         )
         self.info("Created project: %s" % project)
+
+        domain = 'localhost:8000'
+        site = Site.objects.get_current()
+        site.domain = site.name = domain
+        site.save()
+        self.info("Set current site to %s" % site)
 

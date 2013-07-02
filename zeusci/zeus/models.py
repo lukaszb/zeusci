@@ -8,6 +8,10 @@ import datetime
 import jsonfield
 
 
+PENDING = 'pending'
+PASSED = 'passed'
+FAILED = 'failed'
+
 Project = get_project_model()
 
 
@@ -53,6 +57,18 @@ class Buildset(models.Model):
     def build_repo_dir(self):
         return abspath(self.build_dir, 'repo')
 
+    def get_status(self):
+        builds = self.builds.all()
+        for build in builds:
+            if build.status == FAILED:
+                return FAILED
+            elif build.status == PENDING:
+                return PENDING
+        else:
+            # no builds yet, most propably not yet created
+            return PENDING
+        return PASSED
+
 
 class Build(models.Model):
     buildset = models.ForeignKey(Buildset, related_name='builds')
@@ -97,18 +113,14 @@ class Build(models.Model):
     def build_repo_dir(self):
         return abspath(self.build_dir, 'repo')
 
-    SUCCESS = 'success'
-    PENDING = 'pending'
-    FAIL = 'fail'
-
     @property
     def status(self):
-        if self.finished_at and self.returncode == 0:
-            return self.SUCCESS
-        elif self.returncode is None:
-            return self.PENDING
+        if self.returncode is None:
+            return PENDING
+        elif self.returncode == 0:
+            return PASSED
         else:
-            return self.FAIL
+            return FAILED
 
     @property
     def cache_key_output(self):

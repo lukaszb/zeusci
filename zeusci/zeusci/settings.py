@@ -175,7 +175,7 @@ COMPRESS_CSS_FILTERS = (
     #'compressor.filters.css_default.CssAbsoluteFilter',
     #'compressor.filters.cssmin.CSSMinFilter',
 )
-COMPRESS_OUTPUT_DIR = 'compressor-cache'
+COMPRESS_OUTPUT_DIR = '.compressor-cache'
 COMPRESS_PRECOMPILERS = (
     ('text/coffeescript', 'coffee --compile --stdio'),
     ('text/x-sass', 'sass {infile} {outfile} -C'),
@@ -202,6 +202,7 @@ ZEUS_SETTINGS= {
     #},
     'BUILDS_ROOT': abspath(VAR_DIR, 'builds'),
     'REMOVE_BUILD_DIRS': False,
+    'PROJECT_BUILDSETS_COUNT': 10,
 }
 
 

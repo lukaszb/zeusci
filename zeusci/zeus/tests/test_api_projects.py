@@ -35,7 +35,7 @@ class TestProjectApi(BaseApiTestCase):
                 'website_url': 'https://github.com/lukaszb/zeus',
                 'repo_url': 'git://github.com/lukaszb/zeus.git',
                 'project_url': self.zeus.get_absolute_url(),
-                'buildsets_uri': self.make_buildset_list_url('zeus'),
+                'buildsets_uri': self.make_api_buildset_list_url('zeus'),
             },
             {
                 'uri': self.make_url('zeus_api_project_detail', name='frogress'),
@@ -43,7 +43,7 @@ class TestProjectApi(BaseApiTestCase):
                 'website_url': 'https://github.com/lukaszb/frogress',
                 'repo_url': 'git://github.com/lukaszb/frogress.git',
                 'project_url': self.frogress.get_absolute_url(),
-                'buildsets_uri': self.make_buildset_list_url('frogress'),
+                'buildsets_uri': self.make_api_buildset_list_url('frogress'),
             },
         ]
         self.assertEqual(response.data['results'], results)
@@ -62,28 +62,34 @@ class TestProjectApi(BaseApiTestCase):
             'website_url': 'https://github.com/lukaszb/zeus',
             'repo_url': 'git://github.com/lukaszb/zeus.git',
             'project_url': self.zeus.get_absolute_url(),
-            'buildsets_uri': self.make_buildset_list_url('zeus'),
+            'buildsets_uri': self.make_api_buildset_list_url('zeus'),
             'buildsets_total_count': 3,
             'buildsets_recent': [
                 {
-                    'uri': self.make_buildset_detail_url('zeus', 3),
+                    'uri': self.make_api_buildset_detail_url('zeus', 3),
+                    'url': buildset3.get_absolute_url(),
                     'number': 3,
                     'created_at': buildset3.created_at,
                     'finished_at': buildset3.finished_at,
+                    'status': 'pending',
                     'builds': [],
                 },
                 {
-                    'uri': self.make_buildset_detail_url('zeus', 2),
+                    'uri': self.make_api_buildset_detail_url('zeus', 2),
+                    'url': buildset2.get_absolute_url(),
                     'number': 2,
                     'created_at': buildset2.created_at,
                     'finished_at': buildset2.finished_at,
+                    'status': 'pending',
                     'builds': [],
                 },
                 {
-                    'uri': self.make_buildset_detail_url('zeus', 1),
+                    'uri': self.make_api_buildset_detail_url('zeus', 1),
+                    'url': buildset1.get_absolute_url(),
                     'number': 1,
                     'created_at': buildset1.created_at,
                     'finished_at': buildset1.finished_at,
+                    'status': 'pending',
                     'builds': [],
                 },
             ],
@@ -96,7 +102,7 @@ class TestProjectApi(BaseApiTestCase):
         response = self.client.get(url)
         self.assertEqual(response.data['buildsets_total_count'], 3)
         self.assertEqual([bs['uri'] for bs in response.data['buildsets_recent']], [
-            self.make_buildset_detail_url('zeus', 3),
-            self.make_buildset_detail_url('zeus', 2),
+            self.make_api_buildset_detail_url('zeus', 3),
+            self.make_api_buildset_detail_url('zeus', 2),
         ])
 

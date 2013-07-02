@@ -14,7 +14,7 @@ DEFAULTS = {
     'PROJECT_MODEL': 'zeus.project.Project',
     'REMOVE_BUILD_DIRS': True,
     'FOO': 'default-foobar',
-    'PROJECT_BUILDSETS_COUNT': 2,
+    'PROJECT_BUILDSETS_COUNT': 10,
     'API_PAGINATION_SERIALIZER_CLASS': 'rest_framework.pagination.PaginationSerializer',
     'API_PAGINATE_BY': 20,
 }

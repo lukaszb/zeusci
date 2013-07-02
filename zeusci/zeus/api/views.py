@@ -5,7 +5,7 @@ from ..models import Buildset
 from ..models import Build
 from ..models import Project
 from .serializers import BuildsetSerializer
-from .serializers import DetailBuildSerializer
+from .serializers import BuildDetailSerializer
 from .serializers import ProjectDetailSerializer
 from .serializers import ProjectSerializer
 
@@ -61,7 +61,7 @@ buildset_detail = BuildsetDetail.as_view()
 
 
 class BuildDetail(BaseApiMixin, generics.RetrieveAPIView):
-    serializer_class = DetailBuildSerializer
+    serializer_class = BuildDetailSerializer
     model = Build
 
     def get_queryset(self):
