@@ -59,14 +59,14 @@ class Buildset(models.Model):
 
     def get_status(self):
         builds = self.builds.all()
+        if not builds:
+            # no builds yet, most propably not yet created
+            return PENDING
         for build in builds:
             if build.status == FAILED:
                 return FAILED
             elif build.status == PENDING:
                 return PENDING
-        else:
-            # no builds yet, most propably not yet created
-            return PENDING
         return PASSED
 
 

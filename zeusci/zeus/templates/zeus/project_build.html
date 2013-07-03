@@ -26,7 +26,7 @@
     <dd>{{ build.number }}</dd>
 
     <dt>Status</dt>
-    <dd><span class="label label-{{ build.status | statusToClass }}">{{ build.status | uppercase }}</span></dd>
+    <dd><span class="label label-{{ build.status | statusToBadgeClass }}">{{ build.status | uppercase }}</span></dd>
 </dl>
 
 <pre>

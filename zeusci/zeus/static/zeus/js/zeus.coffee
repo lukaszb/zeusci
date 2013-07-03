@@ -1,11 +1,20 @@
 
 zeusFilters = angular.module('zeusFilters', [])
-zeusFilters.filter('statusToClass', () ->
+zeusFilters.filter('statusToBadgeClass', () ->
     filter = (text) ->
         switch text
             when zeus.status.PENDING then 'warning'
             when zeus.status.PASSED then 'success'
             when zeus.status.FAILED then 'important'
+            else 'info'
+    return filter
+)
+zeusFilters.filter('statusToClass', () ->
+    filter = (text) ->
+        switch text
+            when zeus.status.PENDING then 'warning'
+            when zeus.status.PASSED then 'success'
+            when zeus.status.FAILED then 'error'
             else 'info'
     return filter
 )
