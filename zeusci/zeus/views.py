@@ -99,6 +99,11 @@ class ProjectBuildsetBuildView(RedirectView):
             buildset__number=buildset_no,
             number=build_no,
         )
+
+        self.build.finished_at = None
+        self.build.returncode = None
+        self.build.save()
+
         from .builders import PythonBuildseter
         do_build.delay(self.build, PythonBuildseter)
         self.build.clear_output()

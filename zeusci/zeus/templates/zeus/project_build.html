@@ -4,22 +4,18 @@
 {% block init_js %}
 {{ block.super }}
 <script type="text/javascript">
-    zeus_build = {{ build|jsonify }};
+    var zeus_build = {{ build|jsonify }};
+    var force_build_url = {{ force_build_url|jsonify }};
 </script>
 {% endblock %}
 
 {% block build_content %}
 
-<a href="{{ force_build_url }}">Force re-build</a>
 
 {% verbatim %}
 <div ng-app ng-controller="zeus.BuildDetailController">
 
-<ul class="breadcrumb">
-    <li><a href="{{ project.url }}">{{ project.name }}</a> <span class="divider">/</span></li>
-    <li><a href="{{ buildset.url }}">Buildset #{{ buildset.number }}</a> <span class="divider">/</span></li>
-    <li class="active">Build #{{ build.number }}</li>
-</ul>
+<a class="btn btn-mini btn-danger pull-right" href="{{ force_build_url }}"><i class="icon-wrench icon-white"></i> Force re-build</a>
 
 <dl class="dl-horizontal">
     <dt>Build</dt>

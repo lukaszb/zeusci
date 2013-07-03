@@ -9,6 +9,7 @@ zeus.ProjectDetailController = ($scope, $timeout, Project) ->
     zeus.POLL_PROJECT = true
 
     $scope.project = zeus_project
+    $scope.breadcrumbs = [{url: $scope.project.url, text: $scope.project.name}]
 
     shouldPoll = () ->
         return zeus.POLL_ENABLED and zeus.POLL_PROJECT
@@ -35,6 +36,13 @@ zeus.BuildsetDetailController = ($scope, $timeout, Buildset) ->
 
     $scope.buildset = zeus_buildset
 
+    getBreadcrumb = () ->
+        url = $scope.buildset.url
+        text = "Buildset ##{$scope.buildset.number}"
+        return {url: url, text: text}
+
+    $scope.breadcrumbs.push(getBreadcrumb())
+
     shouldPoll = () ->
         $scope.buildset
         return zeus.POLL_ENABLED and zeus.POLL_PROJECT
@@ -60,6 +68,12 @@ zeus.BuildDetailController = ($scope, $timeout, Build) ->
 
     $scope.build = zeus_build
 
+    getBreadcrumb = () ->
+        url = $scope.build.url
+        text = "Build ##{$scope.build.number}"
+        return {url: url, text: text}
+    $scope.breadcrumbs.push(getBreadcrumb())
+
     shouldPoll = () ->
         should = zeus.POLL_ENABLED and not $scope.build.finished_at
         return should
@@ -77,7 +91,10 @@ zeus.BuildDetailController = ($scope, $timeout, Build) ->
             $timeout(poll, zeus.POLL_BUILD_INTERVAL)
         )
 
-    $timeout(poll, zeus.POLL_INTERVAL)
+    $timeout(poll, zeus.POLL_BUILD_INTERVAL)
+
+    if window.force_build_url
+        $scope.force_build_url = force_build_url
 
 zeus.BuildDetailController.$inject = ['$scope', '$timeout', 'Build']
 

@@ -10,8 +10,28 @@
 
 {% block content %}
 
+{% verbatim %}
 <div ng-controller="zeus.BuildsetDetailController">
-<h2><a href="{{ buildset.get_absolute_url }}">Buildset: #{{ buildset.number }}</a></h2>
+
+<ul class="breadcrumb">
+    <li ng-repeat="breadcrumb in breadcrumbs|breadcrumbLinks">
+        <a href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active" ng-repeat="breadcrumb in breadcrumbs|breadcrumbActive">
+        {{ breadcrumb.text }}
+    </li>
+</ul>
+
+
+<dl class="dl-horizontal">
+    <dt>Buildset</dt>
+    <dd>{{ buildset.number }}</dd>
+
+    <dt>Status</dt>
+    <dd><span class="label label-{{ buildset.status | statusToBadgeClass }}">{{ buildset.status | uppercase }}</span></dd>
+</dl>
+{% endverbatim %}
 
 {% block build_content %}
 {% verbatim %}
@@ -29,7 +49,7 @@
     </thead>
     <tbody>
         <tr class="{{ build.status | statusToClass }}" ng-repeat="build in buildset.builds">
-            <td><a href="{{ build.url }}">{{ build.number }}</a></td>
+            <td><a class="pull-right" href="{{ build.url }}">{{ build.number }}</a></td>
             <td>{{ build.status }}</td>
             <td>{{ build.created_at | date:"medium" }}</td>
             <td>{{ build.finished_at | date:"medium" }}</td>

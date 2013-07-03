@@ -7,6 +7,19 @@ from zeus.models import Project
 
 User = get_user_model()
 
+PROJECTS = [
+    {
+        'name': 'frogress',
+        'url': 'https://github.com/lukaszb/frogress',
+        'repo_url': 'git@github.com:lukaszb/frogress.git',
+    },
+    {
+        'name': 'django-guardian',
+        'url': 'https://github.com/lukaszb/django-guardian',
+        'repo_url': 'git@github.com:lukaszb/django-guardian.git',
+    },
+]
+
 
 class Command(NoArgsCommand):
 
@@ -23,12 +36,10 @@ class Command(NoArgsCommand):
         user_args = ('admin', 'lukaszbalcerzak@gmail.com', 'foobar')
         user = User.objects.create_superuser(*user_args)
         self.info("Created user: %s" % user)
-        project = Project.objects.create(
-            name='frogress',
-            url='https://github.com/lukaszb/frogress',
-            repo_url='git@github.com:lukaszb/frogress.git',
-        )
-        self.info("Created project: %s" % project)
+
+        for kwargs in PROJECTS:
+            project = Project.objects.create(**kwargs)
+            self.info("Created project: %s" % project)
 
         domain = 'localhost:8000'
         site = Site.objects.get_current()

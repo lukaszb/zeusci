@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from .project import get_project_model
 from .utils.general import abspath
 from django.db import models
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse
 from django.core.cache import cache
 import datetime
 import jsonfield
@@ -42,7 +42,7 @@ class Buildset(models.Model):
 
     def get_absolute_url(self):
         kwargs = {'name': self.project.name, 'buildset_no': self.number}
-        return reverse_lazy('zeus_project_buildset_detail', kwargs=kwargs)
+        return reverse('zeus_project_buildset_detail', kwargs=kwargs)
 
     @property
     def duration(self):
@@ -80,7 +80,7 @@ class Build(models.Model):
 
     class Meta:
         unique_together = ('buildset', 'number')
-        ordering = ['-number']
+        ordering = ['number']
 
     def __str__(self):
         return '%s.%s' % (self.buildset, self.number)
@@ -94,11 +94,11 @@ class Build(models.Model):
 
     def get_absolute_url(self):
         kwargs = self._get_url_kwargs()
-        return reverse_lazy('zeus_project_build_detail', kwargs=kwargs)
+        return reverse('zeus_project_build_detail', kwargs=kwargs)
 
     def get_force_build_url(self):
         kwargs = self._get_url_kwargs()
-        return reverse_lazy('zeus_force_project_build', kwargs=kwargs)
+        return reverse('zeus_force_project_build', kwargs=kwargs)
 
     @property
     def duration(self):

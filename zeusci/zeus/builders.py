@@ -28,7 +28,8 @@ class BaseBuildseter(object):
 
 def get_tox_config(tox_ini_path):
     from tox._config import parseconfig
-    return parseconfig(tox_ini_path)
+    args = ['-c', tox_ini_path]
+    return parseconfig(args)
 
 
 class PythonBuildseter(BaseBuildseter):
@@ -42,8 +43,9 @@ class PythonBuildseter(BaseBuildseter):
     def build_project(self, project):
         self.info("Buildseting %s" % project.name)
         buildset = Buildset.objects.create(project=project)
-        dirname = '%s.%s' % (project.name, buildset.number)
-        build_dir = abspath(settings.BUILDS_ROOT, dirname)
+        buildset_no = str(buildset.number)
+        build_dir = abspath(settings.BUILDS_ROOT, project.name, buildset_no)
+        makedirs(build_dir)
 
         buildset.build_dir = build_dir
         buildset.save()
@@ -54,14 +56,15 @@ class PythonBuildseter(BaseBuildseter):
         self.clean(buildset)
 
     def pre_builds(self, buildset):
-        self.tox_ini_path = abspath(buildset.build_dir, 'tox.ini')
+        self.tox_ini_path = abspath(buildset.build_repo_dir, 'tox.ini')
 
     def builds(self, buildset):
         results = []
         tox_config = get_tox_config(self.tox_ini_path)
         venvs = tox_config.envlist
+        total = len(venvs)
         for build_no, env in enumerate(venvs, 1):
-            self.info("Buildset step %d | tox:%s" % (build_no, env))
+            self.info("Buildset step %d / %d | tox:%s" % (build_no, total, env))
             from .tasks import do_build
             build = Build.objects.create(
                 buildset=buildset,
