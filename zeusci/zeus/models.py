@@ -77,6 +77,8 @@ class Build(models.Model):
     finished_at = models.DateTimeField(null=True)
     options = jsonfield.JSONField()
     returncode = models.IntegerField(null=True)
+    build_output = models.OneToOneField('Output', null=True, blank=True,
+        related_name='build')
 
     class Meta:
         unique_together = ('buildset', 'number')
@@ -130,7 +132,10 @@ class Build(models.Model):
     def output(self):
         output = cache.get(self.cache_key_output)
         if output is None:
-            output = self.build_output.output
+            if self.build_output is not None:
+                output = self.build_output.output
+            else:
+                output = ''
             cache.set(self.cache_key_output, output)
         return output
 
@@ -142,8 +147,11 @@ class Build(models.Model):
         cache.delete(self.cache_key_output)
 
 
+#class Command(models.Model):
+    #command_output = models.OneToOneField
+
+
 class Output(models.Model):
-    build = models.OneToOneField(Build, related_name='build_output')
     output = models.TextField()
 
     def __repr__(self):

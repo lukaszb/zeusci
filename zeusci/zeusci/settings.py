@@ -201,7 +201,7 @@ ZEUS_SETTINGS= {
         #},
     #},
     'BUILDS_ROOT': abspath(VAR_DIR, 'builds'),
-    'REMOVE_BUILD_DIRS': False,
+    'REMOVE_BUILD_DIRS': True,
     'PROJECT_BUILDSETS_COUNT': 10,
 }
 

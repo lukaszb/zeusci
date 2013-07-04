@@ -23,7 +23,7 @@ class TestBuildDetailSerializer(SimpleTestCase):
 
         # set pk so it fakes db-saved instance
         build = Build(number=103, buildset=buildset, pk=1)
-        build.build_output = Output(output='foobar', build=build)
+        build.build_output = Output(output='foobar')
 
         self.assertEqual(serialize(build)['status'], 'pending')
 

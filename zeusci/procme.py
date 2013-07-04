@@ -26,7 +26,7 @@ class Command(object):
     def __str__(self):
         return '<Command: %s | %r>' % (self.returncode, self.cmd)
 
-    def run_in_thread(self, timeout=None):
+    def run_in_thread(self):
         def target():
             self.process = subprocess.Popen(
                 self.cmd,
@@ -45,7 +45,7 @@ class Command(object):
         """
         """
         afile = open(stream.name)
-        thread = self.run_in_thread(self.timeout)
+        thread = self.run_in_thread()
         start = datetime.datetime.now()
 
         def should_run():

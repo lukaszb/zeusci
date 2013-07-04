@@ -6,11 +6,10 @@ from .utils.general import makedirs
 from .models import Buildset
 from .models import Build
 from .models import Output
+from .execution import execute_command
 from django.core.cache import cache
 import datetime
-import os
 import shutil
-import procme
 
 
 class BaseBuildseter(object):
@@ -82,11 +81,10 @@ class PythonBuildseter(BaseBuildseter):
         Buildset.objects.filter(pk=buildset.pk).update(finished_at=now)
 
     def build(self, build):
-
         venv = build.options['toxenv']
         tox_ini_path = abspath(build.build_repo_dir, 'tox.ini')
         cmd = ['tox', '-c', tox_ini_path, '-e', venv]
-        command = procme.Command(cmd)
+        command = execute_command(cmd)
         print "Running command: %s" % str(cmd)
         for chunk in command.iter_output():
             cache.set(build.cache_key_output, command.data)
@@ -100,7 +98,12 @@ class PythonBuildseter(BaseBuildseter):
             Output.objects.filter(build=build).update(output=command.data)
             build.clear_output_cache()
         except Output.DoesNotExist:
-            Output.objects.get_or_create(build=build, output=command.data)
+            output = Output.objects.create(output=command.data)
+            build.build_output = output
+            build.save(update_fields=['build_output'])
+
+    #def get_build_commands(self, build):
+
 
 
 def build(project):

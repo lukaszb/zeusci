@@ -17,11 +17,13 @@ DEFAULTS = {
     'PROJECT_BUILDSETS_COUNT': 10,
     'API_PAGINATION_SERIALIZER_CLASS': 'rest_framework.pagination.PaginationSerializer',
     'API_PAGINATE_BY': 20,
+    'COMMAND_EXECUTION_BACKEND': 'procme.Command',
 }
 
 # List of settings that may be in string import notation.
 IMPORT_STRINGS = [
     'API_PAGINATION_SERIALIZER_CLASS',
+    'COMMAND_EXECUTION_BACKEND',
 ]
 
 USER_SETTINGS = getattr(settings, 'ZEUS_SETTINGS', None)

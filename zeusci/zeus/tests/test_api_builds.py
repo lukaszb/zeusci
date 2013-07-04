@@ -20,21 +20,26 @@ class TestBuildApi(BaseApiTestCase):
             project=zeus,
             number=1,
         )
-        self.build1 = Build.objects.create(
+        self.build1 = Build(
             buildset=self.buildset,
             number=1,
         )
-        Output.objects.create(build=self.build1, output='Just started')
+        output = Output.objects.create(output='Just started')
+        self.build1.build_output = output
+        self.build1.save()
+
 
         dt = datetime.datetime(2013, 7, 2, 22, 8)
-        self.build2 = Build.objects.create(
+        self.build2 = Build(
             buildset=self.buildset,
             number=2,
             created_at=dt,
             finished_at=(dt + datetime.timedelta(seconds=3)),
             returncode=0,
         )
-        Output.objects.create(build=self.build2, output='Finished')
+        output = Output.objects.create(output='Finished')
+        self.build2.build_output = output
+        self.build2.save()
 
     def test_build_detail(self):
         url_params = {'name': 'zeus', 'buildset_no': 1, 'build_no': 1}
