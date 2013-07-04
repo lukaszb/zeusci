@@ -13,16 +13,6 @@
 {% verbatim %}
 <div ng-controller="zeus.BuildsetDetailController">
 
-<ul class="breadcrumb">
-    <li ng-repeat="breadcrumb in breadcrumbs|breadcrumbLinks">
-        <a href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a>
-        <span class="divider">/</span>
-    </li>
-    <li class="active" ng-repeat="breadcrumb in breadcrumbs|breadcrumbActive">
-        {{ breadcrumb.text }}
-    </li>
-</ul>
-
 
 <dl class="dl-horizontal">
     <dt>Buildset</dt>

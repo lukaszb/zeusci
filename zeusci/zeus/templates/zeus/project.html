@@ -11,6 +11,17 @@
 {% block container %}
 {% verbatim %}
 <div ng-app="zeus" ng-controller="zeus.ProjectDetailController">
+
+<ul class="breadcrumb">
+    <li ng-repeat="breadcrumb in breadcrumbs|breadcrumbLinks">
+        <a href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active" ng-repeat="breadcrumb in breadcrumbs|breadcrumbActive">
+        {{ breadcrumb.text }}
+    </li>
+</ul>
+
 <h1><a href="{{ project.url }}">{{ project.name }}</a></h1>
 
 <dl class="dl-horizontal">
@@ -31,10 +42,6 @@
 {% block content %}
 <a href="{% url "zeus_force_project_buildset" name=project.name %}">Force build</a>
 {% verbatim %}
-
-<ul class="breadcrumb">
-    <li><a href="{{ project.url }}">{{ project.name }}</a></li>
-</ul>
 
 <table class="table table-striped table-bordered table-condensed table-hover">
     <caption>Recent buildsets</caption>
