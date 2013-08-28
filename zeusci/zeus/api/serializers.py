@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .fields import HyperlinkedIdentityField
 from zeus.models import Build
+from zeus.models import Command
 
 
 base_build_fields = [
@@ -9,7 +10,6 @@ base_build_fields = [
     'number',
     'created_at',
     'finished_at',
-    'returncode',
     'status',
 ]
 
@@ -29,11 +29,22 @@ class BuildSerializer(serializers.ModelSerializer):
         fields = base_build_fields
 
 
-class BuildDetailSerializer(BuildSerializer):
+class CommandSerializer(serializers.ModelSerializer):
     output = serializers.CharField()
+    status = serializers.CharField()
+
+    class Meta:
+        model = Command
+        fields = ['number', 'title', 'cmd', 'output', 'started_at',
+                  'finished_at', 'status', 'returncode']
+
+
+class BuildDetailSerializer(BuildSerializer):
+    commands = CommandSerializer(source='commands')
+
     class Meta:
         model = Build
-        fields = base_build_fields + ['output', 'status']
+        fields = base_build_fields + ['commands', 'status']
 
 
 class BuildsetSerializer(serializers.Serializer):

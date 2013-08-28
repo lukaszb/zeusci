@@ -12,7 +12,7 @@ import datetime
 import shutil
 
 
-class BaseBuildseter(object):
+class BaseBuilder(object):
 
     def info(self, message):
         print(" => %s" % message)
@@ -31,7 +31,7 @@ def get_tox_config(tox_ini_path):
     return parseconfig(args)
 
 
-class PythonBuildseter(BaseBuildseter):
+class PythonBuilder(BaseBuilder):
 
     def fetch(self, buildset):
         msg = "Fetching %s -> %s" % (buildset.project.repo_url, buildset.build_repo_dir)
@@ -81,34 +81,41 @@ class PythonBuildseter(BaseBuildseter):
         Buildset.objects.filter(pk=buildset.pk).update(finished_at=now)
 
     def build(self, build):
+        for step in self.get_build_commands(build):
+            self.execute_command(build, step)
+
+    def execute_command(self, build, step):
+            label = step['step']
+            cmd = step['cmd']
+            command = execute_command(cmd)
+            print "Running command: %s" % str(cmd)
+            for chunk in command.iter_output():
+                cache.set(build.cache_key_output, command.data)
+            print "Finished build with code: %s" % command.returncode
+            Build.objects.filter(pk=build.pk).update(
+                finished_at=datetime.datetime.now(),
+                returncode=command.returncode,
+            )
+            try:
+                Output.objects.only('build').get(build=build)
+                Output.objects.filter(build=build).update(output=command.data)
+                build.clear_output_cache()
+            except Output.DoesNotExist:
+                output = Output.objects.create(output=command.data)
+                build.build_output = output
+                build.save(update_fields=['build_output'])
+
+    def get_build_commands(self, build):
         venv = build.options['toxenv']
         tox_ini_path = abspath(build.build_repo_dir, 'tox.ini')
-        cmd = ['tox', '-c', tox_ini_path, '-e', venv]
-        command = execute_command(cmd)
-        print "Running command: %s" % str(cmd)
-        for chunk in command.iter_output():
-            cache.set(build.cache_key_output, command.data)
-        print "Finished build with code: %s" % command.returncode
-        Build.objects.filter(pk=build.pk).update(
-            finished_at=datetime.datetime.now(),
-            returncode=command.returncode,
-        )
-        try:
-            Output.objects.only('build').get(build=build)
-            Output.objects.filter(build=build).update(output=command.data)
-            build.clear_output_cache()
-        except Output.DoesNotExist:
-            output = Output.objects.create(output=command.data)
-            build.build_output = output
-            build.save(update_fields=['build_output'])
-
-    #def get_build_commands(self, build):
+        step = {'step': 'tox', 'cmd': ['tox', '-c', tox_ini_path, '-e', venv]}
+        return [step]
 
 
 
 def build(project):
-    print "Buildseting project: %s" % project
+    print "Building project: %s" % project
 
-    builder = PythonBuildseter()
+    builder = PythonBuilder()
     builder.build_project(project)
 

@@ -9,6 +9,7 @@ import jsonfield
 
 
 PENDING = 'pending'
+RUNNING = 'running'
 PASSED = 'passed'
 FAILED = 'failed'
 
@@ -76,7 +77,6 @@ class Build(models.Model):
     created_at = models.DateTimeField(default=datetime.datetime.now)
     finished_at = models.DateTimeField(null=True)
     options = jsonfield.JSONField()
-    returncode = models.IntegerField(null=True)
     build_output = models.OneToOneField('Output', null=True, blank=True,
         related_name='build')
 
@@ -117,12 +117,19 @@ class Build(models.Model):
 
     @property
     def status(self):
-        if self.returncode is None:
+        commands = self.get_commands()
+        statuses = set(command.status for command in commands)
+        if not statuses or statuses == set([PENDING]):
             return PENDING
-        elif self.returncode == 0:
-            return PASSED
-        else:
+        if FAILED in statuses:
             return FAILED
+        if RUNNING in statuses:
+            return RUNNING
+        if statuses == set([PASSED]):
+            return PASSED
+
+    def get_commands(self):
+        return self.commands.all()
 
     @property
     def cache_key_output(self):
@@ -147,8 +154,50 @@ class Build(models.Model):
         cache.delete(self.cache_key_output)
 
 
-#class Command(models.Model):
-    #command_output = models.OneToOneField
+class Command(models.Model):
+    build = models.ForeignKey(Build, related_name='commands')
+    number = models.PositiveIntegerField()
+    command_output = models.OneToOneField('Output', null=True, blank=True,
+        related_name='command')
+    cmd = models.CharField(max_length=256)
+    title = models.CharField(max_length=256)
+    created_at = models.DateTimeField(default=datetime.datetime.now)
+    started_at = models.DateTimeField(null=True)
+    finished_at = models.DateTimeField(null=True)
+    returncode = models.IntegerField(null=True)
+
+    @property
+    def status(self):
+        if self.started_at is None:
+            return PENDING
+        elif self.returncode is None:
+            return RUNNING
+        elif self.returncode == 0:
+            return PASSED
+        else:
+            return FAILED
+
+    @property
+    def cache_key_output(self):
+        return 'zeus-build-command-output-%s' % self.pk
+
+    @property
+    def output(self):
+        output = cache.get(self.cache_key_output)
+        if output is None:
+            if self.command_output is not None:
+                output = self.command_output.output
+            else:
+                output = ''
+            cache.set(self.cache_key_output, output)
+        return output
+
+    def clear_output(self):
+        Output.objects.filter(command=self).update(output='')
+        self.clear_output_cache()
+
+    def clear_output_cache(self):
+        cache.delete(self.cache_key_output)
 
 
 class Output(models.Model):

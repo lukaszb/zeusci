@@ -177,7 +177,8 @@ COMPRESS_CSS_FILTERS = (
 )
 COMPRESS_OUTPUT_DIR = '.compressor-cache'
 COMPRESS_PRECOMPILERS = (
-    ('text/coffeescript', 'coffee --compile --stdio'),
+    ('text/coffeescript', 'coffeecompressorcompiler.filter.CoffeeScriptCompiler'),
+    #('text/coffeescript', 'coffee --compile --stdio'),
     ('text/x-sass', 'sass {infile} {outfile} -C'),
     ('text/x-scss', 'sass --scss {infile} {outfile}'),
 )
