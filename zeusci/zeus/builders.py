@@ -5,6 +5,7 @@ from .utils.general import abspath
 from .utils.general import makedirs
 from .models import Buildset
 from .models import Build
+from .models import Command
 from .models import Output
 from .execution import execute_command
 from django.core.cache import cache
@@ -83,34 +84,43 @@ class PythonBuilder(BaseBuilder):
     def build(self, build):
         for step in self.get_build_commands(build):
             self.execute_command(build, step)
-
-    def execute_command(self, build, step):
-            label = step['step']
-            cmd = step['cmd']
-            command = execute_command(cmd)
-            print "Running command: %s" % str(cmd)
-            for chunk in command.iter_output():
-                cache.set(build.cache_key_output, command.data)
-            print "Finished build with code: %s" % command.returncode
-            Build.objects.filter(pk=build.pk).update(
-                finished_at=datetime.datetime.now(),
-                returncode=command.returncode,
-            )
-            try:
-                Output.objects.only('build').get(build=build)
-                Output.objects.filter(build=build).update(output=command.data)
-                build.clear_output_cache()
-            except Output.DoesNotExist:
-                output = Output.objects.create(output=command.data)
-                build.build_output = output
-                build.save(update_fields=['build_output'])
+        Build.objects.filter(pk=build.pk).update(
+            finished_at=datetime.datetime.now(),
+        )
 
     def get_build_commands(self, build):
         venv = build.options['toxenv']
         tox_ini_path = abspath(build.build_repo_dir, 'tox.ini')
-        step = {'step': 'tox', 'cmd': ['tox', '-c', tox_ini_path, '-e', venv]}
+        step = {
+            'number': 1,
+            'title': 'tox',
+            'cmd': ['tox', '-c', tox_ini_path, '-e', venv],
+        }
         return [step]
 
+    def execute_command(self, build, step):
+        cmd = step['cmd']
+        build_command = Command.objects.create(
+            build=build,
+            number=step['number'],
+            title=step['title'],
+            cmd=' '.join(cmd),
+            started_at=datetime.datetime.now(),
+        )
+        command = execute_command(cmd)
+        print "Running command: %r\n\traw: %s" % (' '.join(cmd), str(cmd))
+        for chunk in command.iter_output():
+            cache.set(build_command.cache_key_output, command.data)
+        print "Finished command with code: %s" % command.returncode
+        try:
+            filters = {'command': build_command}
+            Output.objects.only('command').get(**filters)
+            Output.objects.filter(**filters).update(output=command.data)
+            build.clear_output_cache()
+        except Output.DoesNotExist:
+            output = Output.objects.create(output=command.data)
+            build_command.command_output = output
+            build_command.save(update_fields=['command_output'])
 
 
 def build(project):

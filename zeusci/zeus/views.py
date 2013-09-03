@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from .models import Buildset
 from .models import Build
+from .models import Command
 from .models import Project
 from .tasks import do_build_project
 from .tasks import do_build
@@ -99,13 +100,13 @@ class ProjectBuildsetBuildView(RedirectView):
             buildset__number=buildset_no,
             number=build_no,
         )
+        Command.objects.filter(build=self.build).delete()
 
         self.build.finished_at = None
-        self.build.returncode = None
         self.build.save()
 
-        from .builders import PythonBuildseter
-        do_build.delay(self.build, PythonBuildseter)
+        from .builders import PythonBuilder
+        do_build.delay(self.build, PythonBuilder)
         self.build.clear_output()
         return super(ProjectBuildsetBuildView, self).get(request, name)
 

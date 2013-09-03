@@ -18,6 +18,7 @@ DEFAULTS = {
     'API_PAGINATION_SERIALIZER_CLASS': 'rest_framework.pagination.PaginationSerializer',
     'API_PAGINATE_BY': 20,
     'COMMAND_EXECUTION_BACKEND': 'procme.Command',
+    'COMMAND_TIMEOUT': 60 * 60,
 }
 
 # List of settings that may be in string import notation.

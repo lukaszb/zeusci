@@ -20,7 +20,7 @@ class Command(object):
         self.returncode = None
         self.stream = stream or tempfile.NamedTemporaryFile()
         self.shell = shell
-        self.timeout = timeout
+        self.timeout = timeout # in seconds
         self.data = ''
 
     def __str__(self):
