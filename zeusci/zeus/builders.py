@@ -21,46 +21,99 @@ class BaseBuilder(object):
     def build(self, project):
         raise NotImplementedError
 
+    def get_buildset(self, project):
+        """
+        Returns :model:`Buildset` instance with properly ``build_dir``
+        attribute set. We also ensure that ``build_dir`` directory exists.
+        """
+        # we're creating buildset first in order to prepare it's number
+        buildset = Buildset.objects.create(project=project)
+        buildset_no = str(buildset.number)
+        # now we can set build_dir
+        build_dir = abspath(settings.BUILDS_ROOT, project.name, buildset_no)
+        buildset.build_dir = build_dir
+        buildset.save()
+        makedirs(build_dir)
+        return buildset
+
+    def build_project(self, project):
+        """
+        This method will prepare :model:`Buildset` instance and run following
+        methods:
+
+        * :meth:`fetch`
+        * :meth:`pre_builds`
+        * :meth:`run_builds`
+        * :meth:`post_builds`
+        * :meth:`clean`
+        """
+        self.info("Creating buildset for project: %r" % project.name)
+        buildset = self.get_buildset(project)
+
+        self.fetch(buildset)
+        self.pre_builds(buildset)
+        self.run_builds(buildset)
+        self.post_builds(buildset)
+        self.clean(buildset)
+
+    def get_fetcher(self, buildset):
+        return GitFetcher()
+
+    def fetch(self, buildset):
+        msg = "Fetching %s -> %s" % (buildset.project.repo_url, buildset.build_repo_dir)
+        self.info(msg)
+        fetcher = self.get_fetcher(buildset)
+        fetcher.fetch(buildset.project.repo_url, buildset.build_repo_dir)
+
+    def pre_builds(self, buildset):
+        """
+        This method is called *before* any build is run.
+        """
+
+    def run_builds(self, buildset):
+        raise NotImplementedError
+
+    def post_builds(self, buildset):
+        """
+        This method is called *after* all builds are completed.
+        """
+
     def clean(self, build):
         if settings.REMOVE_BUILD_DIRS:
             shutil.rmtree(build.build_dir)
 
 
-def get_tox_config(tox_ini_path):
-    from tox._config import parseconfig
-    args = ['-c', tox_ini_path]
-    return parseconfig(args)
-
-
 class PythonBuilder(BaseBuilder):
 
-    def fetch(self, buildset):
-        msg = "Fetching %s -> %s" % (buildset.project.repo_url, buildset.build_repo_dir)
-        self.info(msg)
-        fetcher = GitFetcher()
-        fetcher.fetch(buildset.project.repo_url, buildset.build_repo_dir)
+    def get_tox_parseconfig(self):
+        from tox._config import parseconfig as tox_parseconfig
+        return tox_parseconfig
 
-    def build_project(self, project):
-        self.info("Buildseting %s" % project.name)
-        buildset = Buildset.objects.create(project=project)
-        buildset_no = str(buildset.number)
-        build_dir = abspath(settings.BUILDS_ROOT, project.name, buildset_no)
-        makedirs(build_dir)
+    def get_tox_config(self, buildset):
+        """
+        Returns parsed tox config for given ``buildset``.
+        """
+        tox_ini_path = abspath(buildset.build_repo_dir, 'tox.ini')
+        args = ['-c', tox_ini_path]
+        tox_parseconfig = self.get_tox_parseconfig()
+        return tox_parseconfig(args)
 
-        buildset.build_dir = build_dir
-        buildset.save()
+    def get_prepared_builds(self, buildset):
+        """
+        Returns list of :model:`Buildset` instances. They should already be
+        flushed to the database and have (alternatively) ``options`` prepared.
+        """
+        tox_config = self.get_tox_config(buildset)
+        venvs = tox_config.envlist
+        return [Build.objects.create(
+            buildset=buildset,
+            number=number,
+            options={'toxenv': env},
+        ) for number, env in enumerate(venvs, 1)]
 
-        self.fetch(buildset)
-        self.pre_builds(buildset)
-        self.builds(buildset)
-        self.clean(buildset)
-
-    def pre_builds(self, buildset):
-        self.tox_ini_path = abspath(buildset.build_repo_dir, 'tox.ini')
-
-    def builds(self, buildset):
+    def run_builds(self, buildset):
         results = []
-        tox_config = get_tox_config(self.tox_ini_path)
+        tox_config = self.get_tox_config(buildset)
         venvs = tox_config.envlist
         total = len(venvs)
         for build_no, env in enumerate(venvs, 1):
@@ -106,12 +159,16 @@ class PythonBuilder(BaseBuilder):
             title=step['title'],
             cmd=' '.join(cmd),
             started_at=datetime.datetime.now(),
+            returncode=None,
         )
         command = execute_command(cmd)
         print "Running command: %r\n\traw: %s" % (' '.join(cmd), str(cmd))
         for chunk in command.iter_output():
             cache.set(build_command.cache_key_output, command.data)
         print "Finished command with code: %s" % command.returncode
+        build_command.finished_at = datetime.datetime.now()
+        build_command.save(update_fields=['finished_at'])
+
         try:
             filters = {'command': build_command}
             Output.objects.only('command').get(**filters)

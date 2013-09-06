@@ -12,6 +12,7 @@ from .tasks import do_build
 from .api.serializers import ProjectDetailSerializer
 from .api.serializers import BuildsetSerializer
 from .api.serializers import BuildDetailSerializer
+import datetime
 
 
 
@@ -100,6 +101,8 @@ class ProjectBuildsetBuildView(RedirectView):
             buildset__number=buildset_no,
             number=build_no,
         )
+        self.build.created_at = datetime.datetime.now()
+        self.build.save(force_update=True, update_fields=['created_at'])
         Command.objects.filter(build=self.build).delete()
 
         self.build.finished_at = None
