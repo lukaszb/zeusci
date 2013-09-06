@@ -166,8 +166,9 @@ class PythonBuilder(BaseBuilder):
         for chunk in command.iter_output():
             cache.set(build_command.cache_key_output, command.data)
         print "Finished command with code: %s" % command.returncode
+        build_command.returncode = command.returncode
         build_command.finished_at = datetime.datetime.now()
-        build_command.save(update_fields=['finished_at'])
+        build_command.save()
 
         try:
             filters = {'command': build_command}
