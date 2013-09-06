@@ -70,8 +70,26 @@ class BaseBuilder(object):
         This method is called *before* any build is run.
         """
 
+    def get_prepared_builds(self, buildset):
+        """
+        Returns list of :model:`Buildset` instances. They should already be
+        flushed to the database and have (alternatively) ``options`` prepared.
+        """
+        return []
+
     def run_builds(self, buildset):
-        raise NotImplementedError
+        results = []
+        for build in self.get_prepared_builds(buildset):
+            from .tasks import do_build
+            build.clear_output_cache()
+            shutil.copytree(buildset.build_repo_dir, build.build_repo_dir)
+            ar = do_build.delay(build, self.__class__)
+            results.append(ar)
+        for ar in results:
+            ar.wait()
+
+        now = datetime.datetime.now()
+        Buildset.objects.filter(pk=buildset.pk).update(finished_at=now)
 
     def post_builds(self, buildset):
         """
@@ -99,10 +117,6 @@ class PythonBuilder(BaseBuilder):
         return tox_parseconfig(args)
 
     def get_prepared_builds(self, buildset):
-        """
-        Returns list of :model:`Buildset` instances. They should already be
-        flushed to the database and have (alternatively) ``options`` prepared.
-        """
         tox_config = self.get_tox_config(buildset)
         venvs = tox_config.envlist
         return [Build.objects.create(
@@ -110,29 +124,6 @@ class PythonBuilder(BaseBuilder):
             number=number,
             options={'toxenv': env},
         ) for number, env in enumerate(venvs, 1)]
-
-    def run_builds(self, buildset):
-        results = []
-        tox_config = self.get_tox_config(buildset)
-        venvs = tox_config.envlist
-        total = len(venvs)
-        for build_no, env in enumerate(venvs, 1):
-            self.info("Buildset step %d / %d | tox:%s" % (build_no, total, env))
-            from .tasks import do_build
-            build = Build.objects.create(
-                buildset=buildset,
-                number=build_no,
-                options={'toxenv': env},
-            )
-            build.clear_output_cache()
-            shutil.copytree(buildset.build_repo_dir, build.build_repo_dir)
-            ar = do_build.delay(build, self.__class__)
-            results.append(ar)
-        for ar in results:
-            ar.wait()
-
-        now = datetime.datetime.now()
-        Buildset.objects.filter(pk=buildset.pk).update(finished_at=now)
 
     def build(self, build):
         for step in self.get_build_commands(build):
