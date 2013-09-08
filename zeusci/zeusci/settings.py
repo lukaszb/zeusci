@@ -28,7 +28,7 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*'] # XXX: for development
 
 TIME_ZONE = 'Europe/Warsaw'
 LANGUAGE_CODE = 'en-us'
