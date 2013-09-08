@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django.test import SimpleTestCase
+from zeus.models import Build
 from zeus.models import Buildset
 from zeus.models import Project
 from zeus.builders import BaseBuilder
@@ -87,6 +88,33 @@ class TestBaseBuilder(SimpleTestCase):
         build = mock.Mock()
         self.builder.run_build(build)
         do_build.delay.assert_called_once_with(build, self.builder.__class__)
+
+    @mock.patch('zeus.builders.shutil')
+    def test_build(self, shutil):
+        project = Project.objects.create(name='foobar')
+        build_dir = '/tmp/foobar/builds/'
+        buildset = Buildset.objects.create(project=project, build_dir=build_dir)
+        build = Build.objects.create(buildset=buildset, number=1)
+        self.assertIsNone(build.finished_at)
+
+        build_cmd = mock.Mock()
+        self.builder.execute_command = mock.Mock()
+        self.builder.get_build_commands = mock.Mock(return_value=[build_cmd])
+
+        self.builder.build(build)
+
+        # check if repo is properly copied
+        args = buildset.build_repo_dir, build.build_repo_dir
+        shutil.copytree.assert_called_once_with(*args)
+
+        # check if execute_command method was called
+        self.builder.execute_command.assert_called_once_with(build, build_cmd)
+
+        # check if build has properly finished_at attribute set
+        fetched = Build.objects.get(pk=buildset.pk)
+        now = datetime.datetime.now()
+        delta = datetime.timedelta(seconds=0.1)
+        self.assertAlmostEqual(fetched.finished_at, now, delta=delta)
 
     @mock.patch('zeus.builders.settings')
     def test_clean(self, settings):
