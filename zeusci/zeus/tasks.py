@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from .builders import build
 from celery import task
+import inspect
 import time
 
 
@@ -18,8 +19,8 @@ def do_build_project(project):
     return build(project)
 
 @task
-def do_build(build, builder_cls):
-    builder = builder_cls()
-    print " -> Running build(%r, %r)" % (build, builder_cls)
+def do_build(build, builder):
+    if inspect.isclass(builder):
+        builder = builder()
     builder.build(build)
 
