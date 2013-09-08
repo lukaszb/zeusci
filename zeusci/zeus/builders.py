@@ -83,7 +83,6 @@ class BaseBuilder(object):
             async_result = self.run_build(build)
             results.append(async_result)
         for ar in results:
-            print ar
             ar.wait()
 
         now = datetime.datetime.now()
