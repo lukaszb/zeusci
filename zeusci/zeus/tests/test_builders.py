@@ -82,6 +82,12 @@ class TestBaseBuilder(SimpleTestCase):
         delta = datetime.timedelta(seconds=0.1)
         self.assertAlmostEqual(buildset.finished_at, now, delta=delta)
 
+    @mock.patch('zeus.builders.do_build')
+    def test_run_build(self, do_build):
+        build = mock.Mock()
+        self.builder.run_build(build)
+        do_build.delay.assert_called_once_with(build, self.builder.__class__)
+
     @mock.patch('zeus.builders.settings')
     def test_clean(self, settings):
         build = mock.Mock()

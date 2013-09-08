@@ -31,6 +31,14 @@ class Project(models.Model):
             buildsets = buildsets[:settings.PROJECT_BUILDSETS_COUNT]
         return buildsets
 
+    def get_builder_class(self):
+        from .builders import PythonBuilder
+        return PythonBuilder
+
+    def get_builder(self):
+        builder_cls = self.get_builder_class()
+        return builder_cls()
+
 
 def get_project_model():
     return import_class(settings.PROJECT_MODEL)

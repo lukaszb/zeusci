@@ -8,6 +8,7 @@ from .models import Build
 from .models import Command
 from .models import Output
 from .execution import execute_command
+from .tasks import do_build
 from django.core.cache import cache
 import datetime
 import shutil
@@ -95,9 +96,6 @@ class BaseBuilder(object):
 
         This method actually simply runs :meth:`build` as a background job.
         """
-        # XXX: Needs to import here as trying to import at the global scope
-        # raises errors
-        from .tasks import do_build
         return do_build.delay(build, self.__class__)
 
     def build(self, build):
@@ -181,11 +179,4 @@ class PythonBuilder(BaseBuilder):
             output = Output.objects.create(output=command.data)
             build_command.command_output = output
             build_command.save(update_fields=['command_output'])
-
-
-def build(project):
-    print "Building project: %s" % project
-
-    builder = PythonBuilder()
-    builder.build_project(project)
 
