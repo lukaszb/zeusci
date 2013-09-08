@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
 from django.test import SimpleTestCase
+from zeus.models import Buildset
 from zeus.models import Project
 from zeus.builders import BaseBuilder
 from zeus.builders import PythonBuilder
+import datetime
 import mock
 import os
 import tempfile
@@ -12,10 +14,6 @@ class TestBaseBuilder(SimpleTestCase):
 
     def setUp(self):
         self.builder = BaseBuilder()
-
-    def test_build_method_is_not_implemented(self):
-        with self.assertRaises(NotImplementedError):
-            self.builder.build('project')
 
     @mock.patch('zeus.builders.makedirs')
     @mock.patch('zeus.builders.settings')
@@ -57,6 +55,32 @@ class TestBaseBuilder(SimpleTestCase):
         self.builder.fetch(buildset)
         self.builder.get_fetcher.assert_called_once_with(buildset)
         fetcher.fetch.assert_called_once_with('repo/url', '/tmp/build/dir')
+
+    def test_run_builds(self):
+        project = Project.objects.create(name='foobar')
+        buildset = Buildset.objects.create(project=project)
+
+        build1 = mock.Mock()
+        build2 = mock.Mock()
+        builds = [build1, build2]
+        self.builder.get_prepared_builds = mock.Mock(return_value=builds)
+        async_result = mock.Mock()
+        self.builder.run_build = mock.Mock(return_value=async_result)
+        self.builder.run_builds(buildset)
+
+        # check if run_build was called twice with proper parameters
+        calls = [mock.call(build1), mock.call(build2)]
+        self.assertEqual(self.builder.run_build.call_args_list, calls)
+
+        # check if async results' wait method were called
+        calls = [mock.call(), mock.call()]
+        self.assertEqual(async_result.wait.call_args_list, calls)
+
+        # check if buildset has properly finished_at attribute set
+        buildset = Buildset.objects.get(pk=buildset.pk)
+        now = datetime.datetime.now()
+        delta = datetime.timedelta(seconds=0.1)
+        self.assertAlmostEqual(buildset.finished_at, now, delta=delta)
 
     @mock.patch('zeus.builders.settings')
     def test_clean(self, settings):

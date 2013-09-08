@@ -18,9 +18,6 @@ class BaseBuilder(object):
     def info(self, message):
         print(" => %s" % message)
 
-    def build(self, project):
-        raise NotImplementedError
-
     def get_buildset(self, project):
         """
         Returns :model:`Buildset` instance with properly ``build_dir``
@@ -77,19 +74,41 @@ class BaseBuilder(object):
         """
         return []
 
+    def get_build_commands(self, buildset):
+        return []
+
     def run_builds(self, buildset):
         results = []
         for build in self.get_prepared_builds(buildset):
-            from .tasks import do_build
-            build.clear_output_cache()
-            shutil.copytree(buildset.build_repo_dir, build.build_repo_dir)
-            ar = do_build.delay(build, self.__class__)
-            results.append(ar)
+            async_result = self.run_build(build)
+            results.append(async_result)
         for ar in results:
+            print ar
             ar.wait()
 
         now = datetime.datetime.now()
         Buildset.objects.filter(pk=buildset.pk).update(finished_at=now)
+
+    def run_build(self, build):
+        """
+        Returns Celery's ``AsyncResult`` instance (task instance pushed to the
+        queue, waiting to be finished).
+
+        This method actually simply runs :meth:`build` as a background job.
+        """
+        # XXX: Needs to import here as trying to import at the global scope
+        # raises errors
+        from .tasks import do_build
+        return do_build.delay(build, self.__class__)
+
+    def build(self, build):
+        build.clear_output_cache()
+        shutil.copytree(build.buildset.build_repo_dir, build.build_repo_dir)
+        for step in self.get_build_commands(build):
+            self.execute_command(build, step)
+        Build.objects.filter(pk=build.pk).update(
+            finished_at=datetime.datetime.now(),
+        )
 
     def post_builds(self, buildset):
         """
@@ -124,13 +143,6 @@ class PythonBuilder(BaseBuilder):
             number=number,
             options={'toxenv': env},
         ) for number, env in enumerate(venvs, 1)]
-
-    def build(self, build):
-        for step in self.get_build_commands(build):
-            self.execute_command(build, step)
-        Build.objects.filter(pk=build.pk).update(
-            finished_at=datetime.datetime.now(),
-        )
 
     def get_build_commands(self, build):
         venv = build.options['toxenv']
