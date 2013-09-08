@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.test import SimpleTestCase
 from zeus.tasks import do_build
+from zeus.tasks import do_build_project
 import mock
 
 
@@ -29,4 +30,16 @@ class TestDoBuild(SimpleTestCase):
         do_build(build, DummyBuilder)
 
         self.assertEqual(called, [build])
+
+
+
+class TestDoBuildProject(SimpleTestCase):
+
+    def test_do_build_project(self):
+        builder = mock.Mock()
+        project = mock.Mock()
+        project.get_builder.return_value = builder
+        do_build_project(project)
+
+        builder.build_project.assert_called_once_with(project)
 
