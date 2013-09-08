@@ -129,6 +129,8 @@ class TestBaseBuilder(SimpleTestCase):
         self.builder.clean(build)
         self.assertFalse(os.path.isdir(build.build_dir))
 
+    # TODO: test execute_command method
+
 
 class TestPythonBuildseter(SimpleTestCase):
 
