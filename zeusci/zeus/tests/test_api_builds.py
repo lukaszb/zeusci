@@ -1,5 +1,6 @@
 from .test_api_base import BaseApiTestCase
 from django.core.urlresolvers import reverse
+from django.core.cache import cache
 from zeus.models import Build
 from zeus.models import Buildset
 from zeus.models import Command
@@ -59,6 +60,7 @@ class TestBuildApi(BaseApiTestCase):
             finished_at=(dt + datetime.timedelta(seconds=3)),
         )
         self.build2.save()
+        cache.clear()
 
     def test_build_detail(self):
         url_params = {'name': 'zeus', 'buildset_no': 1, 'build_no': 1}

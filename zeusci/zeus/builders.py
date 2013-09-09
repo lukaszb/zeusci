@@ -11,6 +11,7 @@ from .execution import execute_command
 from .tasks import do_build
 from django.core.cache import cache
 import datetime
+import os
 import shutil
 
 
@@ -68,19 +69,16 @@ class BaseBuilder(object):
         This method is called *before* any build is run.
         """
 
-    def get_prepared_builds(self, buildset):
+    def get_builds(self, buildset):
         """
         Returns list of :model:`Buildset` instances. They should already be
         flushed to the database and have (alternatively) ``options`` prepared.
         """
         return []
 
-    def get_build_commands(self, buildset):
-        return []
-
     def run_builds(self, buildset):
         results = []
-        for build in self.get_prepared_builds(buildset):
+        for build in self.get_builds(buildset):
             async_result = self.run_build(build)
             results.append(async_result)
         for ar in results:
@@ -99,13 +97,49 @@ class BaseBuilder(object):
         return do_build.delay(build, self.__class__)
 
     def build(self, build):
-        #build.clear_output_cache()
+        if os.path.isdir(build.build_repo_dir):
+            shutil.rmtree(build.build_repo_dir)
         shutil.copytree(build.buildset.build_repo_dir, build.build_repo_dir)
-        for step in self.get_build_commands(build):
-            self.execute_command(build, step)
+        for command in self.get_commands(build):
+            self.run_command(command)
         Build.objects.filter(pk=build.pk).update(
             finished_at=datetime.datetime.now(),
         )
+
+    def get_commands(self, build):
+        """
+        Returns list of :model:`Command` instances. They should already be
+        flushed to the database.
+
+        :param build: An :model:`Build` instance.
+        """
+        return []
+
+    def run_command(self, command):
+        """
+        Runs given ``command``.
+        """
+        executed_cmd = execute_command(command.cmd)
+        print "Running command: %r\n\traw: %s" % (command.get_cmd_string(),
+                                                  str(command.cmd))
+        data = ''
+        for chunk in executed_cmd.iter_output():
+            data += chunk
+            cache.set(command.cache_key_output, data)
+        print "Finished command with code: %s" % executed_cmd.returncode
+        command.returncode = executed_cmd.returncode
+        command.finished_at = datetime.datetime.now()
+        command.save()
+
+        try:
+            command.clear_output_cache()
+            filters = {'command': command}
+            Output.objects.only('command').get(**filters)
+            Output.objects.filter(**filters).update(output=data)
+        except Output.DoesNotExist:
+            output = Output.objects.create(output=data)
+            command.command_output = output
+            command.save()
 
     def post_builds(self, buildset):
         """
@@ -116,35 +150,6 @@ class BaseBuilder(object):
         if settings.REMOVE_BUILD_DIRS:
             shutil.rmtree(build.build_dir)
 
-    def execute_command(self, build, step):
-        cmd = step['cmd']
-        build_command = Command.objects.create(
-            build=build,
-            number=step['number'],
-            title=step['title'],
-            cmd=' '.join(cmd),
-            started_at=datetime.datetime.now(),
-            returncode=None,
-        )
-        command = execute_command(cmd)
-        print "Running command: %r\n\traw: %s" % (' '.join(cmd), str(cmd))
-        for chunk in command.iter_output():
-            cache.set(build_command.cache_key_output, command.data)
-        print "Finished command with code: %s" % command.returncode
-        build_command.returncode = command.returncode
-        build_command.finished_at = datetime.datetime.now()
-        build_command.save()
-
-        try:
-            filters = {'command': build_command}
-            Output.objects.only('command').get(**filters)
-            Output.objects.filter(**filters).update(output=command.data)
-            build.clear_output_cache()
-        except Output.DoesNotExist:
-            output = Output.objects.create(output=command.data)
-            build_command.command_output = output
-            build_command.save(update_fields=['command_output'])
-
 
 class PythonBuilder(BaseBuilder):
 
@@ -152,16 +157,19 @@ class PythonBuilder(BaseBuilder):
         from tox._config import parseconfig as tox_parseconfig
         return tox_parseconfig
 
+    def get_tox_ini_path(self, buildset):
+        return abspath(buildset.build_repo_dir, 'tox.ini')
+
     def get_tox_config(self, buildset):
         """
         Returns parsed tox config for given ``buildset``.
         """
-        tox_ini_path = abspath(buildset.build_repo_dir, 'tox.ini')
+        tox_ini_path = self.get_tox_ini_path(buildset)
         args = ['-c', tox_ini_path]
         tox_parseconfig = self.get_tox_parseconfig()
         return tox_parseconfig(args)
 
-    def get_prepared_builds(self, buildset):
+    def get_builds(self, buildset):
         tox_config = self.get_tox_config(buildset)
         venvs = tox_config.envlist
         return [Build.objects.create(
@@ -170,13 +178,16 @@ class PythonBuilder(BaseBuilder):
             options={'toxenv': env},
         ) for number, env in enumerate(venvs, 1)]
 
-    def get_build_commands(self, build):
+    def get_commands(self, build):
         venv = build.options['toxenv']
         tox_ini_path = abspath(build.build_repo_dir, 'tox.ini')
-        step = {
-            'number': 1,
-            'title': 'tox',
-            'cmd': ['tox', '-c', tox_ini_path, '-e', venv],
-        }
-        return [step]
+        command = Command.objects.create(
+            build=build,
+            number=1,
+            title='tox',
+            cmd=['tox', '-c', tox_ini_path, '-e', venv],
+            started_at=datetime.datetime.now(),
+            returncode=None,
+        )
+        return [command]
 

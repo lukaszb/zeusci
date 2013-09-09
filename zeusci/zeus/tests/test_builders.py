@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.test import SimpleTestCase
 from zeus.models import Build
 from zeus.models import Buildset
+from zeus.models import Command
 from zeus.models import Project
 from zeus.builders import BaseBuilder
 from zeus.builders import PythonBuilder
@@ -64,7 +65,7 @@ class TestBaseBuilder(SimpleTestCase):
         build1 = mock.Mock()
         build2 = mock.Mock()
         builds = [build1, build2]
-        self.builder.get_prepared_builds = mock.Mock(return_value=builds)
+        self.builder.get_builds = mock.Mock(return_value=builds)
         async_result = mock.Mock()
         self.builder.run_build = mock.Mock(return_value=async_result)
         self.builder.run_builds(buildset)
@@ -98,8 +99,8 @@ class TestBaseBuilder(SimpleTestCase):
         self.assertIsNone(build.finished_at)
 
         build_cmd = mock.Mock()
-        self.builder.execute_command = mock.Mock()
-        self.builder.get_build_commands = mock.Mock(return_value=[build_cmd])
+        self.builder.run_command = mock.Mock()
+        self.builder.get_commands = mock.Mock(return_value=[build_cmd])
 
         self.builder.build(build)
 
@@ -108,13 +109,53 @@ class TestBaseBuilder(SimpleTestCase):
         shutil.copytree.assert_called_once_with(*args)
 
         # check if execute_command method was called
-        self.builder.execute_command.assert_called_once_with(build, build_cmd)
+        self.builder.run_command.assert_called_once_with(build_cmd)
 
         # check if build has properly finished_at attribute set
         fetched = Build.objects.get(pk=buildset.pk)
         now = datetime.datetime.now()
         delta = datetime.timedelta(seconds=0.1)
         self.assertAlmostEqual(fetched.finished_at, now, delta=delta)
+
+    @mock.patch('zeus.builders.execute_command')
+    def test_run_command(self, execute_command):
+        project = Project.objects.create(name='foobar')
+        build_dir = '/tmp/foobar/builds/'
+        buildset = Buildset.objects.create(project=project, build_dir=build_dir)
+        build = Build.objects.create(buildset=buildset, number=1)
+        command = Command.objects.create(build=build, number=1, cmd=['make'])
+
+        command.clear_output_cache()
+
+        class DummyCommand(object):
+            returncode = 0
+            def iter_output(self):
+                yield 'line1\n'
+                yield 'line2'
+
+        execute_command.return_value = DummyCommand()
+
+        self.builder.run_command(command)
+
+        # check if command has properly set returncode attribute
+        self.assertEqual(command.returncode, 0)
+
+        # check if command has properly set finished_at attribute
+        now = datetime.datetime.now()
+        delta = datetime.timedelta(seconds=0.1)
+        self.assertAlmostEqual(command.finished_at, now, delta=delta)
+
+        # check if command and cache has properly set output
+        self.assertEqual(command.command_output.output, 'line1\nline2')
+        self.assertEqual(command.output, 'line1\nline2')
+
+        # check if output is overridden
+        command.clear_output_cache()
+        command.command_output.output = 'foo1bar2'
+        command.command_output.save()
+        self.builder.run_command(command)
+        self.assertEqual(command.command_output.output, 'foo1bar2')
+        self.assertEqual(command.output, 'foo1bar2')
 
     @mock.patch('zeus.builders.settings')
     def test_clean(self, settings):
@@ -129,13 +170,16 @@ class TestBaseBuilder(SimpleTestCase):
         self.builder.clean(build)
         self.assertFalse(os.path.isdir(build.build_dir))
 
-    # TODO: test execute_command method
-
 
 class TestPythonBuildseter(SimpleTestCase):
 
     def setUp(self):
         self.builder = PythonBuilder()
+
+    def test_get_tox_ini_path(self):
+        buildset = mock.Mock()
+        buildset.build_repo_dir = '/t/r'
+        self.assertEqual(self.builder.get_tox_ini_path(buildset), '/t/r/tox.ini')
 
     def test_get_tox_config(self):
         config = mock.Mock()
@@ -149,6 +193,25 @@ class TestPythonBuildseter(SimpleTestCase):
         expected_args = ['-c', '/tmp/build/dir/tox.ini']
         tox_parseconfig.assert_called_once_with(expected_args)
 
-    def test_build(self):
-        pass
+    def test_get_builds(self):
+        project = Project.objects.create(name='foobar')
+        build_dir = '/tmp/foobar/builds/'
+        buildset = Buildset.objects.create(project=project, build_dir=build_dir)
+        build = Build.objects.create(buildset=buildset, number=1, options={
+            'toxenv': 'py27'})
+        commands = self.builder.get_commands(build)
+        self.assertEqual(len(commands), 1)
+
+        command = commands[0]
+        self.assertEqual(command.number, 1)
+        self.assertEqual(command.title, 'tox')
+        cmd = [
+            'tox',
+            '-c',
+            '/tmp/foobar/builds/builds/1/repo/tox.ini',
+            '-e', 'py27',
+        ]
+        self.assertEqual(command.cmd, cmd)
+        self.assertEqual(command.output, '')
+        self.assertIsNone(command.returncode)
 
