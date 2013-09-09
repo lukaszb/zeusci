@@ -96,11 +96,12 @@ class Command(object):
 if __name__ == '__main__':
     cmd = 'for x in `seq 3`; do echo "Doing $x"; sleep 1; done'
     #cmd = 'echo foobar'
-    command = Command(cmd, shell=True, timeout=1)
+    timeout = 1.9
+    command = Command(cmd, shell=True, timeout=timeout)
     try:
-        for chunk in command.iter_output(pause=0.2):
+        for chunk in command.iter_output(pause=0.05):
             print(chunk, end='')
     except TimeoutExceeded as err:
-        pass
+        print("TimeoutExceeded (%ss)" % timeout)
     print(" -> Command finished with returncode: %s" % command.returncode)
 
