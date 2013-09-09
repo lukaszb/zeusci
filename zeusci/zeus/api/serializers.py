@@ -32,6 +32,7 @@ class BuildSerializer(serializers.ModelSerializer):
 class CommandSerializer(serializers.ModelSerializer):
     output = serializers.CharField()
     status = serializers.CharField()
+    cmd = serializers.CharField(source='get_cmd_string')
 
     class Meta:
         model = Command

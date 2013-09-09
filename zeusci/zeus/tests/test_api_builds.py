@@ -29,7 +29,7 @@ class TestBuildApi(BaseApiTestCase):
             number=1,
             build=self.build1,
             title='Step 1 -- Configuration',
-            cmd='./configure',
+            cmd=['./configure'],
         )
         output = Output.objects.create(output='Configured')
         self.build1_cmd1.command_output = output
@@ -43,7 +43,7 @@ class TestBuildApi(BaseApiTestCase):
             number=2,
             build=self.build1,
             title='Step 2 -- Build',
-            cmd='make',
+            cmd=['make', 'all'],
         )
         output = Output.objects.create(output='Build in progress ...')
         self.build1_cmd2.command_output = output
@@ -85,7 +85,7 @@ class TestBuildApi(BaseApiTestCase):
                 {
                     'number': 2,
                     'title': 'Step 2 -- Build',
-                    'cmd': 'make',
+                    'cmd': 'make all',
                     'output': 'Build in progress ...',
                     'started_at': self.build1_cmd2.started_at,
                     'finished_at': None,

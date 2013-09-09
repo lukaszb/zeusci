@@ -159,7 +159,7 @@ class Command(models.Model):
     number = models.PositiveIntegerField()
     command_output = models.OneToOneField('Output', null=True, blank=True,
         related_name='command')
-    cmd = models.CharField(max_length=256)
+    cmd = jsonfield.JSONField(default=list)
     title = models.CharField(max_length=256)
     created_at = models.DateTimeField(default=datetime.datetime.now)
     started_at = models.DateTimeField(null=True)
@@ -198,6 +198,9 @@ class Command(models.Model):
 
     def clear_output_cache(self):
         cache.delete(self.cache_key_output)
+
+    def get_cmd_string(self):
+        return ' '.join(self.cmd)
 
 
 class Output(models.Model):
