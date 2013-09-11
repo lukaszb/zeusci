@@ -170,15 +170,14 @@ djcelery.setup_loader()
 # =============================================================================
 # Compressor
 # =============================================================================
-COMPRESS = True
+COMPRESS_ENABLED = True
 COMPRESS_CSS_FILTERS = (
-    #'compressor.filters.css_default.CssAbsoluteFilter',
-    #'compressor.filters.cssmin.CSSMinFilter',
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter',
 )
 COMPRESS_OUTPUT_DIR = '.compressor-cache'
 COMPRESS_PRECOMPILERS = (
-    ('text/coffeescript', 'coffeecompressorcompiler.filter.CoffeeScriptCompiler'),
-    #('text/coffeescript', 'coffee --compile --stdio'),
+    ('text/coffeescript', 'coffee --compile --stdio'),
     ('text/x-sass', 'sass {infile} {outfile} -C'),
     ('text/x-scss', 'sass --scss {infile} {outfile}'),
 )
