@@ -55,7 +55,7 @@
     </thead>
     <tbody>
         <tr class="{{ buildset.status | statusToClass }}" ng-repeat="buildset in project.buildsets_recent">
-            <td><a href="{{ buildset.url }}">{{ buildset.number }}</a></td>
+            <td><a href="{{ buildset.url }}" class="block">{{ buildset.number }}</a></td>
             <td>{{ buildset.status }}</td>
             <td>{{ buildset.created_at }}</td>
             <td>{{ buildset.finished_at }}</td>

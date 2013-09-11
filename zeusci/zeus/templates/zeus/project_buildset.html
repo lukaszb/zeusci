@@ -37,7 +37,7 @@
     </thead>
     <tbody>
         <tr class="{{ build.status | statusToClass }}" ng-repeat="build in buildset.builds">
-            <td><a class="pull-right" href="{{ build.url }}">{{ build.number }}</a></td>
+            <td><a class="block" href="{{ build.url }}">{{ build.number }}</a></td>
             <td><span class="label label-{{ buildset.status | statusToBadgeClass }}">{{ buildset.status | uppercase }}</span></td>
             <td>{{ build.created_at | date:"medium" }}</td>
             <td>{{ build.finished_at | date:"medium" }}</td>
