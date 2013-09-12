@@ -14,6 +14,7 @@ module.exports = function (config) {
       'zeus/static/zeus/js/zeus.coffee',
       'zeus/static/zeus/js/controllers.coffee',
       'zeus/static/zeus/js/services.coffee',
+
       'zeus/static/zeus/js/tests/unit/controllerSpec.coffee',
       //'app/lib/angular/angular.js',
       //'app/lib/angular/angular-*.js',
@@ -25,7 +26,7 @@ module.exports = function (config) {
     frameworks: ['jasmine'],
 
     autoWatch: true,
-    singleRun: true,
+    singleRun: false,
 
     browsers: ['PhantomJS'],
 
