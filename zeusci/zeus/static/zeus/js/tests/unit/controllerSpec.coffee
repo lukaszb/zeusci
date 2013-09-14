@@ -1,28 +1,63 @@
 
-#/* jasmine specs for controllers go here */
 describe('Zeus controllers', () ->
+
+    beforeEach(module('zeus'));
 
     describe('ProjectDetailController', () ->
         scope = null
         controller = null
+        timeout = null
 
-        beforeEach(inject( ($rootScope, $controller) ->
+        it('pass', () -> {})
+
+        beforeEach(inject( ($rootScope, $controller, $timeout) ->
+            timeout = $timeout
             scope = $rootScope.$new()
-            console.log zeus.ProjectDetailController
-            controller = $controller(zeus.ProjectDetailController, {
+            controller = $controller('ProjectDetailController', {
                 $scope: scope,
-                #Project: null,
+                $timeout: timeout,
             })
         ))
 
 
-        it('should create "phones" model with 3 phones', () ->
-            scope = {}
-            console.log(controller)
-            #ctrl = new zeus.ProjectDetailController(scope)
-            expect(3).toBe(3);
+        describe('.init', () ->
+            project = {
+                name: 'Tron',
+                url: '/projects/1',
+            }
 
-            #expect(scope.phones.length).toBe(3)
+            beforeEach(() ->
+                controller.poll = () ->
+                    scope.pollerWasStarted = true
+                scope.init(JSON.stringify(project))
+            )
+
+            it('should properly set project', () ->
+                expect(scope.project).toEqual(project)
+            )
+
+            it('should properly set breadcrumbs', () ->
+                expect(scope.breadcrumbs).toEqual([
+                    {url: project.url, text: project.name},
+                ])
+            )
+
+            it('should run poller', () ->
+                expect(scope.pollerWasStarted).toBe(undefined)
+                timeout.flush()
+                expect(scope.pollerWasStarted).toBe(true)
+            )
+
+        )
+
+        it('.shouldPoll', () ->
+            expect(controller.shouldPoll()).toBe(true)
+            controller.POLL_PROJECT = false
+            expect(controller.shouldPoll()).toBe(false)
+        )
+
+        it('.poll', () ->
+            # TODO: Test polling
         )
 
     )

@@ -3,35 +3,35 @@ zeus.POLL_ENABLED = true
 zeus.POLL_INTERVAL = 3000
 zeus.POLL_BUILD_INTERVAL = 300
 
-zeus.ProjectDetailController = ($scope, $timeout, Project) ->
-    window.Project = Project
-    console.log " => Init ProjectDetailController"
-    zeus.POLL_PROJECT = true
+
+zeus.controller('ProjectDetailController', ($scope, $timeout, Project) ->
+    #console.log " => Init ProjectDetailController"
+    @.POLL_PROJECT = true
+    controller = this
+
+    controller.poll = () ->
+        if not controller.shouldPoll()
+            return
+        console.log " => poll project"
+        Project.get({name: $scope.project.name}, (project) ->
+            $scope.project = project
+            $timeout(controller.poll, zeus.POLL_INTERVAL)
+        )
 
     $scope.init = (project) ->
         project = JSON.parse(project)
-        console.log "init(", project, ")"
         $scope.project = project
-    #$scope.project = zeus_project
         $scope.breadcrumbs = [{url: $scope.project.url, text: $scope.project.name}]
-        $timeout(poll, zeus.POLL_INTERVAL)
+        $timeout(controller.poll, zeus.POLL_INTERVAL)
 
-    shouldPoll = () ->
-        return zeus.POLL_ENABLED and zeus.POLL_PROJECT
+    controller.shouldPoll = () ->
+        return zeus.POLL_ENABLED and @.POLL_PROJECT
 
-    poll = () ->
-        if not shouldPoll()
-            return
-        console.log " => poll project"
-        Project.get({name: zeus_project.name}, (project) ->
-            $scope.project = project
-            $timeout(poll, zeus.POLL_INTERVAL)
-        )
+)
 
 
 
-
-zeus.ProjectDetailController.$inject = ['$scope', '$timeout', 'Project']
+#zeus.ProjectDetailController.$inject = ['$scope', '$timeout', 'Project']
 
 
 zeus.BuildsetDetailController = ($scope, $timeout, Buildset) ->

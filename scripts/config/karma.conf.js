@@ -12,9 +12,9 @@ module.exports = function (config) {
       'zeus/static/zeus/js/angular.1.0.7.min.js',
       'zeus/static/zeus/js/angular-resource.1.0.7.min.js',
       'zeus/static/zeus/js/zeus.coffee',
-      //'zeus/static/zeus/js/*.coffee',
       'zeus/static/zeus/js/services.coffee',
       'zeus/static/zeus/js/controllers.coffee',
+      //'zeus/static/zeus/js/*.coffee',
 
       'zeus/static/zeus/js/tests/lib/angular-mocks.js',
       'zeus/static/zeus/js/tests/unit/controllerSpec.coffee',
