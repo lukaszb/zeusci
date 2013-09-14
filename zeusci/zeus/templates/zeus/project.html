@@ -9,8 +9,8 @@
 {% endblock %}
 
 {% block container %}
+<div ng-app="zeus" ng-controller="zeus.ProjectDetailController" ng-init='init({{ project|jsonify|jsonify }})'>
 {% verbatim %}
-<div ng-app="zeus" ng-controller="zeus.ProjectDetailController">
 
 <ul class="breadcrumb">
     <li ng-repeat="breadcrumb in breadcrumbs|breadcrumbLinks">

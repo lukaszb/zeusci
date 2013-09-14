@@ -8,8 +8,13 @@ zeus.ProjectDetailController = ($scope, $timeout, Project) ->
     console.log " => Init ProjectDetailController"
     zeus.POLL_PROJECT = true
 
-    $scope.project = zeus_project
-    $scope.breadcrumbs = [{url: $scope.project.url, text: $scope.project.name}]
+    $scope.init = (project) ->
+        project = JSON.parse(project)
+        console.log "init(", project, ")"
+        $scope.project = project
+    #$scope.project = zeus_project
+        $scope.breadcrumbs = [{url: $scope.project.url, text: $scope.project.name}]
+        $timeout(poll, zeus.POLL_INTERVAL)
 
     shouldPoll = () ->
         return zeus.POLL_ENABLED and zeus.POLL_PROJECT
@@ -23,7 +28,7 @@ zeus.ProjectDetailController = ($scope, $timeout, Project) ->
             $timeout(poll, zeus.POLL_INTERVAL)
         )
 
-    $timeout(poll, zeus.POLL_INTERVAL)
+
 
 
 zeus.ProjectDetailController.$inject = ['$scope', '$timeout', 'Project']
