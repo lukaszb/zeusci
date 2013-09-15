@@ -10,8 +10,12 @@
 
 {% block content %}
 
+{% comment %}
+BuildsetDetailController expects to be wrapped by ProjectDetailController so
+'project' should be already available at the scope 
+{% endcomment %}
+<div ng-controller="BuildsetDetailController" ng-init='init({{ buildset|jsonify|jsonify }})'>
 {% verbatim %}
-<div ng-controller="zeus.BuildsetDetailController">
 
 <dl class="dl-horizontal">
     <dt>Buildset</dt>

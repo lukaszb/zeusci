@@ -9,6 +9,7 @@ zeus.controller('ProjectDetailController', ($scope, $timeout, Project) ->
     controller = this
 
     $scope.init = (project) ->
+        console.log " => Init ProjectDetailController"
         project = JSON.parse(project)
         $scope.project = project
         $scope.breadcrumbs = [{url: $scope.project.url, text: $scope.project.name}]
@@ -29,25 +30,28 @@ zeus.controller('ProjectDetailController', ($scope, $timeout, Project) ->
 )
 
 
-zeus.BuildsetDetailController = ($scope, $timeout, Buildset) ->
-    window.Buildset = Buildset
-    console.log " => Init BuildsetDetailController"
+zeus.controller('BuildsetDetailController', ($scope, $timeout, Buildset) ->
     zeus.POLL_PROJECT = false
+    controller = this
 
-    $scope.buildset = zeus_buildset
 
-    getBreadcrumb = () ->
+    $scope.init = (buildset_json) ->
+        console.log " => Init BuildsetDetailController"
+        $scope.buildset = JSON.parse(buildset_json)
+        $scope.breadcrumbs.push(controller.getBreadcrumb())
+        $timeout(controller.poll, zeus.POLL_INTERVAL)
+
+    controller.getBreadcrumb = () ->
         url = $scope.buildset.url
         text = "Buildset ##{$scope.buildset.number}"
         return {url: url, text: text}
 
-    $scope.breadcrumbs.push(getBreadcrumb())
 
-    shouldPoll = () ->
+    controller.shouldPoll = () ->
         return zeus.POLL_ENABLED and not $scope.buildset.finished_at
 
-    poll = () ->
-        if not shouldPoll()
+    controller.poll = () ->
+        if not controller.shouldPoll()
             return
         console.log " => poll buildset"
         project = $scope.project
@@ -57,10 +61,7 @@ zeus.BuildsetDetailController = ($scope, $timeout, Buildset) ->
             $timeout(poll, zeus.POLL_INTERVAL)
         )
 
-    $timeout(poll, zeus.POLL_INTERVAL)
-
-
-zeus.BuildsetDetailController.$inject = ['$scope', '$timeout', 'Buildset']
+)
 
 
 zeus.BuildDetailController = ($scope, $timeout, Build) ->

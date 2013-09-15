@@ -8,8 +8,6 @@ describe('Zeus controllers', () ->
         controller = null
         timeout = null
 
-        it('pass', () -> {})
-
         beforeEach(inject( ($rootScope, $controller, $timeout) ->
             timeout = $timeout
             scope = $rootScope.$new()
@@ -18,7 +16,6 @@ describe('Zeus controllers', () ->
                 $timeout: timeout,
             })
         ))
-
 
         describe('.init', () ->
             project = {
@@ -58,6 +55,43 @@ describe('Zeus controllers', () ->
 
         it('.poll', () ->
             # TODO: Test polling
+        )
+
+    )
+
+    describe('BuildsetDetailController', () ->
+        scope = null
+        controller = null
+        timeout = null
+        project = null
+
+        beforeEach(inject( ($rootScope, $controller, $timeout) ->
+            project = {
+                name: 'Tron',
+                url: '/projects/1',
+            }
+            timeout = $timeout
+            scope = $rootScope.$new()
+            scope.project = project
+            scope.breadcrumbs = []
+            controller = $controller('BuildsetDetailController', {
+                $scope: scope,
+                $timeout: timeout,
+            })
+        ))
+
+        it('.getBreadcrumb', () ->
+            scope.buildset = {number: 145, url: '/foo/bar'}
+            scope.breadcrumbs = []
+            breadcrumb = controller.getBreadcrumb()
+            expect(breadcrumb).toEqual({url: '/foo/bar', text: 'Buildset #145'})
+        )
+
+        it('.shouldPoll', () ->
+            scope.buildset = {}
+            expect(controller.shouldPoll()).toBe(true)
+            scope.buildset.finished_at = 'some date'
+            expect(controller.shouldPoll()).toBe(false)
         )
 
     )

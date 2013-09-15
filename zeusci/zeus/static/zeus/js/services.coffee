@@ -15,7 +15,7 @@ zeus.factory('Buildset', ($resource) ->
     return $resource(zeus.API_BUILDSET_DETAIL_URL, {}, {
         query: {
             method: 'GET',
-            params: {name: zeus_project.name},
+            params: {name: null},
         },
     })
 )
