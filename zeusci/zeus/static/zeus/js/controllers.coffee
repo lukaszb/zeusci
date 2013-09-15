@@ -5,9 +5,14 @@ zeus.POLL_BUILD_INTERVAL = 300
 
 
 zeus.controller('ProjectDetailController', ($scope, $timeout, Project) ->
-    #console.log " => Init ProjectDetailController"
     @.POLL_PROJECT = true
     controller = this
+
+    $scope.init = (project) ->
+        project = JSON.parse(project)
+        $scope.project = project
+        $scope.breadcrumbs = [{url: $scope.project.url, text: $scope.project.name}]
+        $timeout(controller.poll, zeus.POLL_INTERVAL)
 
     controller.poll = () ->
         if not controller.shouldPoll()
@@ -18,20 +23,10 @@ zeus.controller('ProjectDetailController', ($scope, $timeout, Project) ->
             $timeout(controller.poll, zeus.POLL_INTERVAL)
         )
 
-    $scope.init = (project) ->
-        project = JSON.parse(project)
-        $scope.project = project
-        $scope.breadcrumbs = [{url: $scope.project.url, text: $scope.project.name}]
-        $timeout(controller.poll, zeus.POLL_INTERVAL)
-
     controller.shouldPoll = () ->
         return zeus.POLL_ENABLED and @.POLL_PROJECT
 
 )
-
-
-
-#zeus.ProjectDetailController.$inject = ['$scope', '$timeout', 'Project']
 
 
 zeus.BuildsetDetailController = ($scope, $timeout, Buildset) ->
