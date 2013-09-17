@@ -64,6 +64,8 @@ class ProjectBuildDetailView(TemplateView):
         data['project'] = ProjectDetailSerializer(build.buildset.project).data
         data['buildset'] = BuildsetSerializer(build.buildset).data
         data['build'] = BuildDetailSerializer(build).data
+        from zeus.templatetags.zeus import jsonify
+        data['build_init_json'] = jsonify('init(' + jsonify(data['build']) + ')')
         data['force_build_url'] = build.get_force_build_url()
         return data
 

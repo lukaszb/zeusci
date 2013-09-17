@@ -15,17 +15,20 @@ zeus.factory('Buildset', ($resource) ->
     return $resource(zeus.API_BUILDSET_DETAIL_URL, {}, {
         query: {
             method: 'GET',
-            params: {name: null},
+            params: {},
         },
     })
 )
 
 zeus.factory('Build', ($resource) ->
-    return $resource(zeus.API_BUILD_DETAIL_URL, {}, {
+    Build = $resource(zeus.API_BUILD_DETAIL_URL, {}, {
         query: {
             method: 'GET',
-            params: {name: zeus_project.name, buildsetNo: zeus_buildset.number},
+            params: {},
         },
     })
+    Build.getInitialBuild = () ->
+        return initialBuild
+    return Build
 )
 

@@ -9,7 +9,6 @@ zeus.controller('ProjectDetailController', ($scope, $timeout, Project) ->
     controller = this
 
     $scope.init = (project) ->
-        console.log " => Init ProjectDetailController"
         project = JSON.parse(project)
         $scope.project = project
         $scope.breadcrumbs = [{url: $scope.project.url, text: $scope.project.name}]
@@ -36,7 +35,6 @@ zeus.controller('BuildsetDetailController', ($scope, $timeout, Buildset) ->
 
 
     $scope.init = (buildset_json) ->
-        console.log " => Init BuildsetDetailController"
         $scope.buildset = JSON.parse(buildset_json)
         $scope.breadcrumbs.push(controller.getBreadcrumb())
         $timeout(controller.poll, zeus.POLL_INTERVAL)
@@ -58,45 +56,45 @@ zeus.controller('BuildsetDetailController', ($scope, $timeout, Buildset) ->
         buildset = $scope.buildset
         Buildset.get({name: project.name, buildsetNo: buildset.number}, (buildset) ->
             $scope.buildset = buildset
-            $timeout(poll, zeus.POLL_INTERVAL)
+            $timeout(controller.poll, zeus.POLL_INTERVAL)
         )
 
 )
 
 
-zeus.BuildDetailController = ($scope, $timeout, Build) ->
-    console.log " => Init BuildDetailController"
+zeus.controller('BuildDetailController', ($scope, $timeout, Build) ->
     zeus.POLL_PROJECT = false
+    controller = this
 
-    $scope.build = zeus_build
+    $scope.init = () ->
+        $scope.build = Build.getInitialBuild()
+        $scope.breadcrumbs.push(controller.getBreadcrumb())
+        $timeout(controller.poll, zeus.POLL_BUILD_INTERVAL)
+        if window.force_build_url
+            $scope.force_build_url = force_build_url
 
-    getBreadcrumb = () ->
+    controller.getBreadcrumb = () ->
         url = $scope.build.url
         text = "Build ##{$scope.build.number}"
         return {url: url, text: text}
-    $scope.breadcrumbs.push(getBreadcrumb())
 
-    shouldPoll = () ->
+    controller.shouldPoll = () ->
         should = zeus.POLL_ENABLED and not $scope.build.finished_at
         return should
 
-    poll = () ->
-        if not shouldPoll()
+    controller.poll = () ->
+        if not controller.shouldPoll()
             return
         console.log " => poll build"
-        project = zeus_project
-        buildset = zeus_buildset
-        build = zeus_build
-        params = {name: project.name, buildsetNo: buildset.number, buildNo: build.number}
+        params = {
+            name: $scope.project.name,
+            buildsetNo: $scope.buildset.number,
+            buildNo: $scope.build.number,
+        }
         Build.get(params, (build) ->
             $scope.build = build
-            $timeout(poll, zeus.POLL_BUILD_INTERVAL)
+            $timeout(controller.poll, zeus.POLL_BUILD_INTERVAL)
         )
 
-    $timeout(poll, zeus.POLL_BUILD_INTERVAL)
-
-    if window.force_build_url
-        $scope.force_build_url = force_build_url
-
-zeus.BuildDetailController.$inject = ['$scope', '$timeout', 'Build']
+)
 

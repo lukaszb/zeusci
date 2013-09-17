@@ -94,6 +94,53 @@ describe('Zeus controllers', () ->
             expect(controller.shouldPoll()).toBe(false)
         )
 
+        it('.poll', () ->
+            # TODO: Test polling
+        )
+
+    )
+
+    describe('BuildDetailController', () ->
+        scope = null
+        controller = null
+        timeout = null
+
+        beforeEach(inject( ($rootScope, $controller, $timeout) ->
+            scope = $rootScope.$new()
+            scope.project = {name: 'Tron', url: '/p/4'}
+            scope.buildset = {number: 41}
+            timeout = $timeout
+            controller = $controller('BuildDetailController', {
+                $scope: scope,
+                $timeout: timeout,
+            })
+        ))
+
+        it('.getBreadcrumb', () ->
+            scope.build = {number: 12, url: '/foo/bar'}
+            breadcrumb = controller.getBreadcrumb()
+            expect(breadcrumb).toEqual({url: '/foo/bar', text: 'Build #12'})
+        )
+
+        it('.shouldPoll', () ->
+            scope.build = {}
+            expect(controller.shouldPoll()).toBe(true)
+            scope.build.finished_at = 'some date'
+            expect(controller.shouldPoll()).toBe(false)
+        )
+
+        it('.init', () ->
+            controller.poll = () ->
+                scope.pollerWasStarted = true
+            scope.breadcrumbs = []
+
+            build = {number: 25, url: '/b/25'}
+            scope.init(JSON.stringify(build))
+            #expect(scope.breadcrumbs).toEqual([
+                #{url: '/b/25', text: 'Build #25'},
+            #])
+        )
+
     )
 )
 
