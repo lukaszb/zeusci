@@ -18,3 +18,9 @@ smarturls == 0.1.2
 werkzeug == 0.9.1
 
 python-memcached == 1.53
+
+# for tests
+yanc == 0.2.4
+nose-alert == 0.9.1
+nose-watch == 0.9.1.dev
+mock == 1.0.1
