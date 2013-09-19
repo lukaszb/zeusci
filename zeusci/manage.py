@@ -1,4 +1,4 @@
-#!../devenv/bin/python
+#!../.devenv/bin/python
 import os
 import sys
 

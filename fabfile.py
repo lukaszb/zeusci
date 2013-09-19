@@ -18,23 +18,31 @@ abspath = lambda *p: os.path.abspath(os.path.join(*p))
 
 ROOT_DIR = os.path.dirname(__file__)
 PROJECT_DIR = abspath(ROOT_DIR, 'zeusci')
-DEVENV_DIR = abspath(ROOT_DIR, 'devenv')
-MANAGE_BIN = abspath(PROJECT_DIR, 'manage.py')
+DEVENV_DIR = abspath(ROOT_DIR, '.devenv')
 PYTHON_BIN = abspath(DEVENV_DIR, 'bin', 'python')
+PYTHON_VER = 'python2.7'
+MANAGE_BIN = _('{{ PYTHON_BIN }} ' + abspath(PROJECT_DIR, 'manage.py'))
+PIP_BIN = abspath(DEVENV_DIR, 'bin', 'pip')
 CONFIG_DIR = abspath(ROOT_DIR, 'config')
+REQUIREMENTS_TXT = abspath(CONFIG_DIR, 'requirements.txt')
 KARMA_CONFIG = abspath(CONFIG_DIR, 'karma.conf.js')
 
 
-def _error(msg, code=1):
-    print("ERROR: %s" % msg)
-    sys.exit(code)
+def _warn(msg):
+    print("[WARNING] %s" % msg)
 
 
 def setup_env():
-    if os.path.exists(DEVENV_DIR):
-        _error(_("Development environment seems to exists at {{ DEVENV_DIR }}"))
     with cd(ROOT_DIR):
-        local('tox -e devenv')
+        if os.path.exists(DEVENV_DIR):
+            _warn(_("Development environment seems to exists at {{ DEVENV_DIR }}"))
+        else:
+            local(_('virtualenv -p {{ PYTHON_VER }} {{ DEVENV_DIR }}'))
+        local(_('{{ PIP_BIN }} install -r {{ REQUIREMENTS_TXT }}'))
+
+def clear_env():
+    with cd(ROOT_DIR):
+        local(_('rm -Rf {{ DEVENV_DIR }}'))
 
 def test_py():
     test_cmd = _('{{ PYTHON_BIN }} {{ MANAGE_BIN }} test zeus')
@@ -47,4 +55,13 @@ def test_js():
     test_cmd = 'karma start {/config/karma.conf.js'
     test_cmd = _('karma start {{ KARMA_CONFIG }}')
     local(test_cmd)
+
+def shell():
+    local(_('{{ MANAGE_BIN }} shell_plus'))
+
+def server():
+    local(_('{{ MANAGE_BIN }} runserver'))
+
+def celery():
+    local(_('{{ MANAGE_BIN }} celery worker'))
 

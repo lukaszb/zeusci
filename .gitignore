@@ -3,5 +3,5 @@
 zeusci/builds
 .compressor-cache
 
-devenv
+.devenv
 var
