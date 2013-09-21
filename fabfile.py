@@ -45,7 +45,8 @@ def clear_env():
         local(_('rm -Rf {{ DEVENV_DIR }}'))
 
 def test_py():
-    test_cmd = _('{{ PYTHON_BIN }} {{ MANAGE_BIN }} test zeus')
+    test_cmd = _('{{ MANAGE_BIN }} test zeus')
+    print repr(test_cmd)
     cmd = _('watchmedo shell-command -w -R -p "*.py" -c "clear && {{ test_cmd }}"')
     with cd(PROJECT_DIR):
         local(test_cmd)
