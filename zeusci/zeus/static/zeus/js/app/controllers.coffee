@@ -1,15 +1,15 @@
 
 
-zeus.controller 'ProjectController', ($scope, $timeout, $location, Project) ->
+zeus.controller 'ProjectController', ($scope, $timeout, Project) ->
     console.log " => init ProjectController"
 
     $scope.project = Project.getInstance()
 
 
-zeus.controller 'ProjectDetailController', ($scope, $location) ->
+zeus.controller 'ProjectDetailController', ($scope) ->
     console.log " => init ProjectDetailController"
 
-zeus.controller 'BuildsetDetailController', ($scope, $location, $routeParams, Buildset) ->
+zeus.controller 'BuildsetDetailController', ($scope, $routeParams, Buildset) ->
     console.log " => init BuildsetDetailController"
     console.log $routeParams
 
