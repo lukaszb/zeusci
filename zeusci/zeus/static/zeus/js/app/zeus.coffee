@@ -40,9 +40,11 @@ zeus.status = {
     FAILED: 'failed',
 }
 
-zeus.config(['$routeProvider', ($routeProvider) ->
-    $routeProvider
-        .when('/foo', {template: "Project: {{ project.name }}"})
-        .when('/bar', {template: "Bar: {{ project.name }}"})
-])
+#zeus.config(['$routeProvider', '$locationProvider', ($routeProvider, $locationProvider) ->
+    #$routeProvider
+        #.when('/foo', {template: "Project: {{ project.name }}"})
+        #.when('/bar', {template: "Bar: {{ project.name }}"})
+
+    #$locationProvider.html5Mode(true)
+#])
 

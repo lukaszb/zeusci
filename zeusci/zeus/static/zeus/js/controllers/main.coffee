@@ -3,16 +3,21 @@ zeus.POLL_ENABLED = true
 zeus.POLL_INTERVAL = 3000
 zeus.POLL_BUILD_INTERVAL = 300
 
+window = @
 
-zeus.controller('ProjectDetailController', ($scope, $timeout, Project) ->
+zeus.controller('ProjectDetailController', ($scope, $timeout, $location, Project) ->
     @.POLL_PROJECT = true
     controller = this
 
     $scope.init = (project) ->
+        window.$location = $location
+        $scope.$location = $location
         project = JSON.parse(project)
         $scope.project = project
         $scope.breadcrumbs = [{url: $scope.project.url, text: $scope.project.name}]
         $timeout(controller.poll, zeus.POLL_INTERVAL)
+
+        #$location.path('/foo')
 
     controller.poll = () ->
         if not controller.shouldPoll()
