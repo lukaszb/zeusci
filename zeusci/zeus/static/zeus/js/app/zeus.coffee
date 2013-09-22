@@ -40,11 +40,27 @@ zeus.status = {
     FAILED: 'failed',
 }
 
-#zeus.config(['$routeProvider', '$locationProvider', ($routeProvider, $locationProvider) ->
-    #$routeProvider
-        #.when('/foo', {template: "Project: {{ project.name }}"})
-        #.when('/bar', {template: "Bar: {{ project.name }}"})
+zeus.config(['$routeProvider', '$locationProvider', ($routeProvider, $locationProvider) ->
+    # There should be PROJECT_URL defined at the global scope
+    TEMPLATES_URL = "/static/zeus/templates"
+    #if PROJECT_URL[PROJECT_URL.length - 1] == "/"
+        #PROJECT_URL = ""#PROJECT_URL.slice(0, PROJECT_URL.length - 1)
 
-    #$locationProvider.html5Mode(true)
-#])
+    zeus.API_PROJECT_DETAIL_URL = '/api/projects/:name.json'
+    zeus.API_BUILDSET_DETAIL_URL = '/api/projects/:name/buildsets/:buildsetNo.json'
+    zeus.API_BUILD_DETAIL_URL = '/api/projects/:name/builds/:buildsetNo.:buildNo.json'
+
+    $routeProvider
+        .when("#{PROJECT_URL}", {
+            templateUrl: "#{TEMPLATES_URL}/project_detail.html",
+            controller: "ProjectDetailController"})
+        .when("#{PROJECT_URL}buildset/:buildsetNo/", {
+            templateUrl: "#{TEMPLATES_URL}/buildset_detail.html",
+            controller: "BuildsetDetailController"})
+        .otherwise({redirectTo: PROJECT_URL})
+
+    console.log "#{PROJECT_URL}buildsets/:buildsetNo"
+
+    $locationProvider.html5Mode(true)
+])
 

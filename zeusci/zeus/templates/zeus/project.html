@@ -4,22 +4,18 @@
 {% block init_js %}
 {{ block.super }}
 <script type="text/javascript">
+    // global vars
     zeus_project = {{ project|jsonify }};
+    var PROJECT_URL = "{{ project.url }}";
+    var STATIC_URL = "{{ STATIC_URL }}";
+    var PARTIALS_URL = "{{ STATIC_URL }}zeus/js/app/partials/";
 </script>
 {% endblock %}
 
 {% block container %}
-<div ng-app="zeus" ng-controller="ProjectController" ng-init='init({{ project|jsonify|jsonify }})'>
+<a href="{% url "zeus_force_project_buildset" name=project.name %}">Force build</a>
+<div ng-app="zeus" ng-controller="ProjectController">
 {% verbatim %}
-
-<ul class="breadcrumb">
-    <li ng-repeat="breadcrumb in breadcrumbs|breadcrumbLinks">
-        <a href="{{ breadcrumb.url }}">{{ breadcrumb.text }}</a>
-    </li>
-    <li class="active" ng-repeat="breadcrumb in breadcrumbs|breadcrumbActive">
-        {{ breadcrumb.text }}
-    </li>
-</ul>
 
 <h1><a href="{{ project.url }}">{{ project.name }}</a></h1>
 
@@ -32,12 +28,12 @@
 </dl>
 
 {% endverbatim %}
-<a href="{% url "zeus_force_project_buildset" name=project.name %}">Force build</a>
 
-{% block content %}
-<div ng-view></div>
-</div>{# end of ng-app #}
-{% endblock content %}
+<div ng-view>
+</div>
+
+{# end of ng-app #}
+</div>
 
 {% endblock container %}
 

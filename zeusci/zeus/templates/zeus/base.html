@@ -11,12 +11,15 @@
 
 {% block extra_js %}
 {% compress js %}
+{# libraries #}
 <script type="text/javascript" src="{% static "zeus/js/lib/moment.2.0.0.min.js" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/lib/angular.1.0.7.min.js" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/lib/angular-resource.1.0.7.min.js" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/app/zeus.coffee" %}"></script>
+{# setup global variables #}
 {% block init_js %}{% endblock %}
-<script type="text/coffeescript" src="{% static "zeus/js/services/main.coffee" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/controllers/controllers.coffee" %}"></script>
+{# app #}
+<script type="text/coffeescript" src="{% static "zeus/js/app/app.coffee" %}"></script>
+<script type="text/coffeescript" src="{% static "zeus/js/app/services.coffee" %}"></script>
+<script type="text/coffeescript" src="{% static "zeus/js/app/controllers.coffee" %}"></script>
 {% endcompress %}
 {% endblock %}
