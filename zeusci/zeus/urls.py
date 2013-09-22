@@ -14,7 +14,7 @@ urlpatterns = patterns('zeus.views',
 
     #surl('/p/<slug:name>/*', 'project_view', name='zeus_project_detail'),
     url('^p/(?P<name>\w+)/*', 'project_view', name='zeus_project_detail'),
-    surl('/p/<slug:name>/buildset/<int:buildset_no>/$',
+    surl('/p/<slug:name>/buildsets/<int:buildset_no>/$',
         view='project_buildset_detail_view',
         name='zeus_project_buildset_detail'),
     surl('/p/<slug:name>/builds/<int:buildset_no>\.<int:build_no>/$',
