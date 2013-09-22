@@ -39,10 +39,9 @@
 {% endverbatim %}
 
 {% block content %}
+<div ng-view>
 <a href="{% url "zeus_force_project_buildset" name=project.name %}">Force build</a>
 {% verbatim %}
-
-<div ng-view></div>
 
 <table class="table table-striped table-bordered table-condensed table-hover">
     <caption>Recent buildsets</caption>
@@ -68,6 +67,7 @@
 
 </div>
 {% endverbatim %}
+</div>
 {% endblock content %}
 
 {% endblock container %}
