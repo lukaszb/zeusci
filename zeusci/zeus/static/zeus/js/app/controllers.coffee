@@ -9,6 +9,12 @@ zeus.controller 'ProjectController', ($scope, $timeout, $location, Project) ->
 zeus.controller 'ProjectDetailController', ($scope, $location) ->
     console.log " => init ProjectDetailController"
 
-zeus.controller 'BuildsetDetailController', ($scope, $location, $routeParams) ->
+zeus.controller 'BuildsetDetailController', ($scope, $location, $routeParams, Buildset) ->
     console.log " => init BuildsetDetailController"
+    console.log $routeParams
+
+    $scope.buildset = Buildset.query({
+        name: $scope.project.name,
+        buildsetNo: $routeParams.buildsetNo,
+    })
 

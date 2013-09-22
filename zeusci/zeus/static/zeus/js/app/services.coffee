@@ -16,3 +16,11 @@ zeus.factory 'Project', ($resource) ->
     window.Project = Project
     return Project
 
+
+zeus.factory 'Buildset', ($resource) ->
+    Buildset = $resource(zeus.API_BUILDSET_DETAIL_URL, {}, {
+        query: {method: 'GET'},
+    })
+    window.Buildset = Buildset
+    return Buildset
+

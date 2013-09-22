@@ -1,3 +1,10 @@
+<h3>Builds</h3>
 
-To Be Done
-
+<div class="list-group">
+    <a class="list-group-item" ng-repeat="build in buildset.builds">
+        <h4 class="list-group-item-heading">
+            {{ buildset.number }}.{{ build.number }}
+        </h4>
+        <p class="list-group-item-text">Status: {{ build.status }}</p>
+    </a>
+</div>
