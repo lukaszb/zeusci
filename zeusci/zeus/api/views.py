@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
-from ..conf import settings
+from ..conf import settings as zeus_settings
 from ..models import Buildset
 from ..models import Build
 from ..models import Project
@@ -8,11 +9,18 @@ from .serializers import BuildsetSerializer
 from .serializers import BuildDetailSerializer
 from .serializers import ProjectDetailSerializer
 from .serializers import ProjectSerializer
+import time
 
 
 class BaseApiMixin(object):
-    pagination_serializer_class = settings.API_PAGINATION_SERIALIZER_CLASS
-    paginate_by = settings.API_PAGINATE_BY
+    pagination_serializer_class = zeus_settings.API_PAGINATION_SERIALIZER_CLASS
+    paginate_by = zeus_settings.API_PAGINATE_BY
+
+    def dispatch(self, *args, **kwargs):
+        if settings.DEBUG and zeus_settings.API_DELAY:
+            # TODO: note user (log) that API calls are artificially delayed
+            time.sleep(zeus_settings.API_DELAY)
+        return super(BaseApiMixin, self).dispatch(*args, **kwargs)
 
 
 class ProjectList(BaseApiMixin, generics.ListCreateAPIView):
