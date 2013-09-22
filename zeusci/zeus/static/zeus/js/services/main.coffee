@@ -27,8 +27,6 @@ zeus.factory('Build', ($resource) ->
             params: {},
         },
     })
-    Build.getInitialBuild = () ->
-        return initialBuild
     return Build
 )
 

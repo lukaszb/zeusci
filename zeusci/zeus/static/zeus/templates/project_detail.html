@@ -1,0 +1,21 @@
+<table class="table table-striped table-bordered table-condensed table-hover">
+    <caption>Recent buildsets</caption>
+    <thead>
+        <tr>
+            <th>Buildset</th>
+            <th>Status</th>
+            <th>Started</th>
+            <th>Finished</th>
+            <th>Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="{{ buildset.status | statusToClass }}" ng-repeat="buildset in project.buildsets_recent">
+            <td><a href="{{ buildset.url }}" class="block">{{ buildset.number }}</a></td>
+            <td>{{ buildset.status }}</td>
+            <td>{{ buildset.created_at }}</td>
+            <td>{{ buildset.finished_at }}</td>
+            <td>{{ buildset.duration }}</td>
+        </tr>
+    </tbody>
+</table>
