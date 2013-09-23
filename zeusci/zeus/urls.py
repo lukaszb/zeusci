@@ -12,14 +12,18 @@ urlpatterns = patterns('zeus.views',
         view='project_build_view',
         name='zeus_force_project_build'),
 
-    #surl('/p/<slug:name>/*', 'project_view', name='zeus_project_detail'),
-    url('^p/(?P<name>\w+)/*', 'project_view', name='zeus_project_detail'),
-    surl('/p/<slug:name>/buildsets/<int:buildset_no>/$',
-        view='project_buildset_detail_view',
+    # the same view handles those paths as frontend client is responsible for
+    # further routing.
+    url('^p/(?P<name>\w+)/*',
+        view='project_view',
+        name='zeus_project_detail'),
+    # we need buildset/build routes here so the urls can be bookmarked (or page
+    # refreshed)
+    url('^p/(?P<name>\w+)/buildsets/(?P<buildset_no>\d+)/$',
+        view='project_view',
         name='zeus_project_buildset_detail'),
-    surl('/p/<slug:name>/builds/<int:buildset_no>\.<int:build_no>/$',
-        view='project_build_detail_view',
+    url('^p/(?P<name>\w+)/buildsets/(?P<buildset_no>\d+)\.(?P<build_no>\d+)/$',
+        view='project_view',
         name='zeus_project_build_detail'),
-
 )
 
