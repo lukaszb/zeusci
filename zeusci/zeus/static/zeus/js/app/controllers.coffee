@@ -9,6 +9,7 @@ zeus.controller 'ProjectController', ($scope, $timeout, Project) ->
 zeus.controller 'ProjectDetailController', ($scope) ->
     console.log " => init ProjectDetailController"
 
+
 zeus.controller 'BuildsetDetailController', ($scope, $routeParams, Buildset) ->
     console.log " => init BuildsetDetailController"
     console.log $routeParams
