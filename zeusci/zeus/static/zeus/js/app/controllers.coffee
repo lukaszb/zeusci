@@ -12,7 +12,6 @@ zeus.controller 'ProjectDetailController', ($scope) ->
 
 zeus.controller 'BuildsetDetailController', ($scope, $routeParams, Buildset) ->
     console.log " => init BuildsetDetailController"
-    console.log $routeParams
 
     $scope.buildset = Buildset.query({
         name: $scope.project.name,
