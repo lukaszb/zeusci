@@ -1,5 +1,5 @@
 
-zeus = angular.module('zeus', ['ngResource'])
+zeus = angular.module('zeus', ['ngResource', 'zeusConstants', 'zeusFilters'])
 
 zeus.config(['$routeProvider', '$locationProvider', ($routeProvider, $locationProvider) ->
 
