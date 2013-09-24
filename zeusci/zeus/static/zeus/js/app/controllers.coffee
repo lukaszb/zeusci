@@ -18,3 +18,12 @@ zeus.controller 'BuildsetDetailController', ($scope, $routeParams, Buildset) ->
         buildsetNo: $routeParams.buildsetNo,
     })
 
+
+zeus.controller 'BuildDetailController', ($scope, $routeParams, Build) ->
+
+    $scope.build = Build.query({
+        name: $scope.project.name,
+        buildsetNo: $routeParams.buildsetNo,
+        buildNo: $routeParams,buildNo,
+    })
+

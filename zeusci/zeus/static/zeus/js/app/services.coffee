@@ -24,3 +24,11 @@ zeus.factory 'Buildset', ($resource) ->
     window.Buildset = Buildset
     return Buildset
 
+
+zeus.factory 'Build', ($resource) ->
+    Build = $resource(zeus.API_BUILD_DETAIL_URL, {}, {
+        query: {method: 'GET'},
+    })
+    window.Build = Build
+    return Build
+

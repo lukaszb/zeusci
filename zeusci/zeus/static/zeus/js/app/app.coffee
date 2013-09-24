@@ -8,9 +8,13 @@ zeus.config(['$routeProvider', '$locationProvider', ($routeProvider, $locationPr
             controller: "ProjectDetailController",
             templateUrl: "#{PARTIALS_URL}project_detail.html",
         })
-        .when("#{PROJECT_URL}/buildsets/:buildsetNo", {
+        .when("#{PROJECT_URL}/buildsets/:buildsetNo/", {
             controller: "BuildsetDetailController",
             templateUrl: "#{PARTIALS_URL}buildset_detail.html",
+        })
+        .when("#{PROJECT_URL}/buildsets/:buildsetNo.:buildNo/", {
+            controller: "BuildDetailController",
+            templateUrl: "#{PARTIALS_URL}build_detail.html",
         })
         .otherwise({redirectTo: PROJECT_URL})
 
