@@ -1,10 +1,19 @@
-<h3>Builds</h3>
+<h3>Build {{ buildset.number }}.{{ build.number }}</h3>
 
-<div class="list-group">
-    <a class="list-group-item" ng-repeat="build in buildset.builds">
-        <h4 class="list-group-item-heading">
-            {{ buildset.number }}.{{ build.number }}
-        </h4>
-        <p class="list-group-item-text">Status: {{ build.status }}</p>
-    </a>
+<a class="btn btn-mini btn-danger pull-right" href="#"><i class="glyphicon glyphicon-wrench icon-white"></i> Force re-build</a>
+
+<dl class="dl-horizontal">
+    <dt>Build</dt>
+    <dd>{{ build.number }}</dd>
+
+    <dt>Status</dt>
+    <dd><span class="label label-{{ build.status | statusToClass }}">{{ build.status | uppercase }}</span></dd>
+</dl>
+
+<div ng-repeat="command in build.commands">
+    <h5>{{ command.title }}</h5>
+    <pre>{{ command.output }}</pre>
 </div>
+
+</div>
+

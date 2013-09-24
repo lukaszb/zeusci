@@ -1,14 +1,5 @@
 <h3>Builds</h3>
 
-<div class="list-group">
-    <a class="list-group-item" ng-repeat="build in buildset.builds">
-        <h4 class="list-group-item-heading">
-            {{ buildset.number }}.{{ build.number }}
-        </h4>
-        <p class="list-group-item-text">Status: {{ build.status }}</p>
-    </a>
-</div>
-
 <table class="table table-striped table-bordered table-condensed table-hover">
     <caption>Builds</caption>
     <thead>
@@ -21,10 +12,9 @@
     <tbody>
         <tr class="{{ build.status }}" ng-repeat="build in buildset.builds">
             <td><a href="{{ build.url }}" class="block">{{ buildset.number }}.{{ build.number }}</a></td>
-            <td>{{ build.status }}</td>
+            <td><span class="label label-{{ build.status | statusToClass }}">{{ build.status | uppercase }}</span></td>
             <td>{{ build.created_at }}</td>
             <td>{{ build.finished_at }}</td>
-            <td>{{ build.duration }}</td>
         </tr>
     </tbody>
 </table>

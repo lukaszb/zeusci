@@ -13,17 +13,30 @@ zeus.controller 'ProjectDetailController', ($scope) ->
 zeus.controller 'BuildsetDetailController', ($scope, $routeParams, Buildset) ->
     console.log " => init BuildsetDetailController"
 
-    $scope.buildset = Buildset.query({
+    routeParams = {
         name: $scope.project.name,
         buildsetNo: $routeParams.buildsetNo,
-    })
+    }
+    Buildset.query routeParams, (buildset) ->
+        $scope.buildset = buildset
 
 
-zeus.controller 'BuildDetailController', ($scope, $routeParams, Build) ->
+zeus.controller 'BuildDetailController', ($scope, $routeParams, $timeout, Build) ->
+    # TODO: buildset is not preserved at this controller's scope
+    console.log " => init BuildDetailController"
 
-    $scope.build = Build.query({
+    routeParams = {
         name: $scope.project.name,
         buildsetNo: $routeParams.buildsetNo,
-        buildNo: $routeParams,buildNo,
-    })
+        buildNo: $routeParams.buildNo,
+    }
+
+    poll = () ->
+        inner = () ->
+            console.log "  => Polling build"
+            Build.query routeParams, (build) ->
+                $scope.build = build
+        inner()
+        $timeout(poll, 200)
+    poll()
 
