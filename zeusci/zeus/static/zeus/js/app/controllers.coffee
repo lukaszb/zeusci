@@ -37,6 +37,6 @@ zeus.controller 'BuildDetailController', ($scope, $routeParams, $timeout, Build)
             Build.query routeParams, (build) ->
                 $scope.build = build
         inner()
-        $timeout(poll, 200)
+        $timeout(poll, 1500)
     poll()
 
