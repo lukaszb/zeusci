@@ -1,7 +1,7 @@
 
-zeus = angular.module('zeus', ['ngResource', 'zeusConstants', 'zeusFilters'])
+zeus = angular.module('zeus', ['ngResource', 'ui.router', 'zeusConstants', 'zeusFilters'])
 
-zeus.config(['$routeProvider', '$locationProvider', ($routeProvider, $locationProvider) ->
+zeus.config(($routeProvider, $locationProvider) ->
 
     $routeProvider
         .when("#{PROJECT_URL}", {
@@ -19,7 +19,7 @@ zeus.config(['$routeProvider', '$locationProvider', ($routeProvider, $locationPr
         .otherwise({redirectTo: PROJECT_URL})
 
     $locationProvider.html5Mode(true)
-])
+)
 
 # bind app module object to window so other modules can reference it
 @.zeus = zeus
