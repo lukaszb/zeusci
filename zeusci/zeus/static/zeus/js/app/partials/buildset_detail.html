@@ -11,7 +11,7 @@
     </thead>
     <tbody>
         <tr class="{{ build.status }}" ng-repeat="build in buildset.builds">
-            <td><a href="{{ build.url }}" class="block">{{ buildset.number }}.{{ build.number }}</a></td>
+            <td><a ui-sref="build({name: project.name, buildsetNo: buildset.number, buildNo: build.number})" class="block">{{ buildset.number }}.{{ build.number }}</a></td>
             <td><span class="label label-{{ build.status | statusToClass }}">{{ build.status | uppercase }}</span></td>
             <td>{{ build.created_at }}</td>
             <td>{{ build.finished_at }}</td>

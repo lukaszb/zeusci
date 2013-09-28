@@ -112,3 +112,9 @@ class TestBuildApi(BaseApiTestCase):
         }
         self.assertDictEqual(response.data, expected)
 
+    def test_build_update(self):
+        url_params = {'name': 'zeus', 'buildset_no': 1, 'build_no': 1}
+        url = reverse('zeus_api_build_detail', kwargs=url_params)
+        response = self.client.get(url)
+
+

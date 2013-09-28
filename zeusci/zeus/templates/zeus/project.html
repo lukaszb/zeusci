@@ -27,10 +27,13 @@
     <dd>{{ project.repo_url }}</dd>
 </dl>
 
+<pre>
+$state = {{ $state }}
+$stateParams = {{ $stateParams }}
+</pre>
 {% endverbatim %}
 
-<div ng-view>
-</div>
+<div ui-view></div>
 
 {# end of ng-app #}
 </div>

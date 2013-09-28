@@ -15,20 +15,22 @@ zeus.controller 'BuildsetDetailController', ($scope, $routeParams, Buildset) ->
 
     routeParams = {
         name: $scope.project.name,
-        buildsetNo: $routeParams.buildsetNo,
+        buildsetNo: $scope.$stateParams.buildsetNo,
     }
+    console.log routeParams
     Buildset.query routeParams, (buildset) ->
+        console.log buildset
         $scope.buildset = buildset
 
 
-zeus.controller 'BuildDetailController', ($scope, $routeParams, $timeout, Build) ->
+zeus.controller 'BuildDetailController', ($scope, $stateParams, $timeout, Build) ->
     # TODO: buildset is not preserved at this controller's scope
     console.log " => init BuildDetailController"
 
     routeParams = {
         name: $scope.project.name,
-        buildsetNo: $routeParams.buildsetNo,
-        buildNo: $routeParams.buildNo,
+        buildsetNo: $stateParams.buildsetNo,
+        buildNo: $stateParams.buildNo,
     }
 
     poll = () ->

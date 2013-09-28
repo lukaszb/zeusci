@@ -1,22 +1,46 @@
 
 zeus = angular.module('zeus', ['ngResource', 'ui.router', 'zeusConstants', 'zeusFilters'])
 
-zeus.config(($routeProvider, $locationProvider) ->
+zeus.run ($rootScope, $state, $stateParams) ->
+    $rootScope.$state = $state
+    $rootScope.$stateParams = $stateParams
 
-    $routeProvider
-        .when("#{PROJECT_URL}", {
+zeus.config(($routeProvider, $locationProvider, $stateProvider, $urlRouterProvider) ->
+
+    $urlRouterProvider.otherwise(PROJECT_URL)
+
+    $stateProvider
+        .state('project', {
+            url: "#{PROJECT_URL}",
             controller: "ProjectDetailController",
             templateUrl: "#{PARTIALS_URL}project_detail.html",
         })
-        .when("#{PROJECT_URL}/buildsets/:buildsetNo.:buildNo/", {
+        .state('build', {
+            url: "#{PROJECT_URL}/buildsets/:buildsetNo.:buildNo/",
             controller: "BuildDetailController",
             templateUrl: "#{PARTIALS_URL}build_detail.html",
         })
-        .when("#{PROJECT_URL}/buildsets/:buildsetNo/", {
+        .state('buildset', {
+            url: "#{PROJECT_URL}/buildsets/:buildsetNo/",
             controller: "BuildsetDetailController",
             templateUrl: "#{PARTIALS_URL}buildset_detail.html",
         })
-        .otherwise({redirectTo: PROJECT_URL})
+
+
+    #$routeProvider
+        #.when("#{PROJECT_URL}", {
+            #controller: "ProjectDetailController",
+            #templateUrl: "#{PARTIALS_URL}project_detail.html",
+        #})
+        #.when("#{PROJECT_URL}/buildsets/:buildsetNo.:buildNo/", {
+            #controller: "BuildDetailController",
+            #templateUrl: "#{PARTIALS_URL}build_detail.html",
+        #})
+        #.when("#{PROJECT_URL}/buildsets/:buildsetNo/", {
+            #controller: "BuildsetDetailController",
+            #templateUrl: "#{PARTIALS_URL}buildset_detail.html",
+        #})
+        #.otherwise({redirectTo: PROJECT_URL})
 
     $locationProvider.html5Mode(true)
 )
