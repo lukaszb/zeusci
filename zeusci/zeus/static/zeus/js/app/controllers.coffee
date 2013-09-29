@@ -17,7 +17,6 @@ zeus.controller 'BuildsetDetailController', ($scope, $routeParams, Buildset) ->
         name: $scope.project.name,
         buildsetNo: $scope.$stateParams.buildsetNo,
     }
-    console.log routeParams
     Buildset.query routeParams, (buildset) ->
         console.log buildset
         $scope.buildset = buildset
