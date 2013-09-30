@@ -22,8 +22,8 @@ class BuildSerializer(serializers.ModelSerializer):
             'name': 'buildset__project__name',
         },
     )
-    url = serializers.CharField(source='get_absolute_url')
-    status = serializers.CharField()
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    status = serializers.CharField(read_only=True)
     class Meta:
         model = Build
         fields = base_build_fields
@@ -41,11 +41,12 @@ class CommandSerializer(serializers.ModelSerializer):
 
 
 class BuildDetailSerializer(BuildSerializer):
-    commands = CommandSerializer(source='commands')
+    commands = CommandSerializer(source='commands', read_only=True)
 
     class Meta:
         model = Build
         fields = base_build_fields + ['commands', 'status']
+        read_only_fields = ['number', 'created_at', 'finished_at']
 
 
 class BuildsetSerializer(serializers.Serializer):

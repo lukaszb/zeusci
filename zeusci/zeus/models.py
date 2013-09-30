@@ -128,8 +128,13 @@ class Build(models.Model):
         if statuses == set([PASSED]):
             return PASSED
 
+    def is_finished(self):
+        return self.status in set([FAILED, PASSED])
+
     def get_commands(self):
-        return self.commands.all()
+        if not hasattr(self, '_commands_cache'):
+            self._commands_cache = self.commands.all()
+        return self._commands_cache
 
     @property
     def cache_key_output(self):

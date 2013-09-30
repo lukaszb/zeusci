@@ -1,14 +1,19 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 from ..conf import settings as zeus_settings
 from ..models import Buildset
 from ..models import Build
+from ..models import Command
 from ..models import Project
+from ..tasks import do_build
 from .serializers import BuildsetSerializer
 from .serializers import BuildDetailSerializer
 from .serializers import ProjectDetailSerializer
 from .serializers import ProjectSerializer
+import datetime
 import time
 
 
@@ -68,7 +73,7 @@ class BuildsetDetail(BaseApiMixin, BuildsetApiMixin, generics.RetrieveAPIView):
 buildset_detail = BuildsetDetail.as_view()
 
 
-class BuildDetail(BaseApiMixin, generics.RetrieveAPIView):
+class BuildViewSet(BaseApiMixin, ModelViewSet):
     serializer_class = BuildDetailSerializer
     model = Build
 
@@ -82,10 +87,29 @@ class BuildDetail(BaseApiMixin, generics.RetrieveAPIView):
         }
 
     def get_object(self):
-        queryset = self.get_queryset()
-        filters = self.get_object_filters()
-        return get_object_or_404(queryset, **filters)
+        if not hasattr(self, '_build'):
+            queryset = self.get_queryset()
+            filters = self.get_object_filters()
+            self._build = get_object_or_404(queryset, **filters)
+        return self._build
+
+    def update(self, request, *args, **kwargs):
+        """
+        Actually **restarts** a build *in place* - it doesn't create new build
+        and the information for current build is lost.
+        """
+        build = self.get_object()
+        assert build.is_finished() # FIXME: raise proper http error
+        build.created_at = datetime.datetime.now()
+        build.finished_at = None
+        build.save(force_update=True)
+        Command.objects.filter(build=build).delete()
+
+        from ..builders import PythonBuilder
+        do_build.delay(build, PythonBuilder)
+        build.clear_output()
+        return super(BuildViewSet, self).retrieve(request, *args, **kwargs)
 
 
-build_detail = BuildDetail.as_view()
+build_detail = BuildViewSet.as_view({'get': 'retrieve', 'put': 'update'})
 
