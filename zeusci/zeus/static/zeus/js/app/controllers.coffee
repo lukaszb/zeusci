@@ -46,17 +46,19 @@ zeus.controller 'BuildsetDetailController', ($scope, $routeParams, Buildset) ->
 
 
 zeus.controller 'BuildDetailController', ($scope, $stateParams, $timeout, Build) ->
-    # TODO: buildset is not preserved at this controller's scope
     console.log " => init BuildDetailController"
 
     routeParams = {
-        name: $scope.project.name,
+        name: $scope.project.name, # TODO: should not read from scope
         buildsetNo: $stateParams.buildsetNo,
         buildNo: $stateParams.buildNo,
     }
 
+    $scope.forceRebuild = (build) ->
+        build.$put(routeParams)
+
     init = () ->
-        Build.query routeParams, (build) ->
+        Build.get routeParams, (build) ->
             $scope.build = build
 
     init()

@@ -115,26 +115,27 @@ class Build(models.Model):
     def build_repo_dir(self):
         return abspath(self.build_dir, 'repo')
 
+    # TODO: this should be db field; currently this property is also used to
+    # compute build's commands' statuses which spans queries like crazy
     @property
     def status(self):
         commands = self.get_commands()
         statuses = set(command.status for command in commands)
         if not statuses or statuses == set([PENDING]):
-            return PENDING
+            status = PENDING
         if FAILED in statuses:
-            return FAILED
+            status = FAILED
         if RUNNING in statuses:
-            return RUNNING
+            status = RUNNING
         if statuses == set([PASSED]):
-            return PASSED
+            status = PASSED
+        return status
 
     def is_finished(self):
         return self.status in set([FAILED, PASSED])
 
     def get_commands(self):
-        if not hasattr(self, '_commands_cache'):
-            self._commands_cache = self.commands.all()
-        return self._commands_cache
+        return self.commands.all()
 
     @property
     def cache_key_output(self):
