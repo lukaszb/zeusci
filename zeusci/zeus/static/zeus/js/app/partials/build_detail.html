@@ -10,9 +10,11 @@
     <dd><span class="label label-{{ build.status | statusToClass }}">{{ build.status | uppercase }}</span></dd>
 </dl>
 
-<div ng-repeat="command in build.commands">
-    <h5>{{ command.title }}</h5>
-    <pre>{{ command.output }}</pre>
+<div class="command-panel panel panel-{{ build.status | statusToClass }}" ng-repeat="command in build.commands">
+    <div class="panel-heading">
+        <h3 class="panel-title">$ {{ command.title }}</h3>
+    </div>
+    <div class="panel-body"><pre>{{ command.output }}</pre></div>
 </div>
 
 </div>
