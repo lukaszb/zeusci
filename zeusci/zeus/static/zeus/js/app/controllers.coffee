@@ -65,11 +65,8 @@ zeus.controller 'BuildDetailController', ($scope, $stateParams, $timeout, Build)
         return not $scope.build or not $scope.build.finished_at
 
     controller.poll = () ->
-        console.log " => tries to poll"
         if not controller.shouldPoll()
-            console.log " => poll stopped"
             return
-        console.log " => poll build"
         Build.get routeParams, (build) ->
             $scope.build = build
             $timeout(controller.poll, POLL_INTERVAL)

@@ -99,15 +99,15 @@ class BuildViewSet(BaseApiMixin, ModelViewSet):
         and the information for current build is lost.
         """
         build = self.get_object()
+        build.clear_output()
         assert build.is_finished() # FIXME: raise proper http error
+        Command.objects.filter(build=build).delete()
         build.created_at = datetime.datetime.now()
         build.finished_at = None
         build.save(force_update=True)
-        Command.objects.filter(build=build).delete()
 
         from ..builders import PythonBuilder
         do_build.delay(build, PythonBuilder)
-        build.clear_output()
         return super(BuildViewSet, self).retrieve(request, *args, **kwargs)
 
 
