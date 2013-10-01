@@ -14,7 +14,7 @@
 
 {% block container %}
 <a href="{% url "zeus_force_project_buildset" name=project.name %}">Force build</a>
-<div ng-app="zeus" ng-controller="ProjectController">
+<div ng-app="zeus" ng-controller="ProjectController" ng-init="init()">
 {% verbatim %}
 
 <ol class="breadcrumb" ng-controller="ProjectBreadcrumbsController">

@@ -3,7 +3,8 @@
 zeus.controller 'ProjectController', ($scope, $timeout, Project) ->
     console.log " => init ProjectController"
 
-    $scope.project = Project.getInstance()
+    $scope.init = () ->
+        $scope.project = Project.getInstance()
 
 
 zeus.controller 'ProjectBreadcrumbsController', ($scope, $state, $stateParams) ->
@@ -54,12 +55,9 @@ zeus.controller 'BuildDetailController', ($scope, $stateParams, $timeout, Build)
         buildNo: $stateParams.buildNo,
     }
 
-    poll = () ->
-        inner = () ->
-            console.log "  => Polling build"
-            Build.query routeParams, (build) ->
-                $scope.build = build
-        inner()
-        $timeout(poll, 1500)
-    poll()
+    init = () ->
+        Build.query routeParams, (build) ->
+            $scope.build = build
+
+    init()
 
