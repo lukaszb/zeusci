@@ -17,6 +17,9 @@
 <script type="text/javascript" src="{% static "zeus/js/lib/angular-resource.1.0.7.min.js" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/lib/angular-ui-router.min.js" %}"></script>
 {# setup global variables #}
+<script type="text/javascript">
+    var csrfToken = "{{ csrf_token }}";
+</script>
 {% block init_js %}{% endblock %}
 {# app #}
 <script type="text/coffeescript" src="{% static "zeus/js/app/constants.coffee" %}"></script>

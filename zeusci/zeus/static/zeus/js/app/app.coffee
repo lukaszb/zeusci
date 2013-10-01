@@ -1,12 +1,17 @@
 
 zeus = angular.module('zeus', ['ngResource', 'ui.router', 'zeusConstants', 'zeusFilters'])
 
-zeus.run ($rootScope, $state, $stateParams) ->
+zeus.run ($rootScope, $state, $stateParams, $http) ->
     """
     Always inject $state and $stateParams into the scope.
     """
     $rootScope.$state = $state
     $rootScope.$stateParams = $stateParams
+
+    # CSRF
+    for method in ['post', 'put']
+        $http.defaults.headers[method]['X-CSRFToken'] = csrfToken
+        $http.defaults.headers[method]['X-CSRFToken'] = csrfToken
 
 zeus.config(($routeProvider, $locationProvider, $stateProvider, $urlRouterProvider) ->
 
