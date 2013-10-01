@@ -155,6 +155,8 @@ class Build(models.Model):
     def clear_output(self):
         Output.objects.filter(build=self).update(output='')
         self.clear_output_cache()
+        for command in self.get_commands():
+            command.clear_output()
 
     def clear_output_cache(self):
         cache.delete(self.cache_key_output)

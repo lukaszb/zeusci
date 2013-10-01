@@ -47,6 +47,8 @@ zeus.controller 'BuildsetDetailController', ($scope, $routeParams, Buildset) ->
 
 zeus.controller 'BuildDetailController', ($scope, $stateParams, $timeout, Build) ->
     console.log " => init BuildDetailController"
+    POLL_INTERVAL = 200
+    controller = this
 
     routeParams = {
         name: $scope.project.name, # TODO: should not read from scope
@@ -55,11 +57,24 @@ zeus.controller 'BuildDetailController', ($scope, $stateParams, $timeout, Build)
     }
 
     $scope.forceRebuild = (build) ->
-        build.$put(routeParams)
+        build.$put routeParams, () ->
+            # start polling again
+            controller.poll()
 
-    init = () ->
+    controller.shouldPoll = () ->
+        return not $scope.build or not $scope.build.finished_at
+
+    controller.poll = () ->
+        console.log " => tries to poll"
+        if not controller.shouldPoll()
+            console.log " => poll stopped"
+            return
+        console.log " => poll build"
         Build.get routeParams, (build) ->
             $scope.build = build
+            $timeout(controller.poll, POLL_INTERVAL)
 
-    init()
+    Build.get routeParams, (build) ->
+        $scope.build = build
+        $timeout(controller.poll, POLL_INTERVAL)
 

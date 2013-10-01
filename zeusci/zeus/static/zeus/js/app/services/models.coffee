@@ -23,6 +23,7 @@ zeus.factory 'Buildset', ($resource) ->
 
 zeus.factory 'Build', ($resource) ->
     Build = $resource(zeus.API_BUILD_DETAIL_URL, {}, {
+        get: {method: 'GET'},
         put: {method: 'PUT'},
     })
 
