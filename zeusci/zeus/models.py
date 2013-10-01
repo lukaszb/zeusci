@@ -137,29 +137,11 @@ class Build(models.Model):
     def get_commands(self):
         return self.commands.all()
 
-    @property
-    def cache_key_output(self):
-        return 'zeus-build-output-%s' % self.pk
-
-    @property
-    def output(self):
-        output = cache.get(self.cache_key_output)
-        if output is None:
-            if self.build_output is not None:
-                output = self.build_output.output
-            else:
-                output = ''
-            cache.set(self.cache_key_output, output)
-        return output
-
     def clear_output(self):
-        Output.objects.filter(build=self).update(output='')
-        self.clear_output_cache()
-        for command in self.get_commands():
-            command.clear_output()
-
-    def clear_output_cache(self):
-        cache.delete(self.cache_key_output)
+        command_ids = self.get_commands().values_list('id', flat=True)
+        Output.objects.filter(command__id__in=command_ids).update(output='')
+        for command_id in command_ids:
+            Command.clear_output_cache_for(command_id)
 
 
 class Command(models.Model):
@@ -185,9 +167,13 @@ class Command(models.Model):
         else:
             return FAILED
 
+    @classmethod
+    def get_cache_key_output(cls, pk):
+        return 'zeus-build-command-output-%s' % pk
+
     @property
     def cache_key_output(self):
-        return 'zeus-build-command-output-%s' % self.pk
+        return self.__class__.get_cache_key_output(self.pk)
 
     @property
     def output(self):
@@ -204,8 +190,13 @@ class Command(models.Model):
         Output.objects.filter(command=self).update(output='')
         self.clear_output_cache()
 
+    @classmethod
+    def clear_output_cache_for(cls, pk):
+        key = cls.get_cache_key_output(pk)
+        cache.delete(key)
+
     def clear_output_cache(self):
-        cache.delete(self.cache_key_output)
+        self.__class__.clear_output_cache_for(self.pk)
 
     def get_cmd_string(self):
         return ' '.join(self.cmd)
@@ -215,5 +206,5 @@ class Output(models.Model):
     output = models.TextField()
 
     def __repr__(self):
-        return "<Output: %r>" % self.build
+        return "<Output: %r>" % self.command
 
