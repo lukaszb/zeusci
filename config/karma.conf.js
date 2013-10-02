@@ -4,16 +4,16 @@ module.exports = function (config) {
 
         preprocessors: {
             '**/*.coffee': ['coffee']
-                },
+        },
 
-                files: [
-                'static/js/jquery-1.10.1.min.js',
-                'zeus/static/zeus/js/moment.2.0.0.min.js',
-                'zeus/static/zeus/js/angular.1.0.7.min.js',
-                'zeus/static/zeus/js/angular-resource.1.0.7.min.js',
-                'zeus/static/zeus/js/zeus.coffee',
-                'zeus/static/zeus/js/services.coffee',
-                'zeus/static/zeus/js/controllers.coffee',
+        files: [
+            'static/js/jquery-1.10.1.min.js',
+            'zeus/static/zeus/js/moment.2.0.0.min.js',
+            'zeus/static/zeus/js/angular.1.0.7.min.js',
+            'zeus/static/zeus/js/angular-resource.1.0.7.min.js',
+            'zeus/static/zeus/js/zeus.coffee',
+            'zeus/static/zeus/js/services.coffee',
+            'zeus/static/zeus/js/controllers.coffee',
             //'zeus/static/zeus/js/*.coffee',
 
             'zeus/static/zeus/js/tests/lib/angular-mocks.js',
@@ -23,7 +23,7 @@ module.exports = function (config) {
             //'test/lib/angular/angular-mocks.js',
             //'app/js/**/*.js',
             //'test/unit/**/*.js'
-            ],
+        ],
 
         frameworks: ['jasmine'],
 
