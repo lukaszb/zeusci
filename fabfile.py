@@ -1,4 +1,5 @@
 from fabric.api import cd
+from fabric.api import env
 from fabric.api import local
 import os
 import sys
@@ -45,6 +46,7 @@ def clear_env():
         local(_('rm -Rf {{ DEVENV_DIR }}'))
 
 def test_py():
+    env.ok_ret_codes = [0, 1] # in case of errors, tests should still run
     test_cmd = _('{{ MANAGE_BIN }} test zeus')
     print repr(test_cmd)
     cmd = _('watchmedo shell-command -w -R -p "*.py" -c "clear && {{ test_cmd }}"')
