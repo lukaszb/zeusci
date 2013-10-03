@@ -115,10 +115,44 @@ class TestBuildApi(BaseApiTestCase):
         }
         self.assertDictEqual(response.data, expected)
 
-    def test_build_update(self):
+    def test_build_restart_fails_if_build_is_still_running(self):
         url_params = {'name': 'zeus', 'buildset_no': 1, 'build_no': 1}
         url = reverse('zeus_api_build_detail', kwargs=url_params)
-        #response = self.client.put(url)
-        #self.assertEqual(response.status_code, 200)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, 409)
 
+    def test_build_restart(self):
+        url_params = {'name': 'zeus', 'buildset_no': 1, 'build_no': 1}
+        url = reverse('zeus_api_build_detail', kwargs=url_params)
+        self.build1.commands.update(status=Status.FAILED)
+
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(response.data['status'], Status.PENDING)
+        self.assertIsNone(response.data['finished_at'])
+        self.assertEqual(self.build1.commands.count(), 0)
+
+    def test_build_status_is_changing_correctly(self):
+        self.assertEqual(self.build1.status, Status.RUNNING)
+
+        self.build1_cmd1.status = Status.FAILED
+        self.build1_cmd1.save()
+        self.assertEqual(self.build1.status, Status.FAILED)
+
+        self.build1.commands.update(status=Status.PASSED)
+        self.assertEqual(self.build1.status, Status.PASSED)
+
+        self.build1.commands.all().delete()
+        self.assertEqual(self.build1.status, Status.PENDING)
+
+        # Create a command and make sure status us RUNNING once again
+        Command.objects.create(
+            number=1,
+            build=self.build1,
+            title='Step 1 -- Configuration',
+            cmd=['./configure'],
+            status=Status.RUNNING,
+        )
+        self.assertEqual(self.build1.status, Status.RUNNING)
 

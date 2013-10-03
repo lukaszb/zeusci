@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from ..conf import settings as zeus_settings
 from ..models import Buildset
@@ -9,6 +8,7 @@ from ..models import Build
 from ..models import Command
 from ..models import Project
 from ..tasks import do_build
+from .exceptions import ConflictError
 from .serializers import BuildsetSerializer
 from .serializers import BuildDetailSerializer
 from .serializers import ProjectDetailSerializer
@@ -100,7 +100,8 @@ class BuildViewSet(BaseApiMixin, ModelViewSet):
         """
         build = self.get_object()
         build.clear_output()
-        assert build.is_finished() # FIXME: raise proper http error
+        if not build.is_finished():
+            raise ConflictError('Build is still running and cannot be restarted')
         Command.objects.filter(build=build).delete()
         build.created_at = datetime.datetime.now()
         build.finished_at = None
