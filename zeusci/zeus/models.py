@@ -19,11 +19,6 @@ Status = Choices(
     FAILED='failed',
 )
 
-PENDING = 'pending'
-RUNNING = 'running'
-PASSED = 'passed'
-FAILED = 'failed'
-
 
 class Buildset(models.Model):
     project = models.ForeignKey(Project, related_name='buildsets')
@@ -71,13 +66,13 @@ class Buildset(models.Model):
         builds = self.builds.all()
         if not builds:
             # no builds yet, most propably not yet created
-            return PENDING
+            return Status.PENDING
         for build in builds:
-            if build.status == FAILED:
-                return FAILED
-            elif build.status == PENDING:
-                return PENDING
-        return PASSED
+            if build.status == Status.FAILED:
+                return Status.FAILED
+            elif build.status == Status.PENDING:
+                return Status.PENDING
+        return Status.PASSED
 
 
 class Build(models.Model):
@@ -130,20 +125,19 @@ class Build(models.Model):
     def status(self):
         commands = self.get_commands()
         statuses = set(command.status for command in commands)
-        if not statuses or statuses == set([PENDING]):
-            status = PENDING
-        elif FAILED in statuses:
-            status = FAILED
-        elif RUNNING in statuses:
-            status = RUNNING
-        elif statuses == set([PASSED]):
-            status = PASSED
-        else:
-            status = PENDING
+        status = Status.PENDING
+        if not statuses or statuses == set([Status.PENDING]):
+            status = Status.PENDING
+        elif Status.FAILED in statuses:
+            status = Status.FAILED
+        elif Status.RUNNING in statuses:
+            status = Status.RUNNING
+        elif statuses == set([Status.PASSED]):
+            status = Status.PASSED
         return status
 
     def is_finished(self):
-        return self.status in set([FAILED, PASSED])
+        return self.status in set([Status.FAILED, Status.PASSED])
 
     def get_commands(self):
         return self.commands.all()
