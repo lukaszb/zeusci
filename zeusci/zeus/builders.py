@@ -7,6 +7,7 @@ from .models import Buildset
 from .models import Build
 from .models import Command
 from .models import Output
+from .models import Status
 from .execution import execute_command
 from .tasks import do_build
 from django.core.cache import cache
@@ -119,6 +120,7 @@ class BaseBuilder(object):
         """
         Runs given ``command``.
         """
+        Command.objects.filter(pk=command.pk).update(status=Status.RUNNING)
         executed_cmd = execute_command(command.cmd)
         print "Running command: %r\n\traw: %s" % (command.get_cmd_string(),
                                                   str(command.cmd))
@@ -128,6 +130,10 @@ class BaseBuilder(object):
             cache.set(command.cache_key_output, data)
         print "Finished command with code: %s" % executed_cmd.returncode
         command.returncode = executed_cmd.returncode
+        if executed_cmd.returncode == 0:
+            command.status = Status.PASSED
+        else:
+            command.status = Status.FAILED
         command.finished_at = datetime.datetime.now()
         command.save()
 
@@ -188,6 +194,7 @@ class PythonBuilder(BaseBuilder):
             cmd=['tox', '-c', tox_ini_path, '-e', venv],
             started_at=datetime.datetime.now(),
             returncode=None,
+            status=Status.PENDING,
         )
         return [command]
 

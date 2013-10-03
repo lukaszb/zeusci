@@ -4,6 +4,7 @@ from zeus.models import Build
 from zeus.models import Buildset
 from zeus.models import Command
 from zeus.models import Project
+from zeus.models import Status
 from zeus.builders import BaseBuilder
 from zeus.builders import PythonBuilder
 import datetime
@@ -139,6 +140,9 @@ class TestBaseBuilder(SimpleTestCase):
 
         # check if command has properly set returncode attribute
         self.assertEqual(command.returncode, 0)
+
+        # check if command has properly set status attribute
+        self.assertEqual(command.status, Status.PASSED)
 
         # check if command has properly set finished_at attribute
         now = datetime.datetime.now()

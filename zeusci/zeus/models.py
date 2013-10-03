@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from .project import get_project_model
+from .utils.choices import Choices
 from .utils.general import abspath
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -8,12 +9,20 @@ import datetime
 import jsonfield
 
 
+Project = get_project_model()
+
+
+Status = Choices(
+    PENDING='pending',
+    RUNNING='running',
+    PASSED='passed',
+    FAILED='failed',
+)
+
 PENDING = 'pending'
 RUNNING = 'running'
 PASSED = 'passed'
 FAILED = 'failed'
-
-Project = get_project_model()
 
 
 class Buildset(models.Model):
@@ -123,12 +132,14 @@ class Build(models.Model):
         statuses = set(command.status for command in commands)
         if not statuses or statuses == set([PENDING]):
             status = PENDING
-        if FAILED in statuses:
+        elif FAILED in statuses:
             status = FAILED
-        if RUNNING in statuses:
+        elif RUNNING in statuses:
             status = RUNNING
-        if statuses == set([PASSED]):
+        elif statuses == set([PASSED]):
             status = PASSED
+        else:
+            status = PENDING
         return status
 
     def is_finished(self):
@@ -155,17 +166,8 @@ class Command(models.Model):
     started_at = models.DateTimeField(null=True)
     finished_at = models.DateTimeField(null=True)
     returncode = models.IntegerField(null=True)
-
-    @property
-    def status(self):
-        if self.started_at is None:
-            return PENDING
-        elif self.returncode is None:
-            return RUNNING
-        elif self.returncode == 0:
-            return PASSED
-        else:
-            return FAILED
+    status = models.CharField(max_length=64, choices=Status.as_dict().items(),
+        default=Status.PENDING)
 
     @classmethod
     def get_cache_key_output(cls, pk):

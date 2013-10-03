@@ -6,6 +6,7 @@ from zeus.models import Buildset
 from zeus.models import Command
 from zeus.models import Output
 from zeus.models import Project
+from zeus.models import Status
 import datetime
 
 
@@ -38,6 +39,7 @@ class TestBuildApi(BaseApiTestCase):
         self.build1_cmd1.started_at = self.build1_cmd1.created_at + delta
         self.build1_cmd1.finished_at = self.build1_cmd1.started_at + delta
         self.build1_cmd1.returncode = 0
+        self.build1_cmd1.status = Status.PASSED
         self.build1_cmd1.save()
 
         self.build1_cmd2 = Command.objects.create(
@@ -49,6 +51,7 @@ class TestBuildApi(BaseApiTestCase):
         output = Output.objects.create(output='Build in progress ...')
         self.build1_cmd2.command_output = output
         self.build1_cmd2.started_at = self.build1_cmd2.created_at
+        self.build1_cmd2.status = Status.RUNNING
         self.build1_cmd2.save()
 
 
@@ -115,6 +118,7 @@ class TestBuildApi(BaseApiTestCase):
     def test_build_update(self):
         url_params = {'name': 'zeus', 'buildset_no': 1, 'build_no': 1}
         url = reverse('zeus_api_build_detail', kwargs=url_params)
-        response = self.client.get(url)
+        #response = self.client.put(url)
+        #self.assertEqual(response.status_code, 200)
 
 
