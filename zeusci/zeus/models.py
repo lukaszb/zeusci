@@ -119,8 +119,6 @@ class Build(models.Model):
     def build_repo_dir(self):
         return abspath(self.build_dir, 'repo')
 
-    # TODO: this should be db field; currently this property is also used to
-    # compute build's commands' statuses which spans queries like crazy
     @property
     def status(self):
         commands = self.get_commands()
