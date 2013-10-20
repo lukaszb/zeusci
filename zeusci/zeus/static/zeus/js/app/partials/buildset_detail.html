@@ -1,0 +1,32 @@
+<div ng-switch="buildset.errors.length">
+    <div ng-switch-when="0">
+        <h3>Builds</h3>
+
+        <table class="table table-striped table-bordered table-condensed table-hover">
+            <caption>Builds</caption>
+            <thead>
+                <tr>
+                    <th>Build</th>
+                    <th>Status</th>
+                    <th>Started</th>
+                    <th>Finished</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="{{ build.status }}" ng-repeat="build in buildset.builds">
+                    <td><a ui-sref="build({name: project.name, buildsetNo: buildset.number, buildNo: build.number})" class="block">{{ buildset.number }}.{{ build.number }}</a></td>
+                    <td><span class="label label-{{ build.status | statusToClass }}">{{ build.status | uppercase }}</span></td>
+                    <td>{{ build.created_at }}</td>
+                    <td>{{ build.finished_at }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div ng-show="buildset.errors.length > 0">
+        <h3>Errors</h3>
+        <div ng-repeat="error in buildset.errors">
+            <div class="alert alert-danger">{{ error.reason }}</div>
+        </div>
+    </div>
+</div>
+

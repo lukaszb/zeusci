@@ -1,0 +1,56 @@
+{% extends "zeus/base.html" %}
+{% load jsonify from zeus %}
+
+{% block init_js %}
+{{ block.super }}
+<script type="text/javascript">
+    // global vars
+    zeus_project = {{ project|jsonify }};
+    var PROJECT_URL = "{{ project.url }}";
+    var STATIC_URL = "{{ STATIC_URL }}";
+    var PARTIALS_URL = "{{ STATIC_URL }}zeus/js/app/partials/";
+</script>
+{% endblock %}
+
+{% block container %}
+{% verbatim %}
+<div ng-app="zeus" ng-controller="ProjectController" ng-init="init()">
+
+<ol class="breadcrumb" ng-controller="ProjectBreadcrumbsController">
+    <li ng-repeat="breadcrumb in breadcrumbs">
+    <ng-switch on="$last">
+        <span ng-switch-when="true">{{ breadcrumb.name }}</span>
+        <a ng-switch-default href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>
+    </li>
+</ol>
+
+<h1><a href="{{ project.url }}">{{ project.name }}</a></h1>
+
+<dl class="dl-horizontal">
+    <dt>Website</dt>
+    <dd><a href="{{ project.website_url }}">{{ project.website_url }}</a></dd>
+
+    <dt>Repository</dt>
+    <dd>{{ project.repo_url }}</dd>
+
+    <dt>Hammer a build</dt>
+    <dd>
+        <a class="btn btn-xs btn-primary" ui-sref="buildset_create"><i class="glyphicon glyphicon-wrench icon-white"></i> New buildset</a>
+    </dd>
+</dl>
+
+<!--
+<pre>
+$state = {{ $state }}
+$stateParams = {{ $stateParams }}
+</pre>
+-->
+{% endverbatim %}
+
+<div ui-view="mainContent"></div>
+
+{# end of ng-app #}
+</div>
+
+{% endblock container %}
+

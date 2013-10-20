@@ -1,0 +1,8 @@
+*.pyc
+*.orig
+.database.sqlite
+zeusci/builds
+.compressor-cache
+
+.devenv
+var
