@@ -62,11 +62,6 @@ def test_py(test_arg=None):
             if watch:
                 local(cmd)
 
-def test_js():
-    test_cmd = 'karma start {/config/karma.conf.js'
-    test_cmd = _('karma start {{ KARMA_CONFIG }}')
-    local(test_cmd)
-
 def shell():
     local(_('{{ MANAGE_BIN }} shell_plus'))
 
