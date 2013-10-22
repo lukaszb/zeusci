@@ -3,6 +3,7 @@
 .database.sqlite
 zeusci/builds
 .compressor-cache
+build
 
 .devenv
 var
