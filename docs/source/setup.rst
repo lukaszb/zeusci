@@ -36,7 +36,7 @@ Let's describe briefly what those are:
   Read more on :ref:`how to integrate with existing Django project
   <integration>`.
 
-- ``venv/`` directory contains sandboxed Python environment. Our project would
+- ``venv/`` directory contains sandboxed Python_ environment. Our project would
   use only Python packages and linked binary from this environment. Read more
   on virtualenv_.
 
@@ -100,6 +100,7 @@ the database preparation step. As admin user we can follow instructions on main
 page in order to create a project.
 
 
+.. _python: http://www.python.org
 .. _virtualenv: http://www.virtualenv.org
 .. _django: http://www.djangoproject.com
 .. _sqlite: http://www.sqlite.org
