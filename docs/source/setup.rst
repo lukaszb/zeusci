@@ -93,7 +93,7 @@ In another terminal run::
 
 
 Add project
-===========
+-----------
 
 We need to go to http://127.0.0.1:8000/ and log in with credentials provided at
 the database preparation step. As admin user we can follow instructions on main
