@@ -13,6 +13,8 @@
 
     installation
     setup
+    configuration
+    integration
 
     zci
 
