@@ -15,8 +15,9 @@
     setup
     configuration
     integration
-
     zci
+
+    develop
 
 
 Indices and tables
