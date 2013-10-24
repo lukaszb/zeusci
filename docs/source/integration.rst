@@ -45,8 +45,15 @@ can be done as follows::
 
     urlpatterns = patterns('',
         # other url patterns
-        url(r'^api/', include(zeus.site.api_urls)),
         url(r'^', include(zeus.site.urls)),
+    )
+
+You can also include API and UI endpoints separately::
+
+    urlpatterns = patterns('',
+        # other url patterns
+        url(r'^', include(zeus.site.api_urls)),
+        url(r'^', include(zeus.site.ui_urls)),
     )
 
 
