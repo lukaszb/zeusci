@@ -1,0 +1,15 @@
+
+pre {
+    background-color: #000;
+    color: #fff;
+}
+
+.command-panel .panel-heading h3 {
+    font-family: monospace;
+    font-size: 0.8em;
+}
+
+.block {
+    display: block;
+}
+

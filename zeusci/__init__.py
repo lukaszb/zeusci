@@ -1,4 +1,5 @@
 """
+zeus-ci is Continous Integration server you'd love to use.
 """
 
 # VERSION should be a tuple of 3 digits + (optional) string
