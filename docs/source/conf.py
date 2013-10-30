@@ -34,8 +34,9 @@ pygments_style = 'sphinx'
 # -- Options for HTML output ---------------------------------------------------
 
 RTD_NEW_THEME = True # use ReadTheDocs.org theme
-html_theme = 'default'
-html_static_path = ['.static']
+html_theme = 'rtd_theme'
+html_theme_path = ['themes']
+html_static_path = ['static']
 htmlhelp_basename = 'zeus-cidoc'
 
 # -- Options for LaTeX output --------------------------------------------------
