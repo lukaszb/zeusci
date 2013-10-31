@@ -1,17 +1,28 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url, include
+from django.contrib import admin
+from django.views.generic import TemplateView
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+
+admin.autodiscover()
+
+
+class HomeView(TemplateView):
+    template_name = 'base.html'
+
+    def get_context_data(self, **kwargs):
+        from zeusci.zeus.models import Project
+        data = super(HomeView, self).get_context_data(**kwargs)
+        data['projects'] = Project.objects.all()
+        return data
+
+home = HomeView.as_view()
+
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'exampleci.views.home', name='home'),
-    # url(r'^exampleci/', include('exampleci.foo.urls')),
+    url(r'^$', home, name='home'),
+    url(r'^api/', include('zeusci.zeus.api.urls')),
+    url(r'^', include('zeusci.zeus.urls')),
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 )
+

@@ -45,7 +45,9 @@ MEDIA_URL = ''
 STATIC_ROOT = ''
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = ()
+STATICFILES_DIRS = (
+    abspath(PROJECT_ROOT, 'static'),
+)
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -75,6 +77,7 @@ ROOT_URLCONF = 'zeusapp.urls'
 WSGI_APPLICATION = 'zeusapp.wsgi.application'
 
 TEMPLATE_DIRS = (
+    abspath(PROJECT_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
@@ -91,6 +94,7 @@ INSTALLED_APPS = (
     'djcelery',
     'gunicorn',
     'rest_framework',
+    'compressor',
 
     # Internals
     'zeusci.zeus',

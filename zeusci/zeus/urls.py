@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 from smarturls import surl
 
 
-urlpatterns = patterns('zeus.views',
+urlpatterns = patterns('zeusci.zeus.views',
     # TODO: make helper 'build forcers' proper API endpoints
     surl('/p/<slug:name>/buildset/$',
         view='project_buildset_view',

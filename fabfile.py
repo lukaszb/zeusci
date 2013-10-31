@@ -19,15 +19,17 @@ def _(text):
 abspath = lambda *p: os.path.abspath(os.path.join(*p))
 
 ROOT_DIR = os.path.dirname(__file__)
-PROJECT_DIR = abspath(ROOT_DIR, 'zeusci')
+PROJECT_DIR = abspath(ROOT_DIR, 'exampleci')
 DEVENV_DIR = abspath(ROOT_DIR, '.devenv')
 PYTHON_BIN = abspath(DEVENV_DIR, 'bin', 'python')
-PYTHON_VER = 'python2.7'
-MANAGE_BIN = _('{{ PYTHON_BIN }} ' + abspath(PROJECT_DIR, 'manage.py'))
+PYTHON_VER = 'python3.3'
+APP_DIR = abspath(PROJECT_DIR, 'app')
+MANAGE_BIN = _('{{ PYTHON_BIN }} ' + abspath(APP_DIR, 'manage.py'))
 PIP_BIN = abspath(DEVENV_DIR, 'bin', 'pip')
-CONFIG_DIR = abspath(ROOT_DIR, 'config')
+CONFIG_DIR = abspath(PROJECT_DIR, 'config')
 REQUIREMENTS_TXT = abspath(CONFIG_DIR, 'requirements.txt')
 KARMA_CONFIG = abspath(CONFIG_DIR, 'karma.conf.js')
+SETUP_PY = abspath(ROOT_DIR, 'setup.py')
 
 
 def _warn(msg):
@@ -41,6 +43,7 @@ def setup_env():
         else:
             local(_('virtualenv -p {{ PYTHON_VER }} {{ DEVENV_DIR }}'))
         local(_('{{ PIP_BIN }} install -r {{ REQUIREMENTS_TXT }}'))
+        local(_('{{ PYTHON_BIN }} {{ SETUP_PY }} develop'))
 
 def clear_env():
     with cd(ROOT_DIR):
