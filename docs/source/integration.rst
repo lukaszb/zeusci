@@ -57,5 +57,9 @@ We can also include API and UI endpoints separately::
     )
 
 
+.. seealso:: Make sure to configure all required components like database,
+   message broker, caching backend etc. See :ref:`configuration section
+   <configuration>` for more information.
+
 .. _celery: http://www.celeryproject.org/
 
