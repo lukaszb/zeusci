@@ -105,6 +105,20 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 
 # =============================================================================
+# Cache
+# =============================================================================
+CACHES = {
+    'default': {
+        #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        #'LOCATION': 'some-unique-flake',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        'KEY_PREFIX': 'zeus-ci',
+    }
+}
+
+
+# =============================================================================
 # Celery
 # =============================================================================
 BROKER_URL = 'amqp://guest:guest@localhost:5672/'
@@ -155,18 +169,6 @@ ZEUS_SETTINGS= {
 }
 
 
-# django-nose
-#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-#TEST_RUNNER = 'django_pytest.test_runner.TestRunner'
-TEST_RUNNER = 'discover_runner.DiscoverRunner'
-
-
-TESTING = os.environ.get('TESTING', False)
-if TESTING:
-    from test_settings import update_settings_for_tests
-    update_settings_for_tests(locals())
-
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -175,12 +177,25 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '[%(levelname)s] => %(message)s'
+        },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
     },
     'loggers': {
         'django.request': {
@@ -188,6 +203,21 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'zeusci': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
     }
 }
+
+# django-nose
+#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+#TEST_RUNNER = 'django_pytest.test_runner.TestRunner'
+TEST_RUNNER = 'discover_runner.DiscoverRunner'
+
+
+TESTING = os.environ.get('TESTING', False)
+if TESTING:
+    from .test_settings import update_settings_for_tests
+    update_settings_for_tests(locals())
 

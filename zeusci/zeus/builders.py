@@ -12,14 +12,18 @@ from .execution import execute_command
 from .tasks import do_build
 from django.core.cache import cache
 import datetime
+import logging
 import os
 import shutil
+
+
+logger = logging.getLogger('zeusci.zeus.builders')
 
 
 class BaseBuilder(object):
 
     def info(self, message):
-        print(" => %s" % message)
+        logger.info(message)
 
     def get_buildset(self, project, branch=None):
         """
@@ -136,13 +140,13 @@ class BaseBuilder(object):
         """
         Command.objects.filter(pk=command.pk).update(status=Status.RUNNING)
         executed_cmd = execute_command(command.cmd)
-        print("Running command: %r\n\traw: %s" % (command.get_cmd_string(),
+        self.info("Running command: %r\n\traw: %s" % (command.get_cmd_string(),
                                                   str(command.cmd)))
         data = ''
         for chunk in executed_cmd.iter_output():
             data += chunk
             cache.set(command.cache_key_output, data)
-        print("Finished command with code: %s" % executed_cmd.returncode)
+        self.info("Finished command with code: %s" % executed_cmd.returncode)
         command.returncode = executed_cmd.returncode
         if executed_cmd.returncode == 0:
             command.status = Status.PASSED
