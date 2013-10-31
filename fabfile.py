@@ -52,7 +52,7 @@ def clear_env():
 def test_py(test_arg=None):
     watch = False
     if test_arg is None:
-        test_arg = 'zeus'
+        test_arg = 'zeusci.zeus'
         watch = True
 
     with shell_env(TESTING="Yes"):
