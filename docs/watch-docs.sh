@@ -6,6 +6,7 @@ NOTIFY='growlnotify zeus-ci Documentation -m Recreated'
 
 
 # Run command
+echo " => Documentation would be available at file://$PWD/build/html/index.html"
 $CMD
 $NOTIFY
 
