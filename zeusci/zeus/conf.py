@@ -18,7 +18,7 @@ DEFAULTS = {
     'API_PAGINATION_SERIALIZER_CLASS': 'rest_framework.pagination.PaginationSerializer',
     'API_PAGINATE_BY': 20,
     'API_DELAY': None, # delay in seconds to all api calls
-    'COMMAND_EXECUTION_BACKEND': 'procme.Command',
+    'COMMAND_EXECUTION_BACKEND': 'zeusci.procme.Command',
     'COMMAND_TIMEOUT': 60 * 60,
 }
 

@@ -66,6 +66,7 @@ class BaseBuilder(object):
         cmd = fetcher.fetch(buildset.project.repo_url, buildset.build_repo_dir,
             branch=buildset.branch)
         if cmd.returncode == 0:
+            self.info('Fetched!')
             return True
         else:
             buildset.errors.append({
@@ -110,6 +111,7 @@ class BaseBuilder(object):
         return do_build.delay(build, self.__class__)
 
     def build(self, build):
+        self.info('Build %s' % build)
         if os.path.isdir(build.build_repo_dir):
             shutil.rmtree(build.build_repo_dir)
         shutil.copytree(build.buildset.build_repo_dir, build.build_repo_dir)
