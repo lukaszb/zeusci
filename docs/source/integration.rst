@@ -48,7 +48,7 @@ can be done as follows::
         url(r'^', include(zeus.site.urls)),
     )
 
-You can also include API and UI endpoints separately::
+We can also include API and UI endpoints separately::
 
     urlpatterns = patterns('',
         # other url patterns
