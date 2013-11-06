@@ -1,9 +1,10 @@
 from monolith.cli import SimpleExecutionManager
 from monolith.cli import SingleLabelCommand
 from monolith.cli import BaseCommand
+from monolith.cli import arg
 import os
-import subprocess
 import sys
+import venv
 
 
 abspath = lambda *p: os.path.abspath(os.path.join(*p))
@@ -29,6 +30,10 @@ def get_project_root(this=None):
 
 class PrepareCommand(BaseCommand):
 
+    args = [
+        arg('-f', '--force', default=False, action='store_true'),
+    ]
+
     def info(self, msg):
         print("=> %s" % msg)
 
@@ -47,20 +52,20 @@ class PrepareCommand(BaseCommand):
 
         VENV_DIR = abspath(ROOT_DIR, 'venv')
         self.info("ROOT_DIR = %r" % ROOT_DIR)
-        self.create_venv(VENV_DIR)
+        self.create_venv(namespace, VENV_DIR)
 
-    def create_venv(self, venv_dir):
+    def get_builder(self, namespace):
+        return venv.EnvBuilder(
+            system_site_packages=False,
+            clear=namespace.force,
+            symlinks=True,
+            upgrade=False,
+        )
+
+    def create_venv(self, namespace, venv_dir):
         self.info("Creating virtualenv at %s" % venv_dir)
-        cmd_args = [
-            'virtualenv',
-            venv_dir,
-            '--python',
-            self.get_python_exec(),
-            '--no-site-packages',
-        ]
-        cmd = ' '.join(cmd_args)
-        self.info("Running command: %r" % cmd)
-        subprocess.call(cmd, shell=True)
+        builder = self.get_builder(namespace)
+        builder.create(venv_dir)
         self.info('Done')
 
 
