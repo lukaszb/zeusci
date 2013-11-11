@@ -1,4 +1,4 @@
-Django == 1.5.4
+Django == 1.6
 django-celery == 3.0.23
 celery == 3.0.23
 
