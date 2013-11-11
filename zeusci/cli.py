@@ -57,7 +57,7 @@ class PrepareCommand(BaseCommand):
 
     def handle(self, namespace):
         self.info("ROOT_DIR = %r" % get_project_root())
-        #self.create_venv(namespace)
+        self.create_venv(namespace)
         #self.install_setuptools(namespace)
         ##self.install_pip(namespace)
         self.install_packages(namespace)
@@ -76,8 +76,18 @@ class PrepareCommand(BaseCommand):
             self.info('Virtualenv exists at %s' % venv_dir)
             return
         self.info("Creating virtualenv at %s" % venv_dir)
-        builder = self.get_builder(namespace)
-        builder.create(venv_dir)
+        virtualenv_path = abspath(get_project_root(), 'config', 'virtualenv.py')
+        cmd = ' '.join([
+            sys.executable,
+            virtualenv_path,
+            '--no-site-packages',
+            '-p', sys.executable,
+            venv_dir,
+        ])
+        print('cmd: %r' % cmd)
+        subprocess.call(cmd, shell=True)
+        #builder = self.get_builder(namespace)
+        #builder.create(venv_dir)
         self.info('Done')
 
     def install_setuptools(self, namespace):
@@ -93,6 +103,7 @@ class PrepareCommand(BaseCommand):
         subprocess.call(cmd, shell=True)
 
     def install_packages(self, namespace):
+        self.info('Installing packages ...')
         root_dir = get_project_root()
         venv_dir = self.get_venv_dir()
         requirements_path = abspath(root_dir, 'config', 'requirements.txt')
@@ -100,6 +111,7 @@ class PrepareCommand(BaseCommand):
         cmd_args = [pip_exec, 'install', '-r', requirements_path]
         cmd = ' '.join(cmd_args)
         subprocess.call(cmd, shell=True)
+        self.info('Done')
 
 
 def main():
