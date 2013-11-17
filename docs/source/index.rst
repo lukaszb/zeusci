@@ -9,7 +9,7 @@
 **Documentation**:
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     installation
     setup
@@ -17,13 +17,18 @@
     integration
     zci
 
+.. toctree::
+    :maxdepth: 1
+
     develop
 
 
-Indices and tables
-==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+..
+    Indices and tables
+    ==================
+
+    + :ref:`genindex`
+    + :ref:`modindex`
+    + :ref:`search`
 
