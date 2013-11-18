@@ -21,6 +21,7 @@ home = HomeView.as_view()
 urlpatterns = patterns('',
     url(r'^$', home, name='home'),
     url(r'^api/', include('zeusci.zeus.api.urls')),
+    url(r'^api-docs/', include('rest_framework_swagger.urls')),
     url(r'^', include('zeusci.zeus.urls')),
 
     url(r'^admin/', include(admin.site.urls)),

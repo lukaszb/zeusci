@@ -95,6 +95,7 @@ INSTALLED_APPS = (
     'djcelery',
     'gunicorn',
     'rest_framework',
+    'rest_framework_swagger',
     'compressor',
 
     # Internals

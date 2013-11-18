@@ -1,16 +1,8 @@
 from __future__ import unicode_literals
 from django.conf.urls import patterns, url
-from smarturls import surl
 
 
 urlpatterns = patterns('zeusci.zeus.views',
-    # TODO: make helper 'build forcers' proper API endpoints
-    surl('/p/<slug:name>/buildset/$',
-        view='project_buildset_view',
-        name='zeus_force_project_buildset'),
-    surl('/p/force/<slug:name>/builds/<int:buildset_no>\.<int:build_no>/$',
-        view='project_build_view',
-        name='zeus_force_project_build'),
 
     # the same view handles those paths as frontend client is responsible for
     # further routing.
