@@ -1,4 +1,5 @@
 *.pyc
+__pycache__
 *.orig
 .database.sqlite
 zeusci/builds
@@ -7,3 +8,11 @@ build
 
 .devenv
 var
+dist
+bak
+
+exampleci/config/src
+exampleci/dist
+exampleci/src
+exampleci/venv
+
