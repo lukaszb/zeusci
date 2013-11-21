@@ -36,7 +36,7 @@ pygments_style = 'sphinx'
 RTD_NEW_THEME = True # use ReadTheDocs.org theme
 html_theme = 'rtd_theme'
 html_theme_path = ['themes']
-html_static_path = ['static']
+html_static_path = [abspath('themes', html_theme, 'static')]
 htmlhelp_basename = 'zeus-cidoc'
 
 # -- Options for LaTeX output --------------------------------------------------

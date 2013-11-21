@@ -33,8 +33,8 @@ zci bootstrap
 
 .. program:: zci bootstrap [PROJECT_PATH]
 
-   Following actions would be performed:
+Following actions would be performed:
 
-   - create Python virtual environment directory
-   - prepare default database
+- create Python virtual environment directory
+- prepare default database
 
