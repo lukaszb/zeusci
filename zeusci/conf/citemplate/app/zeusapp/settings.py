@@ -213,7 +213,6 @@ LOGGING = {
 # django-nose
 #TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 #TEST_RUNNER = 'django_pytest.test_runner.TestRunner'
-TEST_RUNNER = 'discover_runner.DiscoverRunner'
 
 
 TESTING = os.environ.get('TESTING', False)

@@ -1,22 +1,48 @@
+from monolith.cli import BaseCommand
+from monolith.cli import CommandError
 from monolith.cli import SimpleExecutionManager
 from monolith.cli import SingleLabelCommand
-from monolith.cli import BaseCommand
 from monolith.cli import arg
 import os
+import shutil
 import subprocess
 import sys
 import venv
+import zeusci
 
 
 abspath = lambda *p: os.path.abspath(os.path.join(*p))
 
 
+CI_TEMPLATE_PATH = abspath(zeusci.__path__[0], 'conf', 'citemplate')
+
+
 class InitCommand(SingleLabelCommand):
 
     def handle_label(self, label, namespace):
-        # TODO: Actually implement this
-        print(" => zci init %r | %s" % (label, namespace))
-        print(" => this is just a stub ...")
+        label = label or '.'
+        dirname = abspath(label)
+        print(" ==> Initializing zeus-ci project at %r" % dirname)
+        if os.path.isdir(dirname):
+            self.handle_existing_dir(dirname, namespace)
+        else:
+            self.handle_new_dir(dirname, namespace)
+
+    def handle_existing_dir(self, dirname, namespace):
+        for name in os.listdir(CI_TEMPLATE_PATH):
+            src = abspath(CI_TEMPLATE_PATH, name)
+            dst = abspath(dirname, name)
+            if os.path.exists(dst):
+                msg = 'Seems like %r was already initialized. Path %r exists'
+                msg = msg % (dirname, dst)
+                raise CommandError(message=msg, code=1)
+            if os.path.isdir(src):
+                shutil.copytree(src, dst)
+            else:
+                shutil.copy(src, dst)
+
+    def handle_new_dir(self, dirname, namespace):
+        shutil.copytree(CI_TEMPLATE_PATH, dirname)
 
 
 def get_project_root(this=None):

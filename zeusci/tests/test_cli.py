@@ -1,4 +1,4 @@
-from zeusci.cli import PrepareCommand
+from zeusci.cli import BootstrapCommand
 from unittest import mock
 import argparse
 import unittest
@@ -7,7 +7,7 @@ import unittest
 class TestPrepareCommand(unittest.TestCase):
 
     def setUp(self):
-        self.command = PrepareCommand()
+        self.command = BootstrapCommand()
 
     @mock.patch('zeusci.cli.venv')
     def test_get_builder(self, venv):
