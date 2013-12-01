@@ -1,4 +1,3 @@
-from monolith.cli import BaseCommand
 from monolith.cli import CommandError
 from monolith.cli import SimpleExecutionManager
 from monolith.cli import SingleLabelCommand
@@ -19,6 +18,11 @@ CI_TEMPLATE_PATH = abspath(zeusci.__path__[0], 'conf', 'citemplate')
 
 class InitCommand(SingleLabelCommand):
 
+    args = SingleLabelCommand.args + [
+        arg('--no-bootstrap', dest='bootstrap', default=True,
+            action='store_false', help='Do not bootstrap the project.')
+    ]
+
     def handle_label(self, label, namespace):
         label = label or '.'
         dirname = abspath(label)
@@ -27,6 +31,8 @@ class InitCommand(SingleLabelCommand):
             self.handle_existing_dir(dirname, namespace)
         else:
             self.handle_new_dir(dirname, namespace)
+        if namespace.bootstrap:
+            self.manager.call_command('bootstrap', dirname)
 
     def handle_existing_dir(self, dirname, namespace):
         for name in os.listdir(CI_TEMPLATE_PATH):
@@ -56,7 +62,8 @@ def get_project_root(this=None):
         return get_project_root(parent)
 
 
-class BootstrapCommand(BaseCommand):
+class BootstrapCommand(SingleLabelCommand):
+    label_default_value = None
 
     args = [
         arg('-f', '--force', default=False, action='store_true'),
@@ -77,14 +84,14 @@ class BootstrapCommand(BaseCommand):
 
 
     def get_venv_dir(self):
-        ROOT_DIR = get_project_root()
-        if ROOT_DIR is None:
+        if self.root_dir is None:
             self.error('No zeusci project could be found! Tried to find .zci dir')
 
-        return abspath(ROOT_DIR, 'venv')
+        return abspath(self.root_dir, 'venv')
 
-    def handle(self, namespace):
-        self.info("ROOT_DIR = %r" % get_project_root())
+    def handle_label(self, label, namespace):
+        self.root_dir = get_project_root(label)
+        self.info("ROOT_DIR = %r" % self.root_dir)
         self.create_venv(namespace)
         self.install_setuptools(namespace)
         self.install_pip(namespace)
@@ -114,7 +121,7 @@ class BootstrapCommand(BaseCommand):
     def install_setuptools(self, namespace):
         # TODO: put setuptools source distribution at some temporary path
         py_exec = self.get_python_exec()
-        ez_setup = abspath(get_project_root(), 'config', 'ez_setup.py')
+        ez_setup = abspath(self.root_dir, 'config', 'ez_setup.py')
         cmd = [py_exec, '-E', ez_setup]
         subprocess.call(cmd)
 
@@ -125,9 +132,8 @@ class BootstrapCommand(BaseCommand):
 
     def install_packages(self, namespace):
         self.info('Installing packages ...')
-        root_dir = get_project_root()
         venv_dir = self.get_venv_dir()
-        requirements_path = abspath(root_dir, 'config', 'requirements.txt')
+        requirements_path = abspath(self.root_dir, 'config', 'requirements.txt')
         pip_exec = abspath(venv_dir, 'bin', 'pip')
         cmd = [pip_exec, 'install', '-r', requirements_path]
         subprocess.call(cmd)

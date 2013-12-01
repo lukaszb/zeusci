@@ -31,8 +31,9 @@ class TestPrepareCommand(unittest.TestCase):
     def test_create_env(self):
         builder = mock.Mock()
         self.command.get_builder = mock.Mock(return_value=builder)
+        self.command.get_venv_dir = mock.Mock(return_value='/tmp/foo')
         namespace = argparse.Namespace(force=False)
 
-        self.command.create_venv(namespace, '/tmp/foo')
+        self.command.create_venv(namespace)
         builder.create.assert_called_once_with('/tmp/foo')
 
