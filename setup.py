@@ -25,8 +25,7 @@ setup(
     include_package_data = True,
     license = 'MIT',
     install_requires = [
-        'Django>=1.6',
-        'monolith>=0.3.1',
+        'monolith>=0.3.2',
     ],
     tests_require = [],
     classifiers = [
