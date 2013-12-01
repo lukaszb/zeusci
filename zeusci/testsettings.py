@@ -5,9 +5,8 @@ import string
 DEBUG = False
 
 INSTALLED_APPS = (
+    'zeusci.zeus',
 )
-
-TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
 
 DATABASES = {
     'default': {
@@ -25,4 +24,6 @@ TEMPLATE_DIRS = (
 
 # this is for tests only so we don't care if it's regenerated
 SECRET_KEY = ''.join([random.choice(string.ascii_letters) for x in range(40)])
+
+ROOT_URLCONF = 'zeusci.zeus.tests.urls'
 
