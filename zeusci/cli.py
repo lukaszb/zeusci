@@ -126,16 +126,15 @@ class BootstrapCommand(SingleLabelCommand):
         subprocess.call(cmd)
 
     def install_pip(self, namespace):
-        easy_install = abspath(self.get_venv_dir(), 'bin', 'easy_install')
+        easy_install = shutil.which('easy_install')
         cmd = [easy_install, 'pip']
         subprocess.call(cmd)
 
     def install_packages(self, namespace):
         self.info('Installing packages ...')
-        venv_dir = self.get_venv_dir()
         requirements_path = abspath(self.root_dir, 'config', 'requirements.txt')
-        pip_exec = abspath(venv_dir, 'bin', 'pip')
-        cmd = [pip_exec, 'install', '-r', requirements_path]
+        pip = shutil.which('pip')
+        cmd = [pip, 'install', '-r', requirements_path]
         subprocess.call(cmd)
         self.info('Done')
 
