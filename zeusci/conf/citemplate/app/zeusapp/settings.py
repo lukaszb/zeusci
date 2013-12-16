@@ -210,6 +210,12 @@ LOGGING = {
     }
 }
 
+# =============================================================================
+# CELERY SETTINGS
+# =============================================================================
+
+CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
+
 # django-nose
 #TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 #TEST_RUNNER = 'django_pytest.test_runner.TestRunner'
