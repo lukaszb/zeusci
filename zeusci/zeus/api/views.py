@@ -19,6 +19,7 @@ from ..tasks import do_build_project
 import datetime
 import time
 
+
 class BaseApiMixin(object):
     pagination_serializer_class = zeus_settings.API_PAGINATION_SERIALIZER_CLASS
     paginate_by = zeus_settings.API_PAGINATE_BY
@@ -28,6 +29,7 @@ class BaseApiMixin(object):
             # TODO: note user (log) that API calls are artificially delayed
             time.sleep(zeus_settings.API_DELAY)
         return super(BaseApiMixin, self).dispatch(*args, **kwargs)
+
 
 class BaseViewSet(BaseApiMixin, ModelViewSet):
     pass
