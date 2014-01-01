@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from .conf import settings
+from .fields import JSONField
 from .utils.choices import Choices
 from .utils.general import abspath
 from django.db import models
@@ -7,7 +8,6 @@ from django.core.urlresolvers import reverse
 from django.core.urlresolvers import reverse_lazy
 from django.core.cache import cache
 import datetime
-import jsonfield
 
 
 
@@ -62,8 +62,8 @@ class Buildset(models.Model):
     build_dir = models.CharField(max_length=512, null=True)
     created_at = models.DateTimeField(default=datetime.datetime.now)
     finished_at = models.DateTimeField(null=True)
-    info = jsonfield.JSONField()
-    errors = jsonfield.JSONField(default=list)
+    info = JSONField()
+    errors = JSONField(default=list)
     branch = models.SlugField(max_length=64, null=True)
 
     class Meta:
@@ -120,7 +120,7 @@ class Build(models.Model):
     number = models.PositiveIntegerField()
     created_at = models.DateTimeField(default=datetime.datetime.now)
     finished_at = models.DateTimeField(null=True)
-    options = jsonfield.JSONField()
+    options = JSONField()
     build_output = models.OneToOneField('Output', null=True, blank=True,
         related_name='build')
 
@@ -193,7 +193,7 @@ class Command(models.Model):
     number = models.PositiveIntegerField()
     command_output = models.OneToOneField('Output', null=True, blank=True,
         related_name='command')
-    cmd = jsonfield.JSONField(default=list)
+    cmd = JSONField(default=list)
     title = models.CharField(max_length=256)
     created_at = models.DateTimeField(default=datetime.datetime.now)
     started_at = models.DateTimeField(null=True)

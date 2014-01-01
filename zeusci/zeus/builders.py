@@ -75,8 +75,8 @@ class BaseBuilder(object):
         else:
             buildset.errors.append({
                 'reason': 'Fetch failed',
-                'stdout': cmd.stdout,
-                'stderr': cmd.stderr,
+                'stdout': str(cmd.stdout),
+                'stderr': str(cmd.stderr),
                 'returncode': cmd.returncode,
             })
             buildset.save()
