@@ -8,24 +8,31 @@
 {% endcompress %}
 {% endblock %}
 
+{% include "zeus/jstemplates.html" %}
 
 {% block extra_js %}
+<script type="text/javascript">
+    {# If needed, build Django namespace. Fill csrfToken for future API calls #}
+    window.Django = window.Django || {};
+    window.Django.csrfToken = "{{ csrf_token }}";
+</script>
+
 {% compress js %}
 {# libraries #}
+<script type="text/javascript" src="{% static "zeus/js/lib/swig.min.js" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/lib/moment.2.0.0.min.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/angular.1.1.5.min.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/angular-resource.1.1.5.min.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/angular-ui-router.min.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/underscore.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/backbone.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/backbone.wreqr.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/backbone.babysitter.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/backbone.marionette.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/backbone.marionette.swig.js" %}"></script>
 {# setup global variables #}
-<script type="text/javascript">
-    var csrfToken = "{{ csrf_token }}";
-</script>
 {% block init_js %}{% endblock %}
 {# app #}
-<script type="text/coffeescript" src="{% static "zeus/js/app/constants.coffee" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/app/filters.coffee" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/app/app.coffee" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/app/services/models.coffee" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/app/controllers.coffee" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/app/init.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/app/constants.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/app/filters.js" %}"></script>
+
 {% endcompress %}
 {% endblock %}
