@@ -12,39 +12,20 @@
 </script>
 {% endblock %}
 
+{% block finish_js %}
+<script type="text/javascript">
+    zeus.start();
+</script>
+{% endblock %}
+
 {% block container %}
 {% verbatim %}
-<div ng-app="zeus" ng-controller="ProjectController" ng-init="init()">
+<div>
 
-<ol class="breadcrumb" ng-controller="ProjectBreadcrumbsController">
-    <li ng-repeat="breadcrumb in breadcrumbs">
-    <ng-switch on="$last">
-        <span ng-switch-when="true">{{ breadcrumb.name }}</span>
-        <a ng-switch-default href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>
-    </li>
-</ol>
+    <div id="breadcrumbs-region"></div>
 
-<h1><a href="{{ project.url }}">{{ project.name }}</a></h1>
+    <div id="main-region"></div>
 
-<dl class="dl-horizontal">
-    <dt>Website</dt>
-    <dd><a href="{{ project.website_url }}">{{ project.website_url }}</a></dd>
-
-    <dt>Repository</dt>
-    <dd>{{ project.repo_url }}</dd>
-
-    <dt>Hammer a build</dt>
-    <dd>
-        <a class="btn btn-xs btn-primary" ui-sref="buildset_create"><i class="glyphicon glyphicon-wrench icon-white"></i> New buildset</a>
-    </dd>
-</dl>
-
-<!--
-<pre>
-$state = {{ $state }}
-$stateParams = {{ $stateParams }}
-</pre>
--->
 {% endverbatim %}
 
 <div ui-view="mainContent"></div>

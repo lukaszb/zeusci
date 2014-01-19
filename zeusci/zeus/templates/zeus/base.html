@@ -8,9 +8,9 @@
 {% endcompress %}
 {% endblock %}
 
-{% include "zeus/jstemplates.html" %}
 
 {% block extra_js %}
+{% include "zeus/jstemplates.html" %}
 <script type="text/javascript">
     {# If needed, build Django namespace. Fill csrfToken for future API calls #}
     window.Django = window.Django || {};
@@ -30,9 +30,21 @@
 {# setup global variables #}
 {% block init_js %}{% endblock %}
 {# app #}
-<script type="text/javascript" src="{% static "zeus/js/app/init.js" %}"></script>
+<script type="text/coffeescript" src="{% static "zeus/js/app.coffee" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/app/constants.js" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/app/filters.js" %}"></script>
 
+
+<script type="text/coffeescript" src="{% static "zeus/js/common/controllers.coffee" %}"></script>
+<script type="text/coffeescript" src="{% static "zeus/js/common/views.coffee" %}"></script>
+
+<script type="text/coffeescript" src="{% static "zeus/js/entities/breadcrumbs.coffee" %}"></script>
+<script type="text/coffeescript" src="{% static "zeus/js/apps/breadcrumbs/list_view.coffee" %}"></script>
+<script type="text/coffeescript" src="{% static "zeus/js/apps/breadcrumbs/list_controller.coffee" %}"></script>
+<script type="text/coffeescript" src="{% static "zeus/js/apps/breadcrumbs/breadcrumbs_app.coffee" %}"></script>
+
+<script type="text/coffeescript" src="{% static "zeus/js/entities/project.coffee" %}"></script>
+
+{% block finish_js %}{% endblock %}
 {% endcompress %}
 {% endblock %}
