@@ -16,3 +16,6 @@ exampleci/dist
 exampleci/src
 exampleci/venv
 
+/ci
+/src
+
