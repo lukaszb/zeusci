@@ -30,20 +30,19 @@
 {# setup global variables #}
 {% block init_js %}{% endblock %}
 {# app #}
-<script type="text/coffeescript" src="{% static "zeus/js/app.coffee" %}"></script>
+
+<script type="text/javascript" src="{% static "zeus/js/app.js" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/app/constants.js" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/app/filters.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/common/controllers.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/common/views.js" %}"></script>
 
+<script type="text/javascript" src="{% static "zeus/js/entities/breadcrumbs.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/list_view.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/list_controller.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/breadcrumbs_app.js" %}"></script>
 
-<script type="text/coffeescript" src="{% static "zeus/js/common/controllers.coffee" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/common/views.coffee" %}"></script>
-
-<script type="text/coffeescript" src="{% static "zeus/js/entities/breadcrumbs.coffee" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/apps/breadcrumbs/list_view.coffee" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/apps/breadcrumbs/list_controller.coffee" %}"></script>
-<script type="text/coffeescript" src="{% static "zeus/js/apps/breadcrumbs/breadcrumbs_app.coffee" %}"></script>
-
-<script type="text/coffeescript" src="{% static "zeus/js/entities/project.coffee" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/entities/project.js" %}"></script>
 
 {% block finish_js %}{% endblock %}
 {% endcompress %}
