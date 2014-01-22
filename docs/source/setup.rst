@@ -16,18 +16,18 @@ By invoking this command we create a ``zeus-ci`` project. It would create a
 following structure of files and directories::
 
     PROJECT_ROOT/
-        app/
-            zeusapp/
-                __init__.py
-                settings.py
-                urls.py
-                wsgi.py
-            manage.py
-        var/
-            builds/
-            logs/
-        venv/
-            ... (content of Python sandbox)
+    ├── app/
+    │   ├── zeusapp/
+    │   │   ├──  __init__.py
+    │   │   ├──  settings.py
+    │   │   ├──  urls.py
+    │   │   └──  wsgi.py
+    │   └── manage.py
+    ├── var/
+    │   ├── builds/
+    │   └── logs/
+    └── venv/
+        └── ... (content of Python virtualenv sandbox)
 
 
 Let's describe briefly what those are:
