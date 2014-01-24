@@ -103,7 +103,7 @@ class BootstrapCommand(SingleLabelCommand):
 
     def get_builder(self, namespace):
         return venv.EnvBuilder(
-            # XXX: We use global site-pacckages as we don't want to re-install
+            # XXX: We use global site-packages as we don't want to re-install
             # zeusci at virtualenv; if there is an obvious way to do this, we
             # will NOT use global site-packages
             system_site_packages=True,
