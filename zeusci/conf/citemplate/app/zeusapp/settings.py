@@ -135,6 +135,8 @@ COMPRESS_CSS_FILTERS = (
     'compressor.filters.css_default.CssAbsoluteFilter',
     'compressor.filters.cssmin.CSSMinFilter',
 )
+# TODO: Should run minimizer but for development we don't need it now
+COMPRESS_JS_FILTERS = []
 COMPRESS_OUTPUT_DIR = '.compressor-cache'
 COMPRESS_PRECOMPILERS = (
     ('text/coffeescript', 'coffee --compile --stdio'),
