@@ -34,6 +34,12 @@ class InitCommand(SingleLabelCommand):
         if namespace.bootstrap:
             self.manager.call_command('bootstrap', dirname)
 
+    def copy(self, src, dst):
+        if os.path.isdir(src):
+            shutil.copytree(src, dst)
+        else:
+            shutil.copy(src, dst)
+
     def handle_existing_dir(self, dirname, namespace):
         for name in os.listdir(CI_TEMPLATE_PATH):
             src = abspath(CI_TEMPLATE_PATH, name)
@@ -42,14 +48,11 @@ class InitCommand(SingleLabelCommand):
                 msg = 'Seems like %r was already initialized. Path %r exists'
                 msg = msg % (dirname, dst)
                 raise CommandError(message=msg, code=1)
-            if os.path.isdir(src):
-                shutil.copytree(src, dst)
-            else:
-                shutil.copy(src, dst)
+            self.copy(src, dst)
 
     def handle_new_dir(self, dirname, namespace):
-        shutil.copytree(CI_TEMPLATE_PATH, dirname)
         # TODO: Randomize SECRET_KEY at settings.py
+        self.copy(CI_TEMPLATE_PATH, dirname)
 
 
 def get_project_root(this=None):
