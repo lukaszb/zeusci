@@ -49,6 +49,7 @@ class InitCommand(SingleLabelCommand):
 
     def handle_new_dir(self, dirname, namespace):
         shutil.copytree(CI_TEMPLATE_PATH, dirname)
+        # TODO: Randomize SECRET_KEY at settings.py
 
 
 def get_project_root(this=None):
