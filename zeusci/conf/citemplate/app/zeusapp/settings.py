@@ -141,6 +141,11 @@ COMPRESS_PRECOMPILERS = (
     ('text/x-sass', 'sass {infile} {outfile} -C'),
     ('text/x-scss', 'sass --scss {infile} {outfile}'),
 )
+# While debugging we don't need long cache (default is 30 days and if we use
+# i.e. memcache and initialize another zeusci installment, then compressor
+# won't create static bundles as those were already cached)
+if DEBUG:
+    COMPRESS_REBUILD_TIMEOUT = 60 * 10  # in seconds
 
 
 # =============================================================================
