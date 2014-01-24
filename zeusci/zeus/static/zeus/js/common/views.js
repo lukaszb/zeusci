@@ -1,28 +1,17 @@
-(function (zeus, Backbone, $, swig) {
+zeus.simpleModule('views', function (views, Marionette, $, swig) {
     zeus.views = zeus.views || {};
 
-    zeus.views.View = Backbone.View.extend({
-        getTemplateHtml: function () {
-            return $(this.template).html();
-        },
-
-        getTemplate: function () {
-            if (this._cachedTemplate === undefined) {
-                var templateHtml = this.getTemplateHtml();
-                this._cachedTemplate = swig.compile(templateHtml);
+    zeus.views.View = Marionette.ItemView.extend({
+        collectionContextName: 'items',
+        serializeData: function () {
+            var data = {};
+            if (this.model) {
+                data = this.model.toJSON();
+            } else if (this.collection) {
+                data[this.collectionContextName] = this.collection.toJSON();
             }
-            return this._cachedTemplate;
-        },
-
-        getContextData: function () {
-            return {};
-        },
-
-        render: function () {
-            var context = this.getContextData();
-            var template = this.getTemplate();
-            this.$el.empty().html(template)
-            return this;
+            return data;
         }
+
     });
-})(zeus, Backbone, $, swig);
+}, Marionette, $, swig);

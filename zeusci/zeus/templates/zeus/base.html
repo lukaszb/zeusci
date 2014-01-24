@@ -32,6 +32,22 @@
 {# app #}
 
 <script type="text/javascript" src="{% static "zeus/js/app.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/common/views.js" %}"></script>
+
+<script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/app.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/models.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/views.js" %}"></script>
+
+<script type="text/javascript" src="{% static "zeus/js/apps/projects/models.js" %}"></script>
+
+{% block finish_js %}{% endblock %}
+{% endcompress %}
+{% endblock %}
+
+{% comment %}
+
+<script type="text/javascript" src="{% static "zeus/js/app.js" %}"></script>
+
 <script type="text/javascript" src="{% static "zeus/js/app/constants.js" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/app/filters.js" %}"></script>
 <script type="text/javascript" src="{% static "zeus/js/common/controllers.js" %}"></script>
@@ -43,7 +59,4 @@
 <script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/breadcrumbs_app.js" %}"></script>
 
 <script type="text/javascript" src="{% static "zeus/js/entities/project.js" %}"></script>
-
-{% block finish_js %}{% endblock %}
-{% endcompress %}
-{% endblock %}
+{% endcomment %}
