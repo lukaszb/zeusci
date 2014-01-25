@@ -20,7 +20,7 @@ Status = Choices(
 
 
 class Project(models.Model):
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, unique=True)
     url = models.URLField()
     repo_url = models.CharField(max_length=512)
 
