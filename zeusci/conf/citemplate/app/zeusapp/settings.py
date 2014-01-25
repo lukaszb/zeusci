@@ -122,6 +122,7 @@ CACHES = {
 # Celery
 # =============================================================================
 BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml', 'pickle']
 
 import djcelery
 djcelery.setup_loader()
@@ -216,12 +217,6 @@ LOGGING = {
         },
     }
 }
-
-# =============================================================================
-# CELERY SETTINGS
-# =============================================================================
-
-CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
 
 # django-nose
 #TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
