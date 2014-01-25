@@ -77,6 +77,10 @@ class BuildsetViewSet(BaseViewSet):
     def new(self, request, *args, **kwargs):
         project = Project.objects.get(name=self.kwargs['name'])
         do_build_project.delay(project, branch=request.DATA.get('branch'))
+        # TODO: At this point we should have our new buildset already created -
+        # otherwise we respond with 201 but no object was created yet and if
+        # celery task fails then user was prematurely informed about success of
+        # this action; Also, we should return ID of created object
         return Response({}, status=HTTP_201_CREATED)
 
 
