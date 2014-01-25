@@ -59,11 +59,11 @@ class BuildsetSerializer(serializers.Serializer):
             'name': 'project__name',
         },
     )
-    url = serializers.CharField(source='get_absolute_url')
-    number = serializers.IntegerField()
-    created_at = serializers.DateTimeField()
-    finished_at = serializers.DateTimeField()
-    status = serializers.CharField(source='get_status')
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
+    number = serializers.IntegerField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
+    finished_at = serializers.DateTimeField(read_only=True)
+    status = serializers.CharField(source='get_status', read_only=True)
     builds = BuildSerializer(source='builds')
     errors = serializers.Field(source='errors')
 
