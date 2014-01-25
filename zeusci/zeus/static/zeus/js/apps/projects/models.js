@@ -6,6 +6,6 @@ zeus.simpleModule('apps.projects.models', function (models, Backbone) {
         return new models.Project(zeus.project);
     }
 
-    app.reqres.setHandler("project", getProject);
+    zeus.reqres.setHandler("project", getProject);
 
 }, Backbone);

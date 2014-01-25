@@ -9,7 +9,7 @@ zeus.simpleModule('apps.breadcrumbs.models', function (models, Backbone) {
     var getBreadcrumbs = function () {
         var breadcrumbs = [{name: "Projects", url: "/"}];
 
-        var project = app.request("project");
+        var project = zeus.request("project");
         if (project) {
             breadcrumbs.push({
                 name: project.get('name'),
