@@ -5,19 +5,24 @@ zeus.simpleModule('apps.breadcrumbs.models', function (models, Backbone) {
 
         var project = zeus.request("project");
         if (project) {
+            var projectUrl = project.get('url').replace(/\/$/, '');
+
             breadcrumbs.push({
                 name: project.get('name'),
-                url: project.get('url')
+                url: projectUrl
             });
+            var url = zeus.getCurrentRoute();
+            var match = url.match(/buildsets\/(\d+)/);
+            if (match) {
+                var buildsetNumber = match[1];
+                breadcrumbs.push({
+                    name: "Buildset " + buildsetNumber,
+                    url: projectUrl + '/buildsets/' + buildsetNumber
+                });
+            }
         }
 
-        var buildset = zeus.request('buildset:current');
-        if (buildset) {
-            breadcrumbs.push({
-                name: 'Buildset ' + buildset.get('number'),
-                url: buildset.get('url')
-            });
-        }
+
         return breadcrumbs;
     }
 

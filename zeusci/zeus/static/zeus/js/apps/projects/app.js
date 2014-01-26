@@ -16,7 +16,6 @@ zeus.simpleModule('apps.projects', function (projects, region) {
             buildset.fetch({
                 success: function () {
                     region.show(view);
-                    zeus.trigger('buildset:current:set', buildset);
                     zeus.navigate(buildset.get('url'));
                 }
             });
@@ -26,7 +25,4 @@ zeus.simpleModule('apps.projects', function (projects, region) {
     zeus.on('show:project', controller.showProject);
     zeus.on('show:buildset', controller.showBuildset);
 
-    zeus.on('buildset:current:set', function (buildset) {
-        projects.models.buildset = buildset;
-    })
 }, zeus.mainRegion);
