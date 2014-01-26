@@ -7,6 +7,7 @@ zeus.simpleModule('apps.projects', function (projects, region) {
                 model: new projects.models.Project(zeus.project)
             });
             region.show(view);
+            zeus.navigate(zeus.project.url);
         },
 
         showBuildset: function (name, number) {
