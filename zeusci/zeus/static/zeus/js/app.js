@@ -28,6 +28,7 @@
         navigate: function (route, options) {
             options = options || {};
             Backbone.history.navigate(route, options);
+            this.trigger('breadcrumbs:refresh');
         },
 
         getCurrentRoute: function () {
@@ -42,6 +43,9 @@
         mainRegion: "#main-region"
     });
 
+    zeus.on('start', function () {
+        console.log("App started");
+    })
     window.zeus = zeus;
     // start app when all js/templates are loaded
 })(Marionette, Backbone, zeus_project);

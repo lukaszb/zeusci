@@ -15,6 +15,10 @@ zeus.simpleModule('apps.projects.models', function (models, Backbone) {
         }
     });
 
+    zeus.reqres.setHandler("buildset:current", function () {
+        return models.buildset;
+    });
+
     zeus.reqres.setHandler("buildset", function (buildsetNumber) {
         return new models.Buildset({number: buildsetNumber});
     });

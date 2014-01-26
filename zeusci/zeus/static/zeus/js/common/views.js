@@ -5,6 +5,13 @@ zeus.simpleModule('views', function (views, Marionette, $, swig) {
         collectionContextName: 'items',
         modelContextName: null,
 
+        initialize: function () {
+            Marionette.ItemView.prototype.initialize.apply(this, arguments);
+            if (this.collection) {
+                this.collection.on('reset', this.render);
+            }
+        },
+
         serializeData: function () {
             var data = {};
             if (this.model) {
