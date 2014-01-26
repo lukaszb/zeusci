@@ -16,8 +16,9 @@
     <tbody>
         {% for buildset in project.buildsets_recent %}
         <tr>
-            <!--<td><a href="{{ buildset.url }}" class="block">{{ buildset.number }}</a></td>-->
-            <td><a ui-sref="buildset({name: project.name, buildsetNo: buildset.number })" class="block">{{ buildset.number }}</a></td>
+            <td><a href="{{ buildset.url }}"
+                  class="block show-buildset"
+         buildsetNumber="{{ buildset.number}}">{{ buildset.number }}</a></td>
             <td><span class="label label-{{ buildset.status | statusToClass }}">{{ buildset.status | upper }}</span></td>
             <td>{{ buildset.created_at }}</td>
             <td>{{ buildset.finished_at }}</td>

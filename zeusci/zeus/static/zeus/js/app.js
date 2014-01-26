@@ -1,4 +1,4 @@
-(function (Marionette, zeus_project) {
+(function (Marionette, Backbone, zeus_project) {
 
     var ZeusApp = Marionette.Application.extend({
         initialize: function (options) {
@@ -23,6 +23,15 @@
                 return moduleDefinition.apply(self, newArgs);
             }
             Marionette.Application.prototype.module.apply(this, args);
+        },
+
+        navigate: function (route, options) {
+            options = options || {};
+            Backbone.history.navigate(route, options)
+        },
+
+        getCurrentRoute: function () {
+            return Backbone.history.fragment;
         }
     });
 
@@ -35,4 +44,4 @@
 
     window.zeus = zeus;
     // start app when all js/templates are loaded
-})(Marionette, zeus_project);
+})(Marionette, Backbone, zeus_project);
