@@ -18,7 +18,7 @@ zeus.simpleModule('apps.projects.views', function (views, Marionette) {
             event.preventDefault();
             event.stopPropagation();
             var number = this.getBuildsetNumber(event);
-            this.trigger('buildset:show', number)
+            zeus.trigger('show:buildset', this.model.get('name'), number)
         },
 
         getBuildsetNumber: function (event) {

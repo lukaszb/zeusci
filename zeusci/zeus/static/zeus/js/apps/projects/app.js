@@ -6,22 +6,22 @@ zeus.simpleModule('apps.projects', function (projects, region) {
             var view = new projects.views.ProjectDetails({
                 model: new projects.models.Project(zeus.project)
             });
-            view.on('buildset:show', controller.showBuildset);
             region.show(view);
         },
 
-        showBuildset: function (number) {
+        showBuildset: function (name, number) {
             console.log(" => show buildset " + number);
             var buildset = new projects.models.Buildset({number: number});
             var view = new projects.views.BuildsetDetails({model: buildset});
             buildset.fetch({
                 success: function () {
                     region.show(view);
+                    zeus.navigate(buildset.get('url'));
                 }
             });
         }
     };
 
-    zeus.on('start', controller.showProject);
-    zeus.on('buildset:show', controller.showBuildset)
+    zeus.on('show:project', controller.showProject);
+    zeus.on('show:buildset', controller.showBuildset);
 }, zeus.mainRegion);
