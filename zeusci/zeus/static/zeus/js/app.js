@@ -14,7 +14,7 @@
             // wrapper would receive module as first argument
             // any extra arguments must be explicitly passed to simpleModule
             // arguments
-            args[1] = function wrapper () {
+            args[1] = function moduleDefinitionWrapper () {
                 var wrapperArgs = Array.prototype.slice.call(arguments);
                 // only pass explicit arguments
                 var newArgs = wrapperArgs.slice(6);
