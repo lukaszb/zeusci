@@ -1,17 +1,19 @@
 zeus.simpleModule('apps.projects.views', function (views, Marionette) {
 
+    views.ProjectLayout = Marionette.Layout.extend({
+        template: "#project-layout-template",
+
+        regions: {
+            contentRegion: "#project-content-region"
+        }
+    });
+
     views.ProjectDetails = zeus.views.View.extend({
         template: "#project-details-template",
         modelContextName: "project",
 
         events: {
             "click .show-buildset": "showBuildset"
-        },
-
-        serializeData: function () {
-            var data = zeus.views.View.prototype.serializeData.call(this);
-            data.project = zeus.request('project').toJSON();
-            return data;
         },
 
         showBuildset: function (event) {
