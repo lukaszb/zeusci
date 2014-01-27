@@ -11,14 +11,26 @@ zeus.simpleModule('apps.breadcrumbs.models', function (models, Backbone) {
                 name: project.get('name'),
                 url: projectUrl
             });
+
             var url = zeus.getCurrentRoute();
+
             var match = url.match(/buildsets\/(\d+)/);
             if (match) {
                 var buildsetNumber = match[1];
+                var buildsetUrl = projectUrl + '/buildsets/' + buildsetNumber;
                 breadcrumbs.push({
                     name: "Buildset " + buildsetNumber,
-                    url: projectUrl + '/buildsets/' + buildsetNumber
+                    url: buildsetUrl
                 });
+
+                match = url.match(/buildsets\/(\d+)\.(\d+)/);
+                if (match) {
+                    var buildNumber = match[2];
+                    breadcrumbs.push({
+                        name: "Build " + buildNumber,
+                        url: buildsetUrl + '.' + buildNumber
+                    });
+                }
             }
         }
 

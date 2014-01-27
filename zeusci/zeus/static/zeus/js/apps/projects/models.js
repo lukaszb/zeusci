@@ -15,6 +15,14 @@ zeus.simpleModule('apps.projects.models', function (models, Backbone) {
         }
     });
 
+
+    // Build
+    models.Build = Backbone.Model.extend({
+        url: function () {
+            return zeus.project.uri + '/builds/' + this.get('buildsetNumber') + '.' + this.get('number');
+        }
+    });
+
     zeus.reqres.setHandler("buildset", function (buildsetNumber) {
         return new models.Buildset({number: buildsetNumber});
     });

@@ -9,9 +9,10 @@ zeus.simpleModule('apps.projects', function (projects, region, _, Marionette) {
             this.region = options.region;
             _.bindAll(this,
                 'initializeLayout',
+                'showBuild',
+                'showBuildset',
                 'showProject',
-                'showProjectDetails',
-                'showBuildset'
+                'showProjectDetails'
             );
             this.initializeLayout();
         },
@@ -50,6 +51,19 @@ zeus.simpleModule('apps.projects', function (projects, region, _, Marionette) {
 
         showBuild: function (name, buildsetNumber, number) {
             console.log(" => show build", arguments);
+            var build = new projects.models.Build({
+                buildsetNumber: buildsetNumber,
+                number: number
+            });
+            var view = new projects.views.BuildDetails({model: build});
+            window.v = view;
+            var self = this;
+            build.fetch({
+                success: function () {
+                    self.contentRegion.show(view);
+                    zeus.navigate(build.get('url'));
+                }
+            })
         }
     });
 
