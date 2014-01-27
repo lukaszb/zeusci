@@ -8,6 +8,7 @@ zeus.simpleModule('apps.projects.views', function (views, Marionette, $) {
         }
     });
 
+
     views.ProjectDetails = zeus.views.View.extend({
         template: "#project-details-template",
         modelContextName: "project",
