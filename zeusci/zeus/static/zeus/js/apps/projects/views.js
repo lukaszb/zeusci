@@ -9,26 +9,39 @@ zeus.simpleModule('apps.projects.views', function (views, Marionette, $) {
     });
 
 
+    var navigateOnClick = function (event) {
+        var url = $(event.target).attr('href');
+        if (url && url[0] === '/') {
+            event.preventDefault();
+            event.stopPropagation();
+            zeus.navigate(url, {trigger: true});
+        }
+    }
+
+
     views.ProjectDetails = zeus.views.View.extend({
         template: "#project-details-template",
         modelContextName: "project",
 
         events: {
-            "click .show-buildset": "showBuildset"
-        },
-
-        showBuildset: function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            var url = $(event.target).attr('href');
-            zeus.navigate(url, {trigger: true});
+            "click a": navigateOnClick
         }
     });
 
 
     views.BuildsetDetails = zeus.views.View.extend({
         template: "#buildset-details-template",
-        modelContextName: "buildset"
+        modelContextName: "buildset",
+
+        events: {
+            "click a": navigateOnClick
+        }
+    });
+
+
+    views.BuildDetails = zeus.views.View.extend({
+        template: "#build-details-template",
+        modelContextName: "build"
     });
 
 }, Marionette, $);

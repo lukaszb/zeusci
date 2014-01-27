@@ -46,6 +46,10 @@ zeus.simpleModule('apps.projects', function (projects, region, _, Marionette) {
                     zeus.navigate(buildset.get('url'));
                 }
             });
+        },
+
+        showBuild: function (name, buildsetNumber, number) {
+            console.log(" => show build", arguments);
         }
     });
 
@@ -62,6 +66,7 @@ zeus.simpleModule('apps.projects', function (projects, region, _, Marionette) {
 
         zeus.on('show:project', controller.showProject);
         zeus.on('show:buildset', controller.showBuildset);
+        zeus.on('show:build', controller.showBuild);
 
         projects.controller = controller;
     });
