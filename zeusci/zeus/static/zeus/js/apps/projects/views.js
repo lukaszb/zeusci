@@ -1,4 +1,4 @@
-zeus.simpleModule('apps.projects.views', function (views, Marionette) {
+zeus.simpleModule('apps.projects.views', function (views, Marionette, $) {
 
     views.ProjectLayout = Marionette.Layout.extend({
         template: "#project-layout-template",
@@ -35,4 +35,4 @@ zeus.simpleModule('apps.projects.views', function (views, Marionette) {
         modelContextName: "buildset"
     });
 
-}, Marionette);
+}, Marionette, $);
