@@ -20,13 +20,8 @@ zeus.simpleModule('apps.projects.views', function (views, Marionette, $) {
         showBuildset: function (event) {
             event.preventDefault();
             event.stopPropagation();
-            var number = this.getBuildsetNumber(event);
-            zeus.trigger('show:buildset', this.model.get('name'), number)
-        },
-
-        getBuildsetNumber: function (event) {
-            var el = $(event.target);
-            return el.attr('buildsetNumber');
+            var url = $(event.target).attr('href');
+            zeus.navigate(url, {trigger: true});
         }
     });
 
