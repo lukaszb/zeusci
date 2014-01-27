@@ -36,7 +36,7 @@ zeus.simpleModule('apps.projects', function (projects, region, _, Marionette) {
         },
 
         showBuildset: function (name, number) {
-            console.log(" => show buildset " + number);
+            console.log(" => show buildset ", arguments);
             var buildset = new projects.models.Buildset({number: number});
             var view = new projects.views.BuildsetDetails({model: buildset});
             var self = this;
