@@ -8,15 +8,15 @@ zeus.simpleModule('apps.projects', function (projects, region, _, Marionette) {
             this.project = options.project;
             this.region = options.region;
             _.bindAll(this,
-                'initializeProjectLayoutView',
+                'initializeLayout',
                 'showProject',
                 'showProjectDetails',
                 'showBuildset'
             );
-            this.initializeProjectLayoutView();
+            this.initializeLayout();
         },
 
-        initializeProjectLayoutView: function () {
+        initializeLayout: function () {
             this.layout = new projects.views.ProjectLayout({
                 model: this.project
             });
