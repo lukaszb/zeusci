@@ -15,9 +15,14 @@
 {% block container %}
 {% verbatim %}
 <div ng-app="zeus">
-    <ol class="breadcrumb">
-        <li>Breadcrumbs</li>
+    <ol class="breadcrumb" ng-controller="BreadcrumbsController">
+        <li ng-repeat="breadcrumb in breadcrumbs">
+        <ng-switch on="$last">
+            <a ng-switch-when="false" href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a>
+            <span ng-switch-default>{{ breadcrumb.name }}</span>
+        </ng-switch>
     </ol>
+
     <div ui-view>LOADING</div>
 </div>
 {% endverbatim %}
