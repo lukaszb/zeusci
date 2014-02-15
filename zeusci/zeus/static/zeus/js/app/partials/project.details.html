@@ -17,7 +17,7 @@
                 <td><a href="{{ buildset.url }}"
                     class="block show-buildset"
             buildsetNumber="{{ buildset.number}}">{{ buildset.number }}</a></td>
-                <td><span class="label label-{{ buildset.status  }}">{{ buildset.status | uppercase }}</span></td>
+                <td><span class="label label-{{ buildset.status | statusToClass }}">{{ buildset.status | uppercase }}</span></td>
                 <td>{{ buildset.created_at }}</td>
                 <td>{{ buildset.finished_at }}</td>
             </tr>
