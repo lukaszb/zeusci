@@ -24,10 +24,11 @@ zeus = (function (angular) {
                 url: '/p/:name',
                 resolve: {
                     project: function (Project, $stateParams) {
+                        console.log(" -> Resolving Project " + $stateParams.name);
                         return Project.get({name: $stateParams.name});
                     }
                 },
-                template: '<ui-view/>',
+                templateUrl: resolveTemplate('project.wrapper'),
                 onEnter: function (Project, Buildset) {
                     // put services as deps so they are actually resolved
                     console.log(" => onEnter: project");
@@ -35,10 +36,40 @@ zeus = (function (angular) {
             })
             .state('project.details', {
                 url: '',
-                templateUrl: resolveTemplate('project.details'),
-                controller: 'ProjectDetailsController',
                 onEnter: function () {
                     console.log(" => onEnter: project.details");
+                },
+                views: {
+                    // injects into unnamed ui-view in parent's state
+                    '': {
+                        templateUrl: resolveTemplate('project.details'),
+                        controller: 'ProjectDetailsController'
+                    },
+                    // injects into 'project-content' ui-view in parent's state
+                    'project-content': {
+                        templateUrl: resolveTemplate('buildset.list'),
+                        controller: 'ProjectDetailsController'
+                    }
+                }
+            })
+            .state('project.details.buildset', {
+                url: '/buildsets/:buildsetNumber',
+                views: {
+                    // injects into parent's ui-view ('project-content')
+                    '': {
+                        templateUrl: resolveTemplate('buildset.details'),
+                        controller: function ($scope, $stateParams, Buildset) {
+                            $scope.buildset = Buildset.get({
+                                name: project.name,
+                                buildsetNumber: $stateParams.buildsetNumber
+                            });
+                            console.log(" => project.details.buildset | view: ''");
+                            window.scope = $scope;
+                        }
+                    }
+                },
+                onEnter: function () {
+                    console.log(" => onEnter: project.details.buildset");
                 }
             })
         ;

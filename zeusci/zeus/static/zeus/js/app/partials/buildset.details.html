@@ -1,0 +1,34 @@
+<h2>Buildset #{{ buildset.number }}</h2>
+
+<div class="buildset-list">
+
+    <div class="buildset-item panel panel-default"
+     ng-repeat="build in buildset.builds">
+        <div class="panel-body">
+            <ul class="list-inline">
+                <li>
+                    <ul class="list-unstyled">
+                        <li>
+                        <a href="#">
+                        Build #{{ buildset.number }}.{{ build.number }}
+                        </a>
+                        </li>
+                        <li>
+                        <span class="label label-{{ build.status | statusToClass }}">
+                            {{ build.status | uppercase }}
+                        </span>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                <ul class="list-unstyled">
+                    <li>Started at: {{ build.created_at }}</li>
+                    <li>Finished at: {{ build.finished_at }}</li>
+                </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
