@@ -5,26 +5,17 @@
 {{ block.super }}
 <script type="text/javascript">
     // global vars
-    zeus_project = {{ project|jsonify }};
+    var project = {{ project|jsonify }};
     var PROJECT_URL = "{{ project.url }}";
     var STATIC_URL = "{{ STATIC_URL }}";
     var PARTIALS_URL = "{{ STATIC_URL }}zeus/js/app/partials/";
 </script>
 {% endblock %}
 
-{% block finish_js %}
-<script type="text/javascript">
-    zeus.start();
-</script>
-{% endblock %}
-
 {% block container %}
 {% verbatim %}
-<div>
-
-    <div id="breadcrumbs-region"></div>
-    <div id="main-region"></div>
-
+<div ng-app="zeus">
+    <div ui-view>LOADING</div>
 </div>
 {% endverbatim %}
 

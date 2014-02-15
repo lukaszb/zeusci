@@ -19,32 +19,18 @@
 
 {% compress js %}
 {# libraries #}
-<script type="text/javascript" src="{% static "zeus/js/lib/swig.min.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/moment.2.0.0.min.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/underscore.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/backbone.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/backbone.wreqr.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/backbone.babysitter.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/backbone.marionette.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/lib/backbone.marionette.swig.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/angular.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/angular-cookies.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/angular-resource.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/angular-ui-router.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/lib/ui-bootstrap-tpls-0.10.0.min.js" %}"></script>
 {# setup global variables #}
 {% block init_js %}{% endblock %}
 {# app #}
 
-<script type="text/javascript" src="{% static "zeus/js/app.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/routes.js" %}"></script>
-
-<script type="text/javascript" src="{% static "zeus/js/common/constants.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/common/filters.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/common/views.js" %}"></script>
-
-<script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/app.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/models.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/apps/breadcrumbs/views.js" %}"></script>
-
-<script type="text/javascript" src="{% static "zeus/js/apps/projects/app.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/apps/projects/models.js" %}"></script>
-<script type="text/javascript" src="{% static "zeus/js/apps/projects/views.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/app/app.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/app/services.js" %}"></script>
+<script type="text/javascript" src="{% static "zeus/js/app/controllers.js" %}"></script>
 
 {% block finish_js %}{% endblock %}
 {% endcompress %}
