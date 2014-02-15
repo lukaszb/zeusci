@@ -28,7 +28,8 @@ zeus = (function (angular) {
                     }
                 },
                 template: '<ui-view/>',
-                onEnter: function () {
+                onEnter: function (Project, Buildset) {
+                    // put services as deps so they are actually resolved
                     console.log(" => onEnter: project");
                 }
             })

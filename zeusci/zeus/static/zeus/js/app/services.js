@@ -1,7 +1,8 @@
 (function (project) {
 
     zeus.constant('settings', {
-        API_PROJECT_URL: '/api/projects/:name'
+        API_PROJECT_URL: '/api/projects/:name',
+        API_BUILDSET_URL: '/api/projects/:name/buildsets/:buildsetNumber'
     });
 
 
@@ -12,6 +13,12 @@
         };
         zeus.Project = Project;  // TODO: Remove me
         return Project;
+    });
+
+    zeus.factory('Buildset', function ($resource, settings) {
+        var Buildset = $resource(settings.API_BUILDSET_URL, {});
+        zeus.Buildset = Buildset;  // TODO Remove me
+        return Buildset
     });
 
 })(project);
