@@ -20,12 +20,20 @@ zeus = (function (angular) {
         console.log(" => setting up the states");
         $stateProvider
             .state('project', {
+                abstract: true,
                 url: '/p/:name',
                 resolve: {
                     project: function (Project, $stateParams) {
                         return Project.get({name: $stateParams.name});
                     }
                 },
+                template: '<ui-view/>',
+                onEnter: function () {
+                    console.log(" => onEnter: project");
+                }
+            })
+            .state('project.details', {
+                url: '',
                 templateUrl: resolveTemplate('project.details'),
                 controller: 'ProjectDetailsController',
                 onEnter: function () {
