@@ -1,2 +1,26 @@
 <h1>{{ project.name }}</h1>
-<div ui-view="project-content"></div>
+
+<div ui-view>
+    <h3>Recent buildsets</h3>
+
+    <table class="table table-striped table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>Buildset</th>
+                <th>Status</th>
+                <th>Started</th>
+                <th>Finished</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="buildset in project.buildsets_recent">
+                <td><a href="{{ buildset.url }}"
+                    class="block show-buildset"
+            buildsetNumber="{{ buildset.number}}">{{ buildset.number }}</a></td>
+                <td><span class="label label-{{ buildset.status  }}">{{ buildset.status | uppercase }}</span></td>
+                <td>{{ buildset.created_at }}</td>
+                <td>{{ buildset.finished_at }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
