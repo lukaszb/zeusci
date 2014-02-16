@@ -9,7 +9,11 @@
                 <li>
                     <ul class="list-unstyled">
                         <li>
-                        <a href="#">
+                        <a ui-sref="project.details.buildset.build({
+                            name: project.name,
+                            buildsetNumber: buildset.number,
+                            buildNumber: build.number
+                        })">
                         Build #{{ buildset.number }}.{{ build.number }}
                         </a>
                         </li>

@@ -62,17 +62,28 @@ zeus = (function (angular) {
                     '': {
                         templateUrl: resolveTemplate('buildset.details'),
                         controller: function ($scope, $stateParams, Buildset) {
-                            $scope.buildset = Buildset.get({
-                                name: project.name,
-                                buildsetNumber: $stateParams.buildsetNumber
-                            });
+                            $scope.buildset = Buildset.get($stateParams);
                             console.log(" => project.details.buildset | view: ''");
-                            window.scope = $scope;
                         }
                     }
                 },
                 onEnter: function () {
                     console.log(" => onEnter: project.details.buildset");
+                }
+            })
+            .state('project.details.buildset.build', {
+                url: '.{buildNumber:[0-9]{1,}}',
+                views: {
+                    'project-content@project': {
+                        templateUrl: resolveTemplate('build.details'),
+                        controller: function ($scope, $stateParams, Build) {
+                            console.log(" => project.details.buildset.build | view: ''");
+                            $scope.build = Build.get($stateParams);
+                        }
+                    }
+                },
+                onEnter: function () {
+                    console.log(" => onEnter: project.details.buildset.build");
                 }
             })
         ;

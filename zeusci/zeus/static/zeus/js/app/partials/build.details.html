@@ -1,0 +1,31 @@
+<div class="panel panel panel-default">
+    <div class="panel-body">
+        <a class="btn btn-mini btn-danger pull-right" href="#" ng-click="forceRebuild(build)"><i class="glyphicon glyphicon-wrench icon-white"></i> Force re-build</a>
+        <ul class="list-inline">
+            <li>
+                <ul class="list-unstyled">
+                    <li><strong>Build {{ $stateParams.buildsetNumber }}.{{ $stateParams.buildNumber }}</strong></li>
+                    <li>
+                        <span class="label label-{{ build.status | statusToClass }}">
+                        {{ build.status | uppercase }}
+                        </span>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <ul class="list-unstyled">
+                    <li>Started at: {{ build.created_at }}</li>
+                    <li>Finished at: {{ build.finished_at }}</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="command-panel panel panel-{{ build.status | statusToClass }}" ng-repeat="command in build.commands">
+    <div class="panel-heading">
+        <h3 class="panel-title">$ {{ command.cmd }}</h3>
+    </div>
+    <div class="panel-body"><pre>{{ command.output }}</pre></div>
+</div>
