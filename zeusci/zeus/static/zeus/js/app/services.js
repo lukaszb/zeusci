@@ -15,6 +15,7 @@
         return Project;
     });
 
+
     zeus.factory('Buildset', function ($resource, settings) {
         var Buildset = $resource(settings.API_BUILDSET_URL, {});
         zeus.Buildset = Buildset;  // TODO Remove me
