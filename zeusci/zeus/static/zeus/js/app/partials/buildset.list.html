@@ -1,24 +1,42 @@
 <div ui-view>
 
 <h3>Recent buildsets</h3>
-    <table class="table table-striped table-bordered table-condensed table-hover">
-        <thead>
-            <tr>
-                <th>Buildset</th>
-                <th>Status</th>
-                <th>Started</th>
-                <th>Finished</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="buildset in project.buildsets_recent">
-                <td>
-                    <a ui-sref="project.details.buildset({name: project.name, buildsetNumber: buildset.number})" class="block show-buildset">{{ buildset.number }}</a>
-                </td>
-                <td><span class="label label-{{ buildset.status | statusToClass }}">{{ buildset.status | uppercase }}</span></td>
-                <td>{{ buildset.created_at }}</td>
-                <td>{{ buildset.finished_at }}</td>
-            </tr>
-        </tbody>
-    </table>
+
+<div class="buildset-list">
+
+    <div class="buildset-item panel panel-default"
+     ng-repeat="buildset in project.buildsets_recent">
+        <div class="panel-body">
+            <ul class="list-inline">
+                <li>
+                    <ul class="list-unstyled">
+                        <li>
+                        <a ui-sref="project.details.buildset({
+                            name: $stateParams.name,
+                            buildsetNumber: buildset.number
+                        })">
+                        Buildset {{ buildset.number }}
+                        </a>
+                        </li>
+
+                        <li>
+                        <span class="label label-{{ buildset.status | statusToClass }}">
+                            {{ buildset.status | uppercase }}
+                        </span>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                <ul class="list-unstyled">
+                    <li>Started at: {{ buildset.created_at }}</li>
+                    <li>Finished at: {{ buildset.finished_at }}</li>
+                </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
 </div>
