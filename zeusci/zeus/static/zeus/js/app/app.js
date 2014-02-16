@@ -1,7 +1,10 @@
 zeus = (function (angular) {
     var zeus = angular.module('zeus', ['ngResource', 'ngCookies', 'ui.router', 'ui.bootstrap']);
 
-    zeus.run(function ($http, $cookies) {
+    zeus.run(function ($http, $cookies, $rootScope, $stateParams) {
+        // Always set $stateParams at the scope
+        $rootScope.$stateParams = $stateParams;
+
         // Pass CSRF token from cookie to all data send back to the server
         $http.defaults.headers.common['X-CSRFToken'] = $cookies['csrftoken'];
     });
