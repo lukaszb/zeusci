@@ -20,7 +20,7 @@ zeus.controller('BreadcrumbsController', function ($scope, $state, $stateParams)
 
         // Buildset
         if ($stateParams.buildsetNumber) {
-            var name = "Buildset #" + $stateParams.buildsetNumber;
+            var name = "Buildset " + $stateParams.buildsetNumber;
             var url = $state.href('project.details.buildset', $stateParams);
             addBreadcrumb(name, url);
         }
@@ -28,7 +28,7 @@ zeus.controller('BreadcrumbsController', function ($scope, $state, $stateParams)
         // Build
         if ($stateParams.buildNumber) {
             var name = [
-                "Buildset #",
+                "Buildset ",
                 $stateParams.buildsetNumber,
                 ".",
                 $stateParams.buildNumber
