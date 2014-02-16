@@ -21,7 +21,7 @@ zeus = (function (angular) {
         $stateProvider
             .state('project', {
                 abstract: true,
-                url: '/p/:name',
+                url: '/p/{name}',
                 resolve: {
                     project: function (Project, $stateParams) {
                         console.log(" -> Resolving Project " + $stateParams.name);
@@ -53,7 +53,7 @@ zeus = (function (angular) {
                 }
             })
             .state('project.details.buildset', {
-                url: '/buildsets/:buildsetNumber',
+                url: '/buildsets/{buildsetNumber:[0-9]{1,}}',
                 views: {
                     // injects into parent's ui-view ('project-content')
                     '': {
