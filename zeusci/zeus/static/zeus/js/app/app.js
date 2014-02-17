@@ -24,13 +24,7 @@ zeus = (function (angular) {
         $stateProvider
             .state('project', {
                 abstract: true,
-                url: '/p/{name}',
-                resolve: {
-                    project: function (Project, $stateParams) {
-                        console.log(" -> Resolving Project " + $stateParams.name);
-                        return Project.get({name: $stateParams.name});
-                    }
-                },
+                url: '/proj',
                 templateUrl: resolveTemplate('project.wrapper'),
                 onEnter: function (Project, Buildset) {
                     // put services as deps so they are actually resolved
@@ -38,9 +32,15 @@ zeus = (function (angular) {
                 }
             })
             .state('project.details', {
-                url: '',
+                url: '^/p/{name}',
                 onEnter: function () {
                     console.log(" => onEnter: project.details");
+                },
+                resolve: {
+                    project: function (Project, $stateParams) {
+                        console.log(" -> Resolving Project " + $stateParams.name);
+                        return Project.get({name: $stateParams.name});
+                    }
                 },
                 views: {
                     // injects into unnamed ui-view in parent's state
