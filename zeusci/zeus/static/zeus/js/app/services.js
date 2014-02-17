@@ -27,7 +27,9 @@
 
 
     zeus.factory('Build', function ($resource, settings) {
-        var Build = $resource(settings.API_BUILD_URL, {});
+        var Build = $resource(settings.API_BUILD_URL, {}, {
+            put: {method: 'PUT'}
+        });
         zeus.Build = Build;  // TODO Remove me
         return Build;
     });

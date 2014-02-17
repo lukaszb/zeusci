@@ -86,10 +86,7 @@ zeus = (function (angular) {
                 views: {
                     'project-content@project': {
                         templateUrl: resolveTemplate('build.details'),
-                        controller: function ($scope, $stateParams, Build) {
-                            console.log(" => project.details.buildset.build | view: ''");
-                            $scope.build = Build.get($stateParams);
-                        }
+                        controller: 'BuildDetailsController'
                     }
                 },
                 onEnter: function () {
