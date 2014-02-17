@@ -1,12 +1,10 @@
 zeus.controller('BuildDetailsController', function ($scope, $stateParams, $timeout, Build) {
 
     $scope.forceRebuild = function () {
-        console.log(" -> forceRebuild: ", $scope.build.$resolved);
-        window.build = $scope.build;
-        build.$put($stateParams, function () {
+        $scope.build.$put($stateParams, function () {
             console.log(" -> PUT a build (forceRebuild)");
         });
-    }
+    };
 
     (function pollBuild() {
         Build.get($stateParams, function (build) {
