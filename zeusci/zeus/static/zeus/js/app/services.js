@@ -18,7 +18,9 @@
 
 
     zeus.factory('Buildset', function ($resource, settings) {
-        var Buildset = $resource(settings.API_BUILDSET_URL, {});
+        var Buildset = $resource(settings.API_BUILDSET_URL, {}, {
+            post: {method: 'POST'}
+        });
         zeus.Buildset = Buildset;  // TODO Remove me
         return Buildset;
     });

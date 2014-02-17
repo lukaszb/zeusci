@@ -1,0 +1,25 @@
+
+<div class="alert alert-success" ng-show="buildset">New buildset was created: <a href="#">Buildset {{ buildset.number}}</a></div>
+
+<div class="panel panel-primary" ng-init="initController()">
+    <div class="panel-heading">
+        <h3 class="panel-title">Manually initialize a build</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" role="form" name="buildsetCreate" novalidate ng-submit="createBuildset()">
+            <div class="form-group">
+                <label for="branch" class="col-sm-4 control-label">Branch</label>
+                <div class="col-sm-4">
+                    <input class="form-control input-sm" name="branch" ng-model="newBuildset.branch" type="text" placeholder="branch (optional)" autofocus/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8">
+                    <button type="submit" class="btn btn-sm btn-primary" ng-class="{'disabled': state.processing}">Force build</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+

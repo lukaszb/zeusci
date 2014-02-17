@@ -55,6 +55,16 @@ zeus = (function (angular) {
                     }
                 }
             })
+            .state('project.details.createBuildset', {
+                url: '/buildsets/init',
+                views: {
+                    // injects into parent's ui-view ('project-content')
+                    '': {
+                        templateUrl: resolveTemplate('buildset.create'),
+                        controller: 'BuildsetCreateController'
+                    }
+                }
+            })
             .state('project.details.buildset', {
                 url: '/buildsets/{buildsetNumber:[0-9]{1,}}',
                 views: {
