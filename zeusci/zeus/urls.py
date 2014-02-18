@@ -17,8 +17,9 @@ urlpatterns = patterns('zeusci.zeus.views',
     url('^p/(?P<name>[-\w]+)/*',
         view='project_view',
         name='zeus_project_detail'),
-    # we need buildset/build routes here so the urls can be bookmarked (or page
-    # refreshed)
+    # we need following as we want for:
+    # - pass serialized data for buildset/build (faster loading)
+    # - reversing urls at backend
     url('^p/(?P<name>[-\w]+)/buildsets/(?P<buildset_no>\d+)/$',
         view='project_view',
         name='zeus_project_buildset_detail'),
