@@ -25,14 +25,22 @@ zeus = (function (angular) {
             .state('project', {
                 abstract: true,
                 url: '/proj',
-                templateUrl: resolveTemplate('project.wrapper'),
+                // each state requires template, even abstract
+                template: '<div ui-view>L O A D I N G</div>',
                 onEnter: function (Project, Buildset) {
                     // put services as deps so they are actually resolved
                     console.log(" => onEnter: project");
                 }
             })
+            // abstract state that wraps all single project states
+            .state('project.single', {
+                abstract: true,
+                templateUrl: resolveTemplate('project.single'),
+                onEnter: function () { console.log(" => onEnter: project.single"); },
+            })
             .state('project.details', {
                 url: '^/p/{name}',
+                parent: 'project.single',
                 onEnter: function () {
                     console.log(" => onEnter: project.details");
                 },
@@ -48,17 +56,18 @@ zeus = (function (angular) {
                         templateUrl: resolveTemplate('project.details'),
                         controller: 'ProjectDetailsController'
                     },
-                    // injects into 'project-content' ui-view in parent's state
-                    'project-content': {
+                    // injects into 'content' ui-view in parent's state
+                    'content': {
                         templateUrl: resolveTemplate('buildset.list'),
                         controller: 'ProjectDetailsController'
                     }
                 }
+
             })
             .state('project.details.createBuildset', {
                 url: '/buildsets/init',
                 views: {
-                    // injects into parent's ui-view ('project-content')
+                    // injects into parent's ui-view ('content')
                     '': {
                         templateUrl: resolveTemplate('buildset.create'),
                         controller: 'BuildsetCreateController'
@@ -68,7 +77,7 @@ zeus = (function (angular) {
             .state('project.details.buildset', {
                 url: '/buildsets/{buildsetNumber:[0-9]{1,}}',
                 views: {
-                    // injects into parent's ui-view ('project-content')
+                    // injects into parent's ui-view ('content')
                     '': {
                         templateUrl: resolveTemplate('buildset.details'),
                         controller: function ($scope, $stateParams, Buildset) {
@@ -84,7 +93,7 @@ zeus = (function (angular) {
             .state('project.details.buildset.build', {
                 url: '.{buildNumber:[0-9]{1,}}',
                 views: {
-                    'project-content@project': {
+                    'content@project.single': {
                         templateUrl: resolveTemplate('build.details'),
                         controller: 'BuildDetailsController'
                     }
