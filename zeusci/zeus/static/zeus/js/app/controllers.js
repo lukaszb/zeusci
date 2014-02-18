@@ -13,6 +13,10 @@ zeus.controller('BreadcrumbsController', function ($scope, $state, $stateParams)
             breadcrumbs.push({name: name, url: url});
         };
 
+        // Project List
+        url = $state.href('project.list');
+        addBreadcrumb("Projects", url);
+
         // Project
         if ($stateParams.name) {
             url = $state.href('project.details', $stateParams);
