@@ -7,6 +7,7 @@ zeus.controller('BreadcrumbsController', function ($scope, $state, $stateParams)
 
     var getBreadcrumbs = function () {
         var breadcrumbs = [];
+        var name, url;
 
         var addBreadcrumb = function (name, url) {
             breadcrumbs.push({name: name, url: url});
@@ -14,26 +15,26 @@ zeus.controller('BreadcrumbsController', function ($scope, $state, $stateParams)
 
         // Project
         if ($stateParams.name) {
-            var url = $state.href('project.details', $stateParams);
+            url = $state.href('project.details', $stateParams);
             addBreadcrumb($stateParams.name, url);
         }
 
         // Buildset
         if ($stateParams.buildsetNumber) {
-            var name = "Buildset " + $stateParams.buildsetNumber;
-            var url = $state.href('project.details.buildset', $stateParams);
+            name = "Buildset " + $stateParams.buildsetNumber;
+            url = $state.href('project.details.buildset', $stateParams);
             addBreadcrumb(name, url);
         }
 
         // Build
         if ($stateParams.buildNumber) {
-            var name = [
+            name = [
                 "Buildset ",
                 $stateParams.buildsetNumber,
                 ".",
                 $stateParams.buildNumber
             ].join('');
-            var url = $state.href('project.details.buildset.build', $stateParams);
+            url = $state.href('project.details.buildset.build', $stateParams);
             addBreadcrumb(name, url);
         }
 
