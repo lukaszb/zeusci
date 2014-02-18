@@ -1,0 +1,7 @@
+<h1>Projects</h1>
+
+<div class="panel panel-default" ng-repeat="project in projects">
+    <div class="panel-body">
+        <a ui-sref="project.details({name: project.name})">{{ project.name }}</a>
+    </div>
+</div>

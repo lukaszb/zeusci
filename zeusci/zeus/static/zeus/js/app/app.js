@@ -24,13 +24,25 @@ zeus = (function (angular) {
         $stateProvider
             .state('project', {
                 abstract: true,
-                url: '/proj',
+                url: '',
                 // each state requires template, even abstract
                 template: '<div ui-view>L O A D I N G</div>',
                 onEnter: function (Project, Buildset) {
                     // put services as deps so they are actually resolved
                     console.log(" => onEnter: project");
                 }
+            })
+            .state('project.list', {
+                url: '^/p',
+                templateUrl: resolveTemplate('project.list'),
+                controller: function ($scope, Project) {
+                    Project.get({}, function (data) {
+                        $scope.projects = data.results;
+                    });
+                },
+                onEnter: function () {
+                    console.log(" => onEnter: project.list");
+                },
             })
             // abstract state that wraps all single project states
             .state('project.single', {

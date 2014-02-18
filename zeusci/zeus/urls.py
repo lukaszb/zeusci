@@ -12,6 +12,9 @@ urlpatterns = patterns('zeusci.zeus.views',
         view='project_build_view',
         name='zeus_force_project_build'),
 
+    url('^p$',
+        view='project_list_view',
+        name='zeus_project_list'),
     # the same view handles those paths as frontend client is responsible for
     # further routing.
     url('^p/(?P<name>[-\w]+)/*',
