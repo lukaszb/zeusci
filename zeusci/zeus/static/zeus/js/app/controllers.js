@@ -69,8 +69,8 @@ zeus.controller('BuildsetCreateController', function ($scope, $stateParams, Buil
         buildset.$post($stateParams, function (obj) {
             state.processing = false;
             $scope.buildset = obj;  // TODO: API should return full object instead of empty one
-        }, function () {
-            console.log(" -> Errors!: ", arguments);
+        }, function (response) {
+            // TODO: Handle errors
         });
     }
 });
