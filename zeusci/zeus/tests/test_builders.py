@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from django.test import SimpleTestCase
+from django.test import TestCase
 from unittest import mock
 from zeusci.zeus.models import Build
 from zeusci.zeus.models import Buildset
@@ -13,7 +13,7 @@ import os
 import tempfile
 
 
-class TestBaseBuilder(SimpleTestCase):
+class TestBaseBuilder(TestCase):
 
     def setUp(self):
         self.builder = BaseBuilder()
@@ -228,7 +228,7 @@ class TestBaseBuilder(SimpleTestCase):
         self.assertFalse(os.path.isdir(build.build_dir))
 
 
-class TestPythonBuildseter(SimpleTestCase):
+class TestPythonBuildseter(TestCase):
 
     def setUp(self):
         self.builder = PythonBuilder()
@@ -260,6 +260,7 @@ class TestPythonBuildseter(SimpleTestCase):
         self.assertEqual(len(commands), 1)
 
         command = commands[0]
+        command.clear_output_cache()
         self.assertEqual(command.number, 1)
         self.assertEqual(command.title, 'tox')
         cmd = [
