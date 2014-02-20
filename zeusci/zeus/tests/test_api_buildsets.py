@@ -13,12 +13,12 @@ class TestBuildsetApi(BaseApiTestCase):
     def setUp(self):
         zeus = Project.objects.create(
             name='zeus',
-            url='https://github.com/lukaszb/zeus',
+            website_url='https://github.com/lukaszb/zeus',
             repo_url='git://github.com/lukaszb/zeus.git',
         )
         self.frogress = Project.objects.create(
             name='frogress',
-            url='https://github.com/lukaszb/frogress',
+            website_url='https://github.com/lukaszb/frogress',
             repo_url='git://github.com/lukaszb/frogress.git',
         )
         dt = datetime.datetime(2013, 6, 13, 23, 12)

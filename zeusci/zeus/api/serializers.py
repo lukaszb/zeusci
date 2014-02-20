@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .fields import HyperlinkedIdentityField
 from zeusci.zeus.models import Build
 from zeusci.zeus.models import Command
+from zeusci.zeus.models import Project
 
 
 base_build_fields = [
@@ -68,24 +69,32 @@ class BuildsetSerializer(serializers.Serializer):
     errors = serializers.Field(source='errors')
 
 
-class ProjectSerializer(serializers.Serializer):
+class ProjectSerializer(serializers.ModelSerializer):
     uri = serializers.HyperlinkedIdentityField(
         view_name='zeus_api_project_detail',
         pk_url_kwarg='name',
         lookup_field='name',
     )
-    name = serializers.CharField('name')
-    website_url = serializers.CharField(source='url')
-    repo_url = serializers.CharField('repo_url')
-    url = serializers.CharField(source='get_absolute_url')
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
     buildsets_uri = serializers.HyperlinkedIdentityField(
         view_name='zeus_api_buildset_list',
         pk_url_kwarg='name',
         lookup_field='name',
     )
 
+    class Meta:
+        model = Project
+        fields = ['name', 'repo_url', 'uri', 'url', 'website_url', 'buildsets_uri']
+
 
 class ProjectDetailSerializer(ProjectSerializer):
     buildsets_total_count = serializers.IntegerField(source='get_buildsets_total_count')
     buildsets_recent = BuildsetSerializer(source='get_recent_buildsets')
+
+    class Meta:
+        model = Project
+        fields = ProjectSerializer.Meta.fields + [
+            'buildsets_total_count',
+            'buildsets_recent',
+        ]
 

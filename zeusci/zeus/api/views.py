@@ -44,7 +44,7 @@ class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectSerializer
 
 
-project_list = ProjectViewSet.as_view({'get': 'list'})
+project_list = ProjectViewSet.as_view({'get': 'list', 'post': 'create'})
 
 
 class ProjectDetail(BaseApiMixin, generics.RetrieveAPIView):

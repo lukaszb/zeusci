@@ -17,7 +17,7 @@ class TestBuildApi(BaseApiTestCase):
     def setUp(self):
         zeus = Project.objects.create(
             name='zeus',
-            url='https://github.com/lukaszb/zeus',
+            website_url='https://github.com/lukaszb/zeus',
             repo_url='git://github.com/lukaszb/zeus.git',
         )
         self.buildset = Buildset.objects.create(

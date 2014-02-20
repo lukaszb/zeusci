@@ -15,7 +15,7 @@ class TestBuildset(TestCase):
     def test_save_error_with_bytes(self):
         zeus = Project.objects.create(
             name='zeus',
-            url='https://github.com/lukaszb/zeus',
+            website_url='https://github.com/lukaszb/zeus',
             repo_url='git://github.com/lukaszb/zeus.git',
         )
         self.buildset = Buildset.objects.create(
@@ -24,4 +24,3 @@ class TestBuildset(TestCase):
             errors=[{'stderr': b'error output'}],
         )
         self.assertEqual(self.buildset.errors[0]['stderr'], 'error output')
-

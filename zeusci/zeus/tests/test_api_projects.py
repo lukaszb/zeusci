@@ -1,29 +1,40 @@
 from django.core.urlresolvers import reverse
+from rest_framework.test import APIClient
 from unittest import mock
 from zeusci.zeus.models import Buildset
 from zeusci.zeus.models import Project
 from .test_api_base import BaseApiTestCase
 import datetime
 
-
 class TestProjectApi(BaseApiTestCase):
     maxDiff = None
+    client_class = APIClient
 
     def setUp(self):
         self.zeus = Project.objects.create(
             name='zeus',
-            url='https://github.com/lukaszb/zeus',
+            website_url='https://github.com/lukaszb/zeus',
             repo_url='git://github.com/lukaszb/zeus.git',
         )
         self.frogress = Project.objects.create(
             name='frogress',
-            url='https://github.com/lukaszb/frogress',
+            website_url='https://github.com/lukaszb/frogress',
             repo_url='git://github.com/lukaszb/frogress.git',
         )
         Buildset.objects.create(project=self.zeus, number=1)
         Buildset.objects.create(project=self.zeus, number=2, build_dir='/tmp/zeus/2')
         dt = datetime.datetime(2013, 6, 13, 23, 12)
         Buildset.objects.create(project=self.zeus, number=3, finished_at=dt)
+
+    def test_create(self):
+        url = reverse('zeus_api_project_list')
+        response = self.client.post(url, {
+            'name': 'ack-vim',
+            'website_url': 'http://github.com/vim-scripts/ack.vim',
+            'repo_url': 'git://github.com/vim-scripts/ack.vim.git',
+        })
+
+        self.assertEqual(response.status_code, 201, response.data)
 
     def test_project_list(self):
         url = reverse('zeus_api_project_list')
