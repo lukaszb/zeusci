@@ -44,6 +44,11 @@ zeus = (function (angular) {
                     console.log(" => onEnter: project.list");
                 },
             })
+            .state('project.create', {
+                url: '^/new',
+                templateUrl: resolveTemplate('project.create'),
+                controller: 'ProjectCreateController'
+            })
             // abstract state that wraps all single project states
             .state('project.single', {
                 abstract: true,

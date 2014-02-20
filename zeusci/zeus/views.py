@@ -15,11 +15,12 @@ from .api.serializers import BuildDetailSerializer
 import datetime
 
 
-class ProjectListView(TemplateView):
+class ProjectNoContextView(TemplateView):
     template_name = 'zeus/project.html'
 
 
-project_list_view = ProjectListView.as_view()
+project_list_view = ProjectNoContextView.as_view()
+project_create_view = ProjectNoContextView.as_view()
 
 
 class ProjectView(TemplateView):

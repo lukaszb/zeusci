@@ -1,0 +1,32 @@
+<h1>Add new project</h1>
+
+<div class="panel panel-primary" ng-init="initController()">
+    <div class="panel-body">
+        <form class="form-horizontal" role="form" name="newProject" novalidate ng-submit="createProject()">
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <input class="form-control input-sm" name="name" ng-model="project.name" type="text" placeholder="Project name" autofocus/>
+                    <div class="alert alert-danger" ng-repeat="error in errors.name">
+                        {{ error }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <input class="form-control input-sm" name="repository_url" ng-model="project.repo_url" type="text" placeholder="Repository URL"/>
+                    <div class="alert alert-danger" ng-repeat="error in errors.repo_url">
+                        {{ error }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-8">
+                    <button type="submit" class="btn btn-sm btn-success" ng-class="{'disabled': state.processing}">Create project</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

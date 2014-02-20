@@ -12,6 +12,7 @@ urlpatterns = patterns('zeusci.zeus.views',
         view='project_build_view',
         name='zeus_force_project_build'),
 
+    url('^new$', view='project_create_view', name='zeus_project_create'),
     url('^p$',
         view='project_list_view',
         name='zeus_project_list'),

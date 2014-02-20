@@ -21,8 +21,8 @@ Status = Choices(
 
 class Project(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    website_url = models.URLField()
     repo_url = models.CharField(max_length=512)
+    website_url = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.name

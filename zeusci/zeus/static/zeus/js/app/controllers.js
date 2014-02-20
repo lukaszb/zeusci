@@ -17,6 +17,10 @@ zeus.controller('BreadcrumbsController', function ($scope, $state, $stateParams)
         url = $state.href('project.list');
         addBreadcrumb("Projects", url);
 
+        if ($state.current.name === 'project.create') {
+            addBreadcrumb('New', '#');
+        }
+
         // Project
         if ($stateParams.name) {
             url = $state.href('project.details', $stateParams);
@@ -65,6 +69,8 @@ zeus.controller('BuildsetCreateController', function ($scope, $stateParams, Buil
         buildset.$post($stateParams, function (obj) {
             state.processing = false;
             $scope.buildset = obj;  // TODO: API should return full object instead of empty one
+        }, function () {
+            console.log(" -> Errors!: ", arguments);
         });
     }
 });

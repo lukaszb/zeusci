@@ -8,7 +8,9 @@
 
 
     zeus.factory('Project', function ($resource, settings) {
-        var Project = $resource(settings.API_PROJECT_URL, {name: '@name'});
+        var Project = $resource(settings.API_PROJECT_URL, {name: '@name'}, {
+            post: {method: 'POST'}
+        });
         Project.getInstance = function () {
             return project;
         };
