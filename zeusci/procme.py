@@ -1,5 +1,5 @@
 """
-This should exported to external package.
+This should be exported to external package.
 """
 from __future__ import print_function
 import datetime
