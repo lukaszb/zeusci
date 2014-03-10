@@ -21,7 +21,7 @@ templates_path = ['.templates']
 source_suffix = '.rst'
 master_doc = 'index'
 project = u'zeus-ci'
-copyright = u'2013, Lukasz Balcerzak'
+copyright = u'2014, Lukasz Balcerzak'
 
 # The short X.Y version.
 version = zeusci.get_version(full=False)
