@@ -19,29 +19,21 @@ class TestBaseBuilder(TestCase):
         self.builder = BaseBuilder()
 
     @mock.patch('zeusci.zeus.builders.makedirs')
-    @mock.patch('zeusci.zeus.builders.settings')
-    def test_get_buildset(self, settings, makedirs):
-        settings.BUILDS_ROOT = '/tmp/ci/builds'
-        project = Project.objects.create(name='foobar-project')
-        buildset = self.builder.get_buildset(project)
-
-        self.assertEqual(buildset.build_dir, '/tmp/ci/builds/foobar-project/1')
-        makedirs.assert_called_once_with(buildset.build_dir)
-
-    def test_build_runs_proper_methods(self):
+    def test_build_runs_proper_methods(self, makedirs):
         project = mock.Mock()
-        buildset = mock.Mock()
-        self.builder.get_buildset = mock.Mock(return_value=buildset)
+        buildset = project.buildsets.create.return_value = mock.Mock()
+
         self.builder.fetch = mock.Mock()
         self.builder.pre_builds = mock.Mock()
         self.builder.run_builds = mock.Mock()
         self.builder.post_builds = mock.Mock()
         self.builder.clean = mock.Mock()
         # TODO this does NOT check the proper order!
-        buildset.branch = None
         self.builder.build_project(project)
 
-        self.builder.get_buildset.assert_called_once_with(project, branch=None)
+        project.buildsets.create.assert_called_once_with(branch=None)
+        makedirs.assert_called_once_with(buildset.build_dir)
+
         self.builder.fetch.assert_called_once_with(buildset)
         self.builder.pre_builds.assert_called_once_with(buildset)
         self.builder.run_builds.assert_called_once_with(buildset)
@@ -250,10 +242,10 @@ class TestPythonBuildseter(TestCase):
         expected_args = ['-c', '/tmp/build/dir/tox.ini']
         tox_parseconfig.assert_called_once_with(expected_args)
 
+    @mock.patch.object(Buildset, 'build_dir', '/tmp/foobar/builds/')
     def test_get_builds(self):
         project = Project.objects.create(name='foobar')
-        build_dir = '/tmp/foobar/builds/'
-        buildset = Buildset.objects.create(project=project, build_dir=build_dir)
+        buildset = Buildset.objects.create(project=project)
         build = Build.objects.create(buildset=buildset, number=1, options={
             'toxenv': 'py27'})
         commands = self.builder.get_commands(build)

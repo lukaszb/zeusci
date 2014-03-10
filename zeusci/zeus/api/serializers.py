@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .fields import HyperlinkedIdentityField
 from zeusci.zeus.models import Build
+from zeusci.zeus.models import Buildset
 from zeusci.zeus.models import Command
 from zeusci.zeus.models import Project
 
@@ -52,7 +53,7 @@ class BuildDetailSerializer(BuildSerializer):
         read_only_fields = ['number', 'created_at', 'finished_at']
 
 
-class BuildsetSerializer(serializers.Serializer):
+class BuildsetSerializer(serializers.ModelSerializer):
     uri = HyperlinkedIdentityField(
         view_name='zeus_api_buildset_detail',
         lookup_field={
@@ -65,8 +66,23 @@ class BuildsetSerializer(serializers.Serializer):
     created_at = serializers.DateTimeField(read_only=True)
     finished_at = serializers.DateTimeField(read_only=True)
     status = serializers.CharField(source='get_status', read_only=True)
-    builds = BuildSerializer(source='builds')
+    builds = BuildSerializer(source='builds', read_only=True)
     errors = serializers.Field(source='errors')
+    branch = serializers.SlugField(required=False, default=None)
+
+    class Meta:
+        model = Buildset
+        fields = [
+            'uri',
+            'url',
+            'number',
+            'created_at',
+            'finished_at',
+            'status',
+            'builds',
+            'errors',
+            'branch',
+        ]
 
 
 class ProjectSerializer(serializers.ModelSerializer):

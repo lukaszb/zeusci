@@ -85,6 +85,7 @@ class TestProjectApi(BaseApiTestCase):
                     'status': 'pending',
                     'builds': [],
                     'errors': [],
+                    'branch': None,
                 },
                 {
                     'uri': self.make_api_buildset_detail_url('zeus', 2),
@@ -95,6 +96,7 @@ class TestProjectApi(BaseApiTestCase):
                     'status': 'pending',
                     'builds': [],
                     'errors': [],
+                    'branch': None,
                 },
                 {
                     'uri': self.make_api_buildset_detail_url('zeus', 1),
@@ -105,6 +107,7 @@ class TestProjectApi(BaseApiTestCase):
                     'status': 'pending',
                     'builds': [],
                     'errors': [],
+                    'branch': None,
                 },
             ],
         })

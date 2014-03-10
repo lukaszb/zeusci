@@ -25,25 +25,19 @@ class BaseBuilder(object):
     def info(self, message):
         logger.info(message)
 
-    def get_buildset(self, project, branch=None):
-        """
-        Returns :model:`Buildset` instance with properly ``build_dir``
-        attribute set. We also ensure that ``build_dir`` directory exists.
-        """
-        # we're creating buildset first in order to prepare it's number
-        buildset = Buildset.objects.create(project=project, branch=branch)
-        buildset_no = str(buildset.number)
-        # now we can set build_dir
-        build_dir = abspath(settings.BUILDS_ROOT, project.name, buildset_no)
-        buildset.build_dir = build_dir
-        buildset.save()
-        makedirs(build_dir)
-        return buildset
-
     def build_project(self, project, branch=None):
         """
-        This method will prepare :model:`Buildset` instance and run following
-        methods:
+        This method will prepare :model:`Buildset` instance and call
+        :meth:`run_buildset`.
+        """
+        self.info("Creating buildset for project: %r" % project.name)
+        buildset = project.buildsets.create(branch=branch)
+        self.run_buildset(buildset)
+        return buildset
+
+    def run_buildset(self, buildset):
+        """
+        Performs all builds for given buildset. Following methods would be run:
 
         * :meth:`fetch`
         * :meth:`pre_builds`
@@ -51,8 +45,7 @@ class BaseBuilder(object):
         * :meth:`post_builds`
         * :meth:`clean`
         """
-        self.info("Creating buildset for project: %r" % project.name)
-        buildset = self.get_buildset(project, branch=branch)
+        makedirs(buildset.build_dir)
 
         self.fetch(buildset)
         self.pre_builds(buildset)

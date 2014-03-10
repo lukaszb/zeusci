@@ -20,7 +20,7 @@ Status = Choices(
 
 
 class Project(models.Model):
-    name = models.CharField(max_length=128, unique=True)
+    name = models.SlugField(max_length=128, unique=True)
     repo_url = models.CharField(max_length=512)
     website_url = models.URLField(null=True, blank=True)
 
@@ -55,16 +55,14 @@ class Project(models.Model):
         return builder_cls()
 
 
-
 class Buildset(models.Model):
     project = models.ForeignKey(Project, related_name='buildsets')
     number = models.PositiveIntegerField()
-    build_dir = models.CharField(max_length=512, null=True)
     created_at = models.DateTimeField(default=datetime.datetime.now)
     finished_at = models.DateTimeField(null=True)
     info = JSONField()
     errors = JSONField(default=list)
-    branch = models.SlugField(max_length=64, null=True)
+    branch = models.SlugField(max_length=64, null=True, blank=True)
 
     class Meta:
         unique_together = ('project', 'number')
@@ -91,6 +89,14 @@ class Buildset(models.Model):
     def duration(self):
         if self.created_at and self.finished_at:
             return self.finished_at - self.created_at
+
+    @property
+    def build_dir(self):
+        return abspath(
+            settings.BUILDS_ROOT,
+            self.project.name,
+            str(self.number),
+        )
 
     @property
     def builds_dir(self):

@@ -15,7 +15,7 @@ from .serializers import BuildsetSerializer
 from .serializers import BuildDetailSerializer
 from .serializers import ProjectDetailSerializer
 from .serializers import ProjectSerializer
-from ..tasks import do_build_project
+from ..tasks import do_buildset
 import datetime
 import time
 
@@ -74,19 +74,17 @@ class BuildsetViewSet(BaseViewSet):
         filters = self.get_object_filters()
         return get_object_or_404(queryset, **filters)
 
-    def new(self, request, *args, **kwargs):
-        project = Project.objects.get(name=self.kwargs['name'])
-        do_build_project.delay(project, branch=request.DATA.get('branch'))
-        # TODO: At this point we should have our new buildset already created -
-        # otherwise we respond with 201 but no object was created yet and if
-        # celery task fails then user was prematurely informed about success of
-        # this action; Also, we should return ID of created object
-        return Response({}, status=HTTP_201_CREATED)
+    def pre_save(self, obj):
+        obj.project = Project.objects.get(name=self.kwargs['name'])
+
+    def post_save(self, obj, created):
+        if created:
+            do_buildset.delay(self.object)
 
 
 buildset_list = BuildsetViewSet.as_view({
     'get': 'list',
-    'post': 'new',
+    'post': 'create',
 })
 
 buildset_detail = BuildsetViewSet.as_view({
@@ -132,8 +130,7 @@ class BuildViewSet(BaseViewSet):
         build.finished_at = None
         build.save(force_update=True)
 
-        from ..builders import PythonBuilder
-        do_build.delay(build, PythonBuilder)
+        do_build.delay(build, build.buildset.project.get_builder())
         return super(BuildViewSet, self).retrieve(request, *args, **kwargs)
 
 

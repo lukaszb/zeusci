@@ -1,5 +1,6 @@
 
-<div class="alert alert-success" ng-show="buildset">New buildset was created: <a href="#">Buildset {{ buildset.number}}</a></div>
+<div class="alert alert-success" ng-show="buildset">New buildset was created:
+    <a ui-sref="project.details.buildset({name: $stateParams.name, buildsetNumber: buildset.number})">Buildset {{ buildset.number }}</a></div>
 
 <div class="panel panel-primary" ng-init="initController()">
     <div class="panel-heading">

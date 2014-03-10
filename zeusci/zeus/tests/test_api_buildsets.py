@@ -58,6 +58,7 @@ class TestBuildsetApi(BaseApiTestCase):
                 'status': 'pending',
                 'builds': [],
                 'errors': [],
+                'branch': None,
             },
             {
                 'uri': self.make_api_buildset_detail_url('zeus', 2),
@@ -68,6 +69,7 @@ class TestBuildsetApi(BaseApiTestCase):
                 'status': 'pending',
                 'builds': [],
                 'errors': [],
+                'branch': None,
             },
             {
                 'uri': self.make_api_buildset_detail_url('zeus', 1),
@@ -78,17 +80,20 @@ class TestBuildsetApi(BaseApiTestCase):
                 'status': 'pending',
                 'builds': [],
                 'errors': [],
+                'branch': None,
             },
         ]
         self.assertEqual(response.data['results'], results)
 
-    @mock.patch('zeusci.zeus.api.views.do_build_project')
-    def test_buildset_new(self, do_build_project):
+    @mock.patch('zeusci.zeus.api.views.do_buildset')
+    def test_buildset_new(self, do_buildset):
         url = reverse('zeus_api_buildset_list', kwargs={'name': 'frogress'})
         response = self.client.post(url, data={'branch': 'foo'})
-        self.assertEqual(response.status_code, HTTP_201_CREATED)
-        do_build_project.delay.assert_called_once_with(
-            self.frogress,
-            branch='foo',
-        )
+        assert response.status_code == HTTP_201_CREATED
 
+        # Make sure new buildset was created (there was one at setup already)
+        buildset = self.frogress.buildsets.get(number=2)
+        assert response.data['number'] == 2
+        assert response.data['url'] == buildset.get_absolute_url()
+
+        do_buildset.delay.assert_called_once_with(buildset)
