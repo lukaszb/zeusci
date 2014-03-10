@@ -6,12 +6,26 @@ zeus.controller('BuildDetailsController', function ($scope, $stateParams, $timeo
         });
     };
 
-    (function pollBuild() {
-        Build.get($stateParams, function (build) {
-            console.log(" -> pollBuild");
+    var pollEnabled = true;
+
+    function pollBuild () {
+
+        function onBuildFetch (build) {
             $scope.build = build;
-            $timeout(pollBuild, 250);
-        });
-    })();
+            if (pollEnabled) {
+                $timeout(pollBuild, 250);
+            }
+        }
+
+        Build.get($stateParams, onBuildFetch);
+    }
+
+    pollBuild();
+
+    $scope.$on('$stateChangeStart', function () {
+        // changeing out of this state, stop polling and allow garbage
+        // collector to clean the controller
+        pollEnabled = false;
+    });
 
 });
