@@ -98,6 +98,7 @@ INSTALLED_APPS = (
     'compressor',
 
     # Internals
+    'zeusci.webapp',
     'zeusci.zeus',
 )
 
