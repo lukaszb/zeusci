@@ -38,3 +38,18 @@ Following actions would be performed:
 - create Python virtual environment directory
 - prepare default database
 
+
+.. _zci_start:
+
+zci start
+---------
+
+.. program:: zci start
+
+Starts zeus-ci instance in the background. Webserver would be available at
+http://0.0.0.0:23115
+
+
+When this command is run for the first time, new project would be created at
+``~/.zeusci/`` location. Basically it would issue a ``zci init ~/.zeusci``
+command.
