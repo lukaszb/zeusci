@@ -2,7 +2,6 @@ import click
 import os
 import shutil
 import subprocess
-import sys
 import venv
 import zeusci
 
@@ -12,11 +11,13 @@ abspath = lambda *p: os.path.abspath(os.path.join(*p))
 
 CI_TEMPLATE_PATH = abspath(zeusci.__path__[0], 'conf', 'citemplate')
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+DEFAULT_PROJECT_ROOT = os.path.expanduser('~/.zeusci')
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 def cli():
-    pass
+    project_root = get_project_root()
+    click.echo(" => Using zeus-ci instance at %s" % project_root)
 
 
 DirPath = click.types.Path(file_okay=False, writable=True)
@@ -67,7 +68,7 @@ def get_project_root(this=None):
     else:
         parent = abspath(this, os.path.pardir)
         if parent == this:
-            return None
+            return DEFAULT_PROJECT_ROOT
         return get_project_root(parent)
 
 
@@ -130,6 +131,21 @@ def install_packages(root_dir):
     click.echo('Done')
 
 
+def get_manage_py(root_dir):
+    return abspath(root_dir, 'app', 'manage.py')
+
+
+def run_django_cmd(root_dir, cmd):
+    python = get_python_exec(root_dir)
+    manage = get_manage_py(root_dir)
+
+    cmd = [python, manage] + cmd
+    return subprocess.call(cmd)
+
+
+def prepare_db(root_dir):
+    run_django_cmd(root_dir, ['syncdb', '--noinput'])
+
 
 @click.command(name='bootstrap')
 @click.option('-f', '--force', is_flag=True, default=False)
@@ -140,10 +156,69 @@ def bootstrap_cmd(project_path, force):
     install_setuptools(root_dir)
     install_pip()
     install_packages(root_dir)
+    prepare_db(root_dir)
+
+
+def get_supervisor_daemon():
+    return shutil.which('supervisord')
+
+
+def get_supervisor_ctl():
+    return shutil.which('supervisorctl')
+
+
+def get_supervisor_config(project_root):
+    return abspath(project_root, 'config/supervisord.conf')
+
+
+def run_supervisor(project_root, executable, cmd):
+    config = get_supervisor_config(project_root)
+    if isinstance(cmd, str):
+        cmd = [cmd]
+    return subprocess.call([executable, '-c', config] + cmd)
+
+
+def run_supervisor_daemon(project_root, args=None):
+    args = args or []
+    return run_supervisor(project_root, get_supervisor_daemon(), args)
+
+
+def run_supervisor_ctl(project_root, cmd):
+    return run_supervisor(project_root, get_supervisor_ctl(), cmd)
+
+
+@click.command(name='start')
+@click.pass_context
+def start_cmd(ctx):
+    project_path = get_project_root()
+    if not os.path.exists(project_path):
+        ctx.invoke(init_cmd, project_path=project_path, bootstrap=True)
+    prepare_db(project_path)
+    run_supervisor_daemon(project_path)
+
+
+@click.command(name='status')
+def status_cmd():
+    project_root = get_project_root()
+    run_supervisor_ctl(project_root, 'status')
+
+
+def stop_supervisor_daemon(project_root):
+    run_supervisor_ctl(project_root, 'shutdown')
+
+
+@click.command(name='stop')
+def stop_cmd():
+    project_root = get_project_root()
+    run_supervisor_ctl(project_root, 'stop all')
+    stop_supervisor_daemon(project_root)
 
 
 cli.add_command(init_cmd)
 cli.add_command(bootstrap_cmd)
+cli.add_command(start_cmd)
+cli.add_command(status_cmd)
+cli.add_command(stop_cmd)
 
 
 def main():
