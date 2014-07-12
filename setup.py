@@ -25,7 +25,7 @@ setup(
     include_package_data = True,
     license = 'MIT',
     install_requires = [
-        'monolith>=0.3.2',
+        'click>=2.4',
     ],
     tests_require = [],
     classifiers = [
