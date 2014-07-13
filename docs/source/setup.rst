@@ -23,9 +23,13 @@ following structure of files and directories::
     │   │   ├──  urls.py
     │   │   └──  wsgi.py
     │   └── manage.py
+    ├── config/
+    │   ├──  ez_setup.py
+    │   ├──  requirements.txt
+    │   └──  supervisord.conf
+    ├── log/
     ├── var/
-    │   ├── builds/
-    │   └── logs/
+    │   └── builds/
     └── venv/
         └── ... (content of Python virtualenv sandbox)
 
@@ -36,12 +40,18 @@ Let's describe briefly what those are:
   Read more on :ref:`how to integrate with existing Django project
   <integration>`.
 
+- ``config/`` - here lies installation and deployment related configuration
+  files.
+
+- ``log/`` is a directory where all logs would be stored.
+
 - ``venv/`` directory contains sandboxed Python_ environment. Our project would
   use only Python packages and linked binary from this environment. Read more
   on virtualenv_.
 
 - ``var/`` here all *various* files would be stored. By default, ``zeus-ci``
-  would store here all logs and builds-related files.
+  would store here all builds-related files. If sqlite database is used, it's
+  file would be put here by default.
 
 
 Configuration
