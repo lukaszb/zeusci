@@ -183,7 +183,7 @@ class PythonBuilder(BaseBuilder):
         Returns parsed tox config for given ``buildset``.
         """
         tox_ini_path = self.get_tox_ini_path(buildset)
-        args = ['-c', tox_ini_path]
+        args = ['-c', tox_ini_path, '--skip-missing-interpreters']
         tox_parseconfig = self.get_tox_parseconfig()
         return tox_parseconfig(args)
 
@@ -203,7 +203,8 @@ class PythonBuilder(BaseBuilder):
             build=build,
             number=1,
             title='tox',
-            cmd=['tox', '-c', tox_ini_path, '-e', venv],
+            cmd=['tox', '-c', tox_ini_path,  '--skip-missing-interpreters',
+                '-e', venv],
             started_at=datetime.datetime.now(),
             returncode=None,
             status=Status.PENDING,

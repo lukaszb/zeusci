@@ -239,7 +239,8 @@ class TestPythonBuildseter(TestCase):
         buildset.build_repo_dir = '/tmp/build/dir'
 
         self.assertEqual(self.builder.get_tox_config(buildset), config)
-        expected_args = ['-c', '/tmp/build/dir/tox.ini']
+        expected_args = ['-c', '/tmp/build/dir/tox.ini',
+                         '--skip-missing-interpreters']
         tox_parseconfig.assert_called_once_with(expected_args)
 
     @mock.patch.object(Buildset, 'build_dir', '/tmp/foobar/builds/')
@@ -259,6 +260,7 @@ class TestPythonBuildseter(TestCase):
             'tox',
             '-c',
             '/tmp/foobar/builds/builds/1/repo/tox.ini',
+            '--skip-missing-interpreters',
             '-e', 'py27',
         ]
         self.assertEqual(command.cmd, cmd)
