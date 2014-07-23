@@ -3,7 +3,6 @@ from unittest import mock
 from zeusci.zeus.api.serializers import BuildDetailSerializer
 from zeusci.zeus.models import Build
 from zeusci.zeus.models import Buildset
-from zeusci.zeus.models import Command
 from zeusci.zeus.models import Project
 
 
@@ -28,5 +27,4 @@ class TestBuildDetailSerializer(SimpleTestCase):
         # status without commands
         self.assertEqual(serialize(build)['status'], 'pending')
 
-        cmd1 = Command.objects.create(build=build, number=1)
 
