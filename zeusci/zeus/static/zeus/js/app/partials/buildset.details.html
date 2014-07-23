@@ -1,6 +1,7 @@
 <h2>Buildset {{ buildset.number }}</h2>
 
-<span class="label label-{{ buildset.status | statusToClass }}">
+<span class="label label-{{ buildset.status | statusToClass }}"
+    ng-show="(buildset.status === 'failed')">
 {{ buildset.status | uppercase }}
 </span>
 
