@@ -6,6 +6,14 @@
 
 :Date: |today|
 
+**Blastoff**
+
+::
+
+    $ pip3 install zeusci
+    $ zci start
+
+
 **Documentation**:
 
 .. toctree::
