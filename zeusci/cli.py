@@ -195,6 +195,7 @@ def start_cmd(ctx):
         ctx.invoke(init_cmd, project_path=project_path, bootstrap=True)
     prepare_db(project_path)
     run_supervisor_daemon(project_path)
+    click.echo(" => Webserver started at: http://127.0.0.1:23115")
 
 
 @click.command(name='status')
