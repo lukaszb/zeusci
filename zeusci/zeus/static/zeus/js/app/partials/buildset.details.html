@@ -1,5 +1,34 @@
 <h2>Buildset {{ buildset.number }}</h2>
 
+<span class="label label-{{ buildset.status | statusToClass }}">
+{{ buildset.status | uppercase }}
+</span>
+
+<hr/>
+
+<div class="panel panel panel-danger"
+    ng-repeat="error in buildset.errors">
+    <div class="panel-heading">Reason: {{ error.reason }}</div>
+    <div class="panel-body">
+
+        <section>
+            <strong>returncode</strong>:
+            {{ error.returncode }}
+        </section>
+
+        <section>
+            <strong>stderr</strong>:
+            <pre>{{ error.stderr }}</pre>
+        </section>
+
+        <section>
+            <strong>stdout</strong>:
+            <pre>{{ error.stdout }}</pre>
+        </section>
+
+    </div>
+</div>
+
 <div class="build-list">
 
     <div class="panel panel-default"
