@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .fields import HyperlinkedIdentityField
-from zeusci.zeus.fields import bytes2str
 from zeusci.zeus.models import Build
 from zeusci.zeus.models import Buildset
 from zeusci.zeus.models import Command
@@ -68,11 +67,8 @@ class BuildsetSerializer(serializers.ModelSerializer):
     finished_at = serializers.DateTimeField(read_only=True)
     status = serializers.CharField(source='get_status', read_only=True)
     builds = BuildSerializer(source='builds', read_only=True)
-    errors = serializers.SerializerMethodField('get_errors')
+    errors = serializers.Field(source='errors')
     branch = serializers.SlugField(required=False, default=None)
-
-    def get_errors(self, obj):
-        return [bytes2str(error.copy()) for error in obj.errors]
 
     class Meta:
         model = Buildset
