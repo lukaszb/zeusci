@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from .fetchers import GitFetcher
 from .conf import settings
+from .fields import bytes2str
 from .utils.general import abspath
 from .utils.general import makedirs
 from .models import Buildset
@@ -68,8 +69,8 @@ class BaseBuilder(object):
         else:
             buildset.errors.append({
                 'reason': 'Fetch failed',
-                'stdout': str(cmd.stdout),
-                'stderr': str(cmd.stderr),
+                'stdout': bytes2str(cmd.stdout),
+                'stderr': bytes2str(cmd.stderr),
                 'returncode': cmd.returncode,
             })
             buildset.save()

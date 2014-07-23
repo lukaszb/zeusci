@@ -85,8 +85,8 @@ class TestBaseBuilder(TestCase):
 
         cmd = mock.Mock()
         cmd.returncode = 12
-        cmd.stdout = 'output'
-        cmd.stderr = 'some error'
+        cmd.stdout = b'output'
+        cmd.stderr = b'some error'
         fetcher = mock.Mock()
         fetcher.fetch = mock.Mock(return_value=cmd)
         self.builder.get_fetcher = mock.Mock(return_value=fetcher)
